@@ -33,7 +33,7 @@
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $errors->first('email') }}</strong>
                     </span>
-                @endif
+                  @endif
                 </div>
                 </div>
                 <div class="form-group">
@@ -44,7 +44,7 @@
                         <i class="ti-lock text-primary"></i>
                       </span>
                     </div>
-                    <input type="password" name='password' class="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="Password">
+                    <input type="password" name='password' class="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="Password" required>
                     @if ($errors->has('password'))
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $errors->first('password') }}</strong>
