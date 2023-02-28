@@ -8,11 +8,8 @@
           <div class="col-lg-5 d-flex align-items-center justify-content-center">
             <div class="auth-form-transparent text-left p-3">
               <div class="brand-logo center row">
-                <div class="col-6 text-center">
+                <div class="col-12 text-center">
                     <img src="images/m.png" alt="logo">
-                </div>
-                <div class="col-6 text-center">
-                    <img src="images/z.png" alt="logo">
                 </div>
               </div>
               <h4>Welcome back!</h4>
