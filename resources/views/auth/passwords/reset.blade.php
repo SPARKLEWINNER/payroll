@@ -19,7 +19,7 @@
                     {{ session('status') }}
                 </div>
             @endif
-            <form method="POST" action="{{ route('password.update') }}">
+            <form method="POST" action="{{ route('password.update') }}" onsubmit='show()'>
                 @csrf
                 <div class="form-group">
                     <label for="exampleInputEmail">Email</label>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="my-2 d-flex justify-content-between align-items-center">
                     <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">Reset Password</button>
-                  <a href="{{ route('login') }}" class="auth-link text-black">Back to Login Page</a>
+                  <a href="{{ route('login') }}" onclick='show()' class="auth-link text-black">Back to Login Page</a>
                 </div>
                 <div class="my-3">
                  

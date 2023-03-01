@@ -14,7 +14,7 @@
               </div>
               <h4>Welcome back!</h4>
               <h6 class="font-weight-light">Happy to see you again!</h6>
-              <form class="pt-3" method="POST" action="{{ route('login') }}">
+              <form class="pt-3" method="POST" action="{{ route('login') }}" onsubmit="show()">
                 @csrf
                 <div class="form-group">
                   <label for="exampleInputEmail">Email</label>
@@ -56,7 +56,7 @@
                       Keep me signed in
                     </label>
                   </div>
-                  <a href="{{ route('password.request') }}" class="auth-link text-black">Forgot password?</a>
+                  <a href="{{ route('password.request') }}" onclick='show()' class="auth-link text-black">Forgot password?</a>
                 </div>
                 <div class="my-3">
                   <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">LOGIN</button>

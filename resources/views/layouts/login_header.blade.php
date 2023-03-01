@@ -23,8 +23,23 @@
     <link rel="stylesheet" href="{{ asset('vendors/css/vendor.bundle.base.css') }} ">
 
     <link rel="stylesheet" href="{{ asset('css/vertical-layout-light/style.css') }}">
+    <style>
+        .loader {
+          position: fixed;
+          left: 0px;
+          top: 0px;
+          width: 100%;
+          height: 100%;
+          z-index: 9999;
+          background: url("{{ asset('images/loader.gif') }}") 50% 50% no-repeat white;
+          opacity: .8;
+          background-size: 320px 320px;
+        }
+      </style>
 </head>
 <body>
+    <div id="loader" style="display:none;" class="loader">
+	</div>
     {{-- <div id="app"> --}}
      
 
@@ -32,7 +47,11 @@
             @yield('content')
         {{-- </main> --}}
     {{-- </div> --}}
-
+    <script>
+        	function show() {
+			document.getElementById("loader").style.display = "block";
+		}
+    </script>
     <script src="{{ asset('vendors/js/vendor.bundle.base.js') }}"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
