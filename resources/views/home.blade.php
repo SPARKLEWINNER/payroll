@@ -1,5 +1,6 @@
 @extends('layouts.header')
-
+@section('css')
+@endsection
 @section('content')
 <div class="main-panel">
     <div class="content-wrapper">
@@ -47,7 +48,7 @@
               <div class="card card-tale">
                 <div class="card-body">
                   <p class="mb-4">Total Groups</p>
-                  <p class="fs-30 mb-2">0</p>
+                  <p class="fs-30 mb-2">{{$groups->count()}}</p>
                   <p></p>
                 </div>
               </div>
@@ -56,7 +57,7 @@
               <div class="card card-dark-blue">
                 <div class="card-body">
                   <p class="mb-4">Total Stores</p>
-                  <p class="fs-30 mb-2">0</p>
+                  <p class="fs-30 mb-2">{{count($companies)}}</p>
                   <p></p>
                 </div>
               </div>
@@ -67,17 +68,17 @@
               <div class="card card-light-blue">
                 <div class="card-body">
                   <p class="mb-4">Users</p>
-                  <p class="fs-30 mb-2">0</p>
+                  <p class="fs-30 mb-2">{{$users->count()}}</p>
                   <p></p>
                 </div>
               </div>
             </div>
-            <div class="col-md-6 stretch-card transparent">
+            <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
               <div class="card card-light-danger">
                 <div class="card-body">
-                  <p class="mb-4">Number of Clients</p>
-                  <p class="fs-30 mb-2">47033</p>
-                  <p>0.22% (30 days)</p>
+                  <p class="mb-4">Unregistered Store</p>
+                  <p class="fs-30 mb-2">{{count($companies)-$groups->count()}}</p>
+                  <p></p>
                 </div>
               </div>
             </div>
@@ -86,7 +87,20 @@
       </div>
       
     </div>
+</div>
+@endsection
+@section('js')
+    <!-- Plugin js for this page -->
 
-    <!-- partial -->
-  </div>
+    <script src="{{ asset('vendors/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ asset('vendors/datatables.net/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('vendors/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script>
+    <script src="{{ asset('js/dataTables.select.min.js') }}"></script>
+    <!-- End plugin js for this page -->
+   
+ <!-- Custom js for this page-->
+ <script src="{{ asset('js/jquery.cookie.js') }}" type="text/javascript"></script>
+ <script src="{{ asset('js/dashboard.js') }}"></script>
+ <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script>
+ <!-- End custom js for this page-->
 @endsection

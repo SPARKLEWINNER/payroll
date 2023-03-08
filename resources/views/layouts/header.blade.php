@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="{{ asset('vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/css/vendor.bundle.base.css') }} ">
 
-    <link rel="stylesheet" href="{{ asset('css/vertical-layout-light/style.css') }}">
+    @yield('css')
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{{ asset('vendors/datatables.net-bs4/dataTables.bootstrap4.css') }}">
@@ -86,34 +86,66 @@
         </nav> 
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
-          <!-- partial:partials/_settings-panel.html -->
-          <div class="theme-setting-wrapper">
-            <div id="settings-trigger"><i class="ti-settings"></i></div>
-            <div id="theme-settings" class="settings-panel">
-              <i class="settings-close ti-close"></i>
-              <p class="settings-heading">SIDEBAR SKINS</p>
-              <div class="sidebar-bg-options selected" id="sidebar-light-theme"><div class="img-ss rounded-circle bg-light border me-3"></div>Light</div>
-              <div class="sidebar-bg-options" id="sidebar-dark-theme"><div class="img-ss rounded-circle bg-dark border me-3"></div>Dark</div>
-              <p class="settings-heading mt-2">HEADER SKINS</p>
-              <div class="color-tiles mx-0 px-4">
-                <div class="tiles success"></div>
-                <div class="tiles warning"></div>
-                <div class="tiles danger"></div>
-                <div class="tiles info"></div>
-                <div class="tiles dark"></div>
-                <div class="tiles default"></div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- partial -->
           <!-- partial:partials/_sidebar.html -->
           <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
-              <li class="nav-item {{ $header == "home" ? "active" : "" }}"  >
-                <a class="nav-link"  href="{{url('/')}}">
+              <li class="nav-item {{ Route::current()->getName() == "home" || "" ? "active" : "" }}"  >
+                <a class="nav-link"  href="{{url('/')}}" onclick='show()'>
                   <i class="icon-grid menu-icon"></i>
                   <span class="menu-title">Dashboard</span>
+                </a>
+              </li>
+              <li class="nav-item {{ Route::current()->getName() == "settings" || "" ? "active" : "" }}">
+                <a class="nav-link" data-toggle="collapse" href="#settings" aria-expanded="{{ Route::current()->getName() == "settings" || "" ? "true" : "" }}" aria-controls="ui-basic">
+                    <i class="icon-cog menu-icon"></i>
+                    <span class="menu-title">Settings</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse {{ Route::current()->getName() == "settings" || "" ? "show" : "" }}" id="settings">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"> <a class="nav-link" href="{{ url('/holidays') }}">Holidays</a></li>
+                    </ul>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="collapse" href="#masterfiles" aria-expanded="false" aria-controls="ui-basic">
+                    <i class="icon-align-center menu-icon"></i>
+                    <span class="menu-title">Masterfiles</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="masterfiles">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/groups') }}">Groups</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/stores') }}">Stores</a>
+                        </li>
+                    </ul>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="collapse" href="#payroll" aria-expanded="false" aria-controls="ui-basic">
+                    <i class="icon-book menu-icon"></i>
+                    <span class="menu-title">Payroll</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="payroll">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/generate-payroll') }}">Generate Payroll</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/stores') }}">Stores</a>
+                        </li>
+                    </ul>
+                </div>
+              </li>
+           
+              <li class="nav-item {{ Route::current()->getName() == "users" ? "active" : "" }}"  >
+                <a class="nav-link"  href="{{url('/users')}}" onclick='show()'>
+                  <i class="icon-head menu-icon"></i>
+                  <span class="menu-title">Users</span>
                 </a>
               </li>
             </ul>
@@ -125,7 +157,7 @@
         <!-- page-body-wrapper ends -->
       </div>
      
-        
+      @include('sweetalert::alert')    
     <script>
         function logout() {
 			event.preventDefault();
@@ -150,10 +182,11 @@
     <script src="{{ asset('js/settings.js') }}"></script>
     <script src="{{ asset('js/todolist.js') }}"></script>
     <!-- endinject -->
+    @yield('js')
     <!-- Custom js for this page-->
-    <script src="{{ asset('js/jquery.cookie.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/dashboard.js') }}"></script>
-    <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script>
+    {{-- <script src="{{ asset('js/jquery.cookie.js') }}" type="text/javascript"></script> --}}
+    {{-- <script src="{{ asset('js/dashboard.js') }}"></script> --}}
+    {{-- <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script> --}}
     <!-- End custom js for this page-->
 
 </body>
