@@ -7,68 +7,112 @@
 	<div class="main-panel">
 		<div class="content-wrapper">
             <div class='row'>
-                <div class="col-lg-8 grid-margin stretch-card">
+                <div class="col-lg-12 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Groups</h4>
-                          
-
-                            <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Group</th>
-                                            <th>Store Count</th>
-                                            <th>Action</th>
-                                            {{-- <th>Action</th> --}}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($groups as $group)
-                                        <tr>
-                                            <td>{{$group->name}}</td>
-                                            <td>{{count($group->stores)}}</td>
-                                            <td></td>
-                                            {{-- <th>Action</th> --}}
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                            <h4 class="card-title">Stores</h4>
+                            <p class="card-description">
+                                <form method='get' onsubmit='show();' enctype="multipart/form-data">
+                                    <div class=row>
+                                        <div class='col-md-3'>
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label text-right">Stores</label>
+                                                <div class="col-sm-8">
+                                                    <select data-placeholder="Select Store" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='store' required>
+                                                        <option value="">-- Select store --</option>
+                                                        @foreach($stores as $store)
+                                                        <option value="{{$store}}" @if ($store == $storeData) selected @endif>{{$store}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class='col-md-3'>
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label text-right">From</label>
+                                                <div class="col-sm-8">
+                                                    <input type="date" value='{{$from}}' class="form-control" name="from" max='{{date('Y-m-d')}}' onchange='get_min(this.value);' required />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class='col-md-3'>
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label text-right">To</label>
+                                                <div class="col-sm-8">
+                                                    <input type="date" value='{{$to}}' class="form-control" name="to" id='to' max='{{date('Y-m-d')}}' required />
+                                                </div>
+                                            </div>
+                                        </div>
+                                      
+                                        <div class='col-md-3'>
+                                            <button type="submit" class="form-control form-control-sm btn btn-primary mb-2 btn-sm">Generate</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </p>
+                      
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 grid-margin stretch-card">
+            </div>
+            <div class='row'>
+                <div class="col-lg-12 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">New Group</h4>
-                            <form method='POST' action='new-group' onsubmit='show()'>
-                                @csrf
-                                    <div class="row">
-                                        <div class='col-lg-12 form-group'>
-                                            <label for="allowanceType">Group</label>
-                                            <input name='group' class='form-control form-control-sm' type='text' required> 
-                                        </div>
-                                        <div class="col-lg-12 form-group">
-                                            <label for="employee">Stores</label>
-                                            <select data-placeholder="Select Store"
-                                                class="form-control form-control-sm required js-example-basic-multiple w-100" multiple="multiple" style='width:100%;' name='stores[]' required>
-                                                <option value="">--Select Store--</option>
-                                                @foreach ($stores as $store)
-                                                    <option value="{{$store}}">{{$store}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                            </form>
+                          
+                            <h4 class="card-title">Employees</h4>
+                            <div class="table-responsive">
+                                @if(count($employees) > 0)
+                                @foreach($employees as $employee)
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <td colspan='11'>{{$employee['_id']}} - {{$employee['displayName']}}</td>
+                                          </tr>
+                                        <tr>
+                                          <th>Date</th>
+                                          <th></th>
+                                          <th>Time In</th>
+                                          <th>Time Out</th>
+                                          <th>Work </th>
+                                          <th>Lates </th>
+                                          <th>Undertime</th>
+                                          <th>Overtime</th>
+                                          <th>Approved Overtime</th>
+                                          <th>Night Diff</th>
+                                          <th>OT Night Diff</th>
+                                          <th>Remarks</th>
+                                        </tr>
+                                      </thead>
+                                    <tbody>
+                                        @foreach($date_range as $date)
+                                       <tr>
+                                            <td>{{$date}}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                          </tr>
+                                          @endforeach
+                                    </tbody>
+                                </table>
+                                @endforeach
+                                @endif
+                            </div>
+                           
                         </div>
                     </div>
                 </div>
             </div>
 		</div>
     </div>
-@include('new_group')
 @endsection
 @section('js')
     <script src="{{ asset('vendors/select2/select2.min.js')}}"></script>

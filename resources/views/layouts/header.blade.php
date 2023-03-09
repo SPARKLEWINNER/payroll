@@ -116,10 +116,10 @@
                 <div class="collapse" id="masterfiles">
                     <ul class="nav flex-column sub-menu">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/groups') }}">Groups</a>
+                            <a class="nav-link" href="{{ url('/groups') }}" onclick='show();'>Groups</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/stores') }}">Stores</a>
+                            <a class="nav-link" href="{{ url('/stores') }}" onclick='show();'>Stores</a>
                         </li>
                     </ul>
                 </div>
@@ -133,10 +133,7 @@
                 <div class="collapse" id="payroll">
                     <ul class="nav flex-column sub-menu">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/generate-payroll') }}">Generate Payroll</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/stores') }}">Stores</a>
+                            <a class="nav-link" href="{{ url('/generate-payroll') }}" onclick='show();'>Generate Payroll</a>
                         </li>
                     </ul>
                 </div>
@@ -188,6 +185,11 @@
     {{-- <script src="{{ asset('js/dashboard.js') }}"></script> --}}
     {{-- <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script> --}}
     <!-- End custom js for this page-->
-
+    <script>
+    function get_min(value)
+      {
+        document.getElementById("to").min = value;
+      }
+  </script>
 </body>
 </html>
