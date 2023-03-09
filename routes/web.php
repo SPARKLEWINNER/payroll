@@ -39,6 +39,10 @@ Route::group(['middleware' => 'auth'], function()
 
     //Stores
     Route::get('stores','StoreController@index')->name('store');
+
+    //generate payroll
+    Route::get('generate','PayrollController@index')->name('generate-payroll');
+    Route::get('payrolls','PayrollController@payrolls')->name('payroll');
 });
 
 

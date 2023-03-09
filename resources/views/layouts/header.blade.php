@@ -133,7 +133,10 @@
                 <div class="collapse" id="payroll">
                     <ul class="nav flex-column sub-menu">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/generate-payroll') }}" onclick='show();'>Generate Payroll</a>
+                            <a class="nav-link" href="{{ url('/generate') }}" onclick='show();'>Generate Payroll</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/payrolls') }}" onclick='show();'>Payrolls</a>
                         </li>
                     </ul>
                 </div>

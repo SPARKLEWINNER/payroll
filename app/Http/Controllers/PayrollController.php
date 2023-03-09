@@ -1,20 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Holiday;
 use Illuminate\Http\Request;
 
-class StoreController extends Controller
+class PayrollController extends Controller
 {
     //
-    
     public function index(Request $request)
     {
-       
+        $holidays = Holiday::get();
+        // dd($holidays);
+        $printReport = new StoreController;
         $storeData = $request->store;
         $from = $request->from;
         $to = $request->to;
-        $date_range =  $this->dateRange($from,$to);
+        $date_range =  $printReport->dateRange($from,$to);
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', 'https://sparkle-time-keep.herokuapp.com/api/users/company');
         $stores = json_decode((string) $response->getBody(), true);
@@ -28,7 +29,7 @@ class StoreController extends Controller
                         ]
             ]);
             $employees = json_decode((string) $employeesJson->getBody(), true);
-            $employees = collect($employees)->take(5);
+            $employees = collect($employees)->sortBy('displayName');
             // foreach($employees as $key => $emp)
             // {
             //     $schedulesJson = $client->request('POST', 'https://sparkle-time-keep.herokuapp.com/api/range/schedule/', [
@@ -44,8 +45,8 @@ class StoreController extends Controller
                
             // }
         }
-        
-        return view('stores',
+        // dd($employees);
+        return view('generate-payroll',
             array(
                 'stores' => $stores,
                 'storeData' => $storeData,
@@ -56,18 +57,5 @@ class StoreController extends Controller
                 'schedulesData' => $schedulesData,
             )
         );
-    }
-    public function dateRange( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
-        $dates = [];
-        $current = strtotime( $first );
-        $last = strtotime( $last );
-    
-        while( $current <= $last ) {
-    
-            $dates[] = date( $format, $current );
-            $current = strtotime( $step, $current );
-        }
-    
-        return $dates;
     }
 }
