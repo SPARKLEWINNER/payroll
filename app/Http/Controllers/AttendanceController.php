@@ -13,7 +13,7 @@ class AttendanceController extends Controller
         $attendance->emp_id = $request->emp_id;
         $attendance->emp_name = $request->emp_name;
         $attendance->status = $request->status;
-        $attendance->time = date('Y-m-d h:i:s',strtotime($request->status));
+        $attendance->time = date('Y-m-d h:i:s',strtotime($request->time));
         $attendance->store = $request->store;
         $attendance->remarks = url('');
         $attendance->date = date('Y-m-d',strtotime($request->date));
