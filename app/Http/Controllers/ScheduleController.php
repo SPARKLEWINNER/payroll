@@ -13,7 +13,7 @@ class ScheduleController extends Controller
         $schedule->emp_id = $request->emp_id;
         $schedule->time_in = date('Y-m-d h:i:s',strtotime($request->time_in));
         $schedule->time_out = date('Y-m-d h:i:s',strtotime($request->time_out));
-        $schedule->time_out = floatval($request->total_hours);
+        $schedule->total_hours = floatval($request->total_hours);
         $schedule->date = date('Y-m-d',strtotime($request->date));
         $schedule->save();
 
