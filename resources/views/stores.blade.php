@@ -21,7 +21,7 @@
                                                     <select data-placeholder="Select Store" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='store' required>
                                                         <option value="">-- Select store --</option>
                                                         @foreach($stores as $store)
-                                                        <option value="{{$store}}" @if ($store == $storeData) selected @endif>{{$store}}</option>
+                                                        <option value="{{$store->store}}" @if ($store->store == $storeData) selected @endif>{{$store->store}}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -62,16 +62,15 @@
                           
                             <h4 class="card-title">Employees</h4>
                             <div class="table-responsive">
-                                @if(count($employees) > 0)
                                 @foreach($employees as $employee)
                                 <table class="table table-hover table-bordered">
                                     <thead>
                                         <tr>
-                                            <td colspan='11'>{{$employee['_id']}} - {{$employee['displayName']}}</td>
+                                            <td colspan='11'>{{$employee->emp_id}} - {{$employee->emp_name}}</td>
                                           </tr>
                                         <tr>
                                           <th>Date</th>
-                                          <th></th>
+                                          <th>Schedules</th>
                                           <th>Time In</th>
                                           <th>Time Out</th>
                                           <th>Work </th>
@@ -86,12 +85,16 @@
                                       </thead>
                                     <tbody>
                                         @foreach($date_range as $date)
-                                       <tr>
-                                            <td>{{$date}}</td>
+                                        @php
+                                            $time_in = (($employee->attendances)->where('status','time-in')->where('date',$date))->first();
+                                            $time_out = (($employee->attendances)->where('status','time-out')->where('date',$date))->first();
+                                        @endphp
+                                        <tr>
+                                            <td>{{date('M d, Y - l',strtotime($date))}}</td>
                                             <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td>{{($time_in != null) ? date('h:i a',strtotime($time_in->time)) : ""}}</td>
+                                            <td>{{($time_out != null) ? date('h:i a',strtotime($time_out->time)) : ""}}</td>
+                                            <td> {{(($time_in != null) && ($time_out != null) ) ? get_working_hours($time_out->time,$time_in->time)." hrs" : "" }}  </td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -104,7 +107,6 @@
                                     </tbody>
                                 </table>
                                 @endforeach
-                                @endif
                             </div>
                            
                         </div>
@@ -114,6 +116,12 @@
 		</div>
     </div>
 @endsection
+@php
+    function get_working_hours($timeout,$timein)
+    {
+        return round((((strtotime($timeout) - strtotime($timein)))/3600),2);
+    }
+@endphp
 @section('js')
     <script src="{{ asset('vendors/select2/select2.min.js')}}"></script>
     <script src="{{ asset('js/select2.js')}}"></script>

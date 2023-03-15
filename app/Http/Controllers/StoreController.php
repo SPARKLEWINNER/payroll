@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Attendance;
 use Illuminate\Http\Request;
 
 class StoreController extends Controller
@@ -15,34 +15,14 @@ class StoreController extends Controller
         $from = $request->from;
         $to = $request->to;
         $date_range =  $this->dateRange($from,$to);
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'https://sparkle-time-keep.herokuapp.com/api/users/company');
-        $stores = json_decode((string) $response->getBody(), true);
+        $stores = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
         $employees = [];
-        $schedulesData = [];
         if($request->store)
         {
-            $employeesJson = $client->request('POST', 'https://sparkle-time-keep.herokuapp.com/api/store/personnel', [
-                        'json' => [
-                            'store' => $request->store,
-                        ]
-            ]);
-            $employees = json_decode((string) $employeesJson->getBody(), true);
-            $employees = collect($employees)->take(5);
-            // foreach($employees as $key => $emp)
-            // {
-            //     $schedulesJson = $client->request('POST', 'https://sparkle-time-keep.herokuapp.com/api/range/schedule/', [
-            //         'json' => [
-            //                     'id' => $emp['_id'],
-            //                     "from" => $from,
-            //                     "to" => $to
-            //                 ]
-            //         ]);
-            //     $schedules = json_decode((string) $schedulesJson->getBody(), true);
-            //     // dd($schedules);
-            //     $schedulesData[$key] = $schedules;
-               
-            // }
+            $employees = Attendance::with(['attendances' => function($q) use ($from,$to)
+            {
+                $q->whereBetween('date',[$from,$to]);
+            }])->groupBy('emp_id','emp_name')->select('emp_id','emp_name')->where('store',$request->store)->orderBy('emp_name','asc')->get();
         }
         
         return view('stores',
@@ -53,7 +33,6 @@ class StoreController extends Controller
                 'to' => $to,
                 'date_range' => $date_range,
                 'employees' => $employees,
-                'schedulesData' => $schedulesData,
             )
         );
     }

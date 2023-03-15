@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
+    <link rel="stylesheet" href="{{ asset('vendors/font-awesome/css/font-awesome.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendors/feather/feather.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/css/vendor.bundle.base.css') }} ">
@@ -121,6 +122,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/stores') }}" onclick='show();'>Stores</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/salaries') }}" onclick='show();'>Salaries</a>
+                        </li>
                     </ul>
                 </div>
               </li>
@@ -141,7 +145,6 @@
                     </ul>
                 </div>
               </li>
-           
               <li class="nav-item {{ Route::current()->getName() == "users" ? "active" : "" }}"  >
                 <a class="nav-link"  href="{{url('/users')}}" onclick='show()'>
                   <i class="icon-head menu-icon"></i>

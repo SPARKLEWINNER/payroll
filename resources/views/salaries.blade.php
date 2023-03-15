@@ -10,24 +10,22 @@
                 <div class="col-lg-8 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Groups</h4>
-                          
-
+                            <h4 class="card-title">Salaries</h4>
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Group</th>
+                                            <th>Store</th>
                                             <th>Store Count</th>
                                             <th>Action</th>
                                             {{-- <th>Action</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($groups as $group)
+                                        @foreach($salaries as $salary)
                                         <tr>
-                                            <td>{{$group->name}}</td>
-                                            <td>{{count($group->stores)}}</td>
+                                            <td>{{$salary->store}}</td>
+                                            <td></td>
                                             <td>
                                                 <button type="button" class="btn btn-primary btn-icon-text btn-sm">
                                                     <i class="ti-file btn-icon-prepend"></i>
@@ -46,14 +44,11 @@
                 <div class="col-lg-4 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">New Group</h4>
+                            <h4 class="card-title">New Salary</h4>
                             <form method='POST' action='new-group' onsubmit='show()'>
                                 @csrf
                                     <div class="row">
-                                        <div class='col-lg-12 form-group'>
-                                            <label for="allowanceType">Group</label>
-                                            <input name='group' class='form-control form-control-sm' type='text' required> 
-                                        </div>
+                                       
                                         <div class="col-lg-12 form-group">
                                             <label for="employee">Stores</label>
                                             <select data-placeholder="Select Store"
@@ -63,6 +58,14 @@
                                                     <option value="{{$store}}">{{$store}}</option>
                                                 @endforeach
                                             </select>
+                                        </div>
+                                        <div class='col-lg-12 form-group'>
+                                            <label for="allowanceType">Daily Rate</label>
+                                            <input name='rate' class='form-control form-control-sm' type='number' min="0" step="0.01" required> 
+                                        </div>
+                                        <div class='col-lg-12 form-group'>
+                                            <label for="allowanceType">Allowance Amount</label>
+                                            <input name='rate' class='form-control form-control-sm' type='number' min="0" step="0.01" required> 
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Save</button>

@@ -55,12 +55,16 @@
                     </div>
                 </div>
             </div>
+            @if(count($employees) >0)
             <div class='row'>
                 <div class="col-lg-12 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                          
-                            <h4 class="card-title">Employees</h4>
+                            <h5>Holidays <br>
+                                @foreach($holidays as $holiday)
+                                    {{$holiday->holiday_name}} - {{$holiday->holiday_date}} - {{$holiday->holiday_type}}  <br>
+                                @endforeach
+                            </h5>
                             <div class="table-responsive">
                                
                                 <table class="table table-hover table-bordered">
@@ -189,6 +193,7 @@
                     </div>
                 </div>
             </div>
+            @endif
 		</div>
     </div>
 @endsection

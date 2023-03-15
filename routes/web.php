@@ -11,13 +11,14 @@
 |
 */
 
-
+// Route::get('attendance','AttendanceController@create')->name('create-attendance');
 
 Auth::routes();
 Route::group(['middleware' => 'auth'], function()
 {
 
-
+    
+    Route::get('/get-history','AttendanceController@get')->name('scum');
     
     Route::get('/', 'HomeController@index')->name('home');
 
@@ -42,7 +43,12 @@ Route::group(['middleware' => 'auth'], function()
 
     //generate payroll
     Route::get('generate','PayrollController@index')->name('generate-payroll');
-    Route::get('payrolls','PayrollController@payrolls')->name('payroll');
+    Route::get('payrolls','PayrollController@payrolls')->name('payrolls');
+    Route::get('payroll/{id}','PayrollController@payroll')->name('payroll');
+    Route::get('billing/{id}','PayrollController@billing')->name('billing');
+
+    //Salaries
+    Route::get('salaries','SalaryController@index')->name('salary');
 });
 
 

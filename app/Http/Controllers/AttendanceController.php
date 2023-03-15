@@ -24,4 +24,36 @@ class AttendanceController extends Controller
                 'data' => $attendance];
 
     }
+
+    public function get()
+    {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('GET', 'https://time-in-production-api.onrender.com/api/user/recordsv2/6144181da6566a001623b8e3/2023-02-16/2023-02-28');
+        $employees = json_decode((string) $response->getBody(), true);
+
+        foreach($employees as $emp)
+        {
+            // dd($emp);
+            if(count($emp['reports']) > 0)
+            {
+                foreach($emp['reports']['0']['record'] as $record)
+                {
+                    $attendance = new Attendance;
+                    $attendance->emp_id = $emp['Employee']['_id'];
+                    $attendance->emp_name = $emp['Employee']['displayName'];
+                    $attendance->status = $record['status'];
+                    $attendance->time = date('Y-m-d H:i:s',strtotime(str_replace("Z"," ",$record['dateTime'])));
+                    $attendance->store = "Star Concorde Group";
+                    $attendance->remarks = url('');
+                    $attendance->date = $emp['date'];
+                    $attendance->save();
+                }
+            }
+           
+        }
+
+        return 'success';
+    }
 }
+
+

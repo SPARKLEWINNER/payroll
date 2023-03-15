@@ -33,14 +33,24 @@ class GroupController extends Controller
 
     public function new(Request $request)
     {
-        $group = new Group;
-        $group->name = $request->group;
-        $group->user_id = auth()->user()->id;
-        $group->save();
+        $findgroup = Group::where('name',$request->group)->first();
+        if($findgroup == null)
+        {
+            $group = new Group;
+            $group->name = $request->group;
+            $group->user_id = auth()->user()->id;
+            $group->save();
+            $id = $group->id;
+        }
+        else
+        {
+            $id = $findgroup->id;
+        }
+        
         // dd($group->id);
         foreach ($request->stores as $store) {
                 $store_save = new Store;
-                $store_save->group_id = $group->id;
+                $store_save->group_id = $id;
                 $store_save->store = $store;
                 $store_save->user_id = auth()->user()->id;
                 $store_save->save();
