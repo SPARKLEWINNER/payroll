@@ -25,10 +25,10 @@ class AttendanceController extends Controller
 
     }
 
-    public function get()
+    public function get(Request $request)
     {
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'https://time-in-production-api.onrender.com/api/user/recordsv2/6144181da6566a001623b8e3/2023-02-16/2023-02-28');
+        $response = $client->request('GET', 'https://time-in-production-api.onrender.com/api/user/recordsv2/'.$request->store_id.'/'.$request->from.'/'.$request->to);
         $employees = json_decode((string) $response->getBody(), true);
 
         foreach($employees as $emp)
