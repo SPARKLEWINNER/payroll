@@ -73,14 +73,12 @@
                                           <th>Schedules</th>
                                           <th>Time In</th>
                                           <th>Time Out</th>
-                                          <th>Work </th>
+                                          <th>Working Hrs </th>
                                           <th>Lates </th>
                                           <th>Undertime</th>
                                           <th>Overtime</th>
                                           <th>Approved Overtime</th>
                                           <th>Night Diff</th>
-                                          <th>OT Night Diff</th>
-                                          <th>Remarks</th>
                                         </tr>
                                       </thead>
                                     <tbody>
@@ -94,9 +92,7 @@
                                             <td></td>
                                             <td>{{($time_in != null) ? date('h:i a',strtotime($time_in->time)) : ""}}</td>
                                             <td>{{($time_out != null) ? date('h:i a',strtotime($time_out->time)) : ""}}</td>
-                                            <td> {{(($time_in != null) && ($time_out != null) ) ? get_working_hours($time_out->time,$time_in->time)." hrs" : "" }}  </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td>{{(($time_in != null) && ($time_out != null) ) ? get_working_hours($time_out->time,$time_in->time)." hrs" : "" }}  </td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
