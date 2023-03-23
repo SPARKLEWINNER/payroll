@@ -11,7 +11,7 @@
     @laravelPWA
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <link rel="shortcut icon" href="{{ asset('images/icon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('images/icons/icon-144x144.png') }}">
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">

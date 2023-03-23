@@ -5,10 +5,11 @@ return [
     'manifest' => [
         'name' => env('APP_NAME', 'Payroll'),
         'short_name' => 'PAYROLL',
-        'start_url' => 'payroll.sparkles.com.ph',
+        'start_url' => '.',
         'background_color' => '#ffffff',
         'theme_color' => '#000000',
         'display' => 'standalone',
+        'display-override' => ['minimal-ui'],
         'orientation'=> 'any',
         'status_bar'=> 'black',
         'icons' => [
