@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Attendance;
 use App\Holiday;
 use App\Payroll;
 use PDF;
@@ -23,9 +24,7 @@ class PayrollController extends Controller
         $holidays = [];
         // dd($holidays);
         $date_range =  $printReport->dateRange($from,$to);
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'https://sparkle-time-keep.herokuapp.com/api/users/company');
-        $stores = json_decode((string) $response->getBody(), true);
+        $stores = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
         $employees = [];
         $schedulesData = [];
         if($request->store)
@@ -39,27 +38,11 @@ class PayrollController extends Controller
                 $query->where('status',null)->whereBetween('holiday_date',[$from, $to]);
             })
             ->orderBy('holiday_date','asc')->get();
-            $employeesJson = $client->request('POST', 'https://sparkle-time-keep.herokuapp.com/api/store/personnel', [
-                        'json' => [
-                            'store' => $request->store,
-                        ]
-            ]);
-            $employees = json_decode((string) $employeesJson->getBody(), true);
-            $employees = collect($employees)->sortBy('displayName');
-            // foreach($employees as $key => $emp)
-            // {
-            //     $schedulesJson = $client->request('POST', 'https://sparkle-time-keep.herokuapp.com/api/range/schedule/', [
-            //         'json' => [
-            //                     'id' => $emp['_id'],
-            //                     "from" => $from,
-            //                     "to" => $to
-            //                 ]
-            //         ]);
-            //     $schedules = json_decode((string) $schedulesJson->getBody(), true);
-            //     // dd($schedules);
-            //     $schedulesData[$key] = $schedules;
-               
-            // }
+            $employees = Attendance::with(['attendances' => function($q) use ($from,$to)
+            {
+                $q->whereBetween('date',[$from,$to]);
+            }])->groupBy('emp_id','emp_name')->select('emp_id','emp_name')->where('store',$request->store)->orderBy('emp_name','asc')->get();
+         
         }
         // dd($employees);
         return view('generate-payroll',

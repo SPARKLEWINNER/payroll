@@ -11,4 +11,8 @@ class Attendance extends Model
     {
         return $this->hasMany(Attendance::class,'emp_id','emp_id');
     }
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class,'emp_id','emp_id');
+    }
 }

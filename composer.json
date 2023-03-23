@@ -14,7 +14,8 @@
         "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
-        "realrashid/sweet-alert": "^6.0"
+        "realrashid/sweet-alert": "^6.0",
+        "silviolleite/laravelpwa": "^2.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

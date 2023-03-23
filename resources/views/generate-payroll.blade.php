@@ -21,7 +21,7 @@
                                                     <select data-placeholder="Select Store" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='store' required>
                                                         <option value="">-- Select store --</option>
                                                         @foreach($stores as $store)
-                                                        <option value="{{$store}}" @if ($store == $storeData) selected @endif>{{$store}}</option>
+                                                        <option value="{{$store->store}}" @if ($store->store == $storeData) selected @endif>{{$store->store}}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -117,7 +117,7 @@
                                                 <tr>
                                                     <td>{{$c++}}</td>
                                                     <td></td>
-                                                    <td>{{$employee['displayName']}}</td>
+                                                    <td>{{$employee->emp_name}}</td>
                                                     <td>0.00</td>
                                                     <td>0.00</td>
                                                     <td>0.00</td>
