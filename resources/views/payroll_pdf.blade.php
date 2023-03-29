@@ -1,3 +1,6 @@
+@php
+ini_set("memory_limit", "-1");
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
