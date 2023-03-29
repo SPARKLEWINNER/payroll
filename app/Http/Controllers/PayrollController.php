@@ -85,4 +85,11 @@ class PayrollController extends Controller
         ))->setPaper('legal', 'landscape');
         return $pdf->stream(date('m-d-Y').'-billing-'.$payroll->store.'.pdf');
     }
+
+    public function test()
+    {
+        $pdf = PDF::loadView('test',array(
+        ))->setPaper('legal', 'landscape');
+        return $pdf->stream(date('m-d-Y').'.pdf');
+    }
 }

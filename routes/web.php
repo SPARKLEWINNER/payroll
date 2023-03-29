@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth'], function()
     Route::get('payrolls','PayrollController@payrolls')->name('payrolls');
     Route::get('payroll/{id}','PayrollController@payroll')->name('payroll');
     Route::get('billing/{id}','PayrollController@billing')->name('billing');
+    Route::get('test','PayrollController@test')->name('test');
 
     //Salaries
     Route::get('salaries','SalaryController@index')->name('salary');
