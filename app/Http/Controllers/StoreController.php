@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Attendance;
+use App\Store;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class StoreController extends Controller
 {
@@ -52,5 +54,30 @@ class StoreController extends Controller
         }
     
         return $dates;
+    }
+
+    public function remove(Request $request)
+    {
+        $findstore = Store::where('id',$request->store)->first();
+        if($findstore == null)
+        {
+            Alert::success('Store not found')->persistent('Dismiss');
+        }
+        else
+        {
+            $res = Store::find($request->store)->delete();
+            if($res == null) 
+            {
+                Alert::fail('Something went wrong please try again later')->persistent('Dismiss');
+            }
+            else 
+            {
+                Alert::success('Successfully Remove')->persistent('Dismiss');    
+            }
+        }
+        
+        // dd($group->id);
+        
+        return back();
     }
 }

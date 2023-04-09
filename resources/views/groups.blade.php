@@ -19,6 +19,7 @@
                                         <tr>
                                             <th>Group</th>
                                             <th>Store Count</th>
+                                            <th>Store</th>
                                             <th>Action</th>
                                             {{-- <th>Action</th> --}}
                                         </tr>
@@ -28,12 +29,29 @@
                                         <tr>
                                             <td>{{$group->name}}</td>
                                             <td>{{count($group->stores)}}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-primary btn-icon-text btn-sm">
-                                                    <i class="ti-file btn-icon-prepend"></i>
-                                                    Edit
-                                                  </button>
-                                            </td>
+                                            <form method='GET' action="store-remove" onsubmit='show()' enctype="multipart/form-data">
+                                                <td>  
+                                                    <select data-placeholder="Select Store" 
+                                                        class="form-control form-control-sm required js-example-basic-single" 
+                                                        style='width:100%;'
+                                                        name='store' 
+                                                        required
+                                                    >
+                                                        @foreach($group->stores as $store)    
+                                                            <option value="{{$store->id}}">{{$store->store}}</option>
+                                                        @endforeach
+                                                    </select>  
+                                                </td>
+                                               
+                                                <td>
+                                                    
+                                                        <button type="submit" class="btn btn-primary btn-icon-text btn-sm">
+                                                            <i class="ti-file btn-icon-prepend"></i>
+                                                            Remove
+                                                        </button>
+
+                                                </td>
+                                            </form>
                                             {{-- <th>Action</th> --}}
                                         </tr>
                                         @endforeach
@@ -60,7 +78,7 @@
                                                 class="form-control form-control-sm required js-example-basic-multiple w-100" multiple="multiple" style='width:100%;' name='stores[]' required>
                                                 <option value="">--Select Store--</option>
                                                 @foreach ($stores as $store)
-                                                    <option value="{{$store}}">{{$store}}</option>
+                                                    <option value="{{$store->store}}">{{$store->store}}</option>
                                                 @endforeach
                                             </select>
                                         </div>

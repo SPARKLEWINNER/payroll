@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Group;
 use App\Store;
+use App\Attendance;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 class GroupController extends Controller
@@ -12,11 +13,12 @@ class GroupController extends Controller
     public function index()
     {
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'https://sparkle-time-keep.herokuapp.com/api/users/company');
-        $stores = json_decode((string) $response->getBody(), true);
+        //$response = $client->request('GET', 'https://sparkle-time-keep.herokuapp.com/api/users/company');
+        $response = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
+        //$stores = json_decode((string) $response->getBody(), true);
         $Nstores = Store::get()->pluck('store')->toArray();
         // dd($Nstores);
-        $stores = \array_diff($stores,$Nstores);
+        //$stores = \array_diff($stores,$Nstores);
         // dd($array);
         $groups = Group::with('stores')->get();
 
@@ -24,7 +26,7 @@ class GroupController extends Controller
             'groups',
             array(
                 'groups' => $groups,
-                'stores' => $stores,
+                'stores' => $response,
                 'Nstores' => $Nstores,
 
             )
@@ -58,6 +60,7 @@ class GroupController extends Controller
         Alert::success('Successfully Store')->persistent('Dismiss');
         return back();
     }
+    
     
 
 }

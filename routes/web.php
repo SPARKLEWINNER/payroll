@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth'], function()
 
     //Stores
     Route::get('stores','StoreController@index')->name('store');
+    Route::get('store-remove','StoreController@remove')->name('store-remove');
 
     //generate payroll
     Route::get('generate','PayrollController@index')->name('generate-payroll');
