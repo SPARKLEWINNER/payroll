@@ -11,10 +11,8 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Groups</h4>
-                          
-
                             <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
+                                <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
                                             <th>Group</th>

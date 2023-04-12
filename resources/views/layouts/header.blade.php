@@ -120,6 +120,11 @@
                             <a class="nav-link" href="{{ url('/groups') }}" onclick='show();'>Groups</a>
                         </li>
                         <li class="nav-item">
+                          <a class="nav-link"  href="{{url('/users')}}" onclick='show()'>
+                            <span class="menu-title">Users</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ url('/stores') }}" onclick='show();'>Stores</a>
                         </li>
                         <li class="nav-item">
@@ -145,12 +150,7 @@
                     </ul>
                 </div>
               </li>
-              <li class="nav-item {{ Route::current()->getName() == "users" ? "active" : "" }}"  >
-                <a class="nav-link"  href="{{url('/users')}}" onclick='show()'>
-                  <i class="icon-head menu-icon"></i>
-                  <span class="menu-title">Users</span>
-                </a>
-              </li>
+
             </ul>
           </nav>
           <!-- partial -->

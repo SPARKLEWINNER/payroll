@@ -25,7 +25,7 @@ Route::group(['middleware' => 'auth'], function()
     Route::get('/home', 'HomeController@index')->name('home');
 
     //users
-    Route::get('users','UserController@index')->name('users');
+    Route::get('/users','UserController@index')->name('users');
 
     //groups
     Route::get('groups','GroupController@index')->name('groups');
