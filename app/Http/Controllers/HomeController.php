@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Group;
 use App\Store;
+use App\Attendance;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 
@@ -28,10 +29,9 @@ class HomeController extends Controller
     {
         $users = User::get();
         $groups = Group::get();
-        $stores = Store::get();
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'https://sparkle-time-keep.herokuapp.com/api/users/company');
-        $companies = json_decode((string) $response->getBody(), true);
+        $stores = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
+        $attendances = Attendance::orderBy('id','desc')->take(1000)->get();
+        $employees = Attendance::groupBy('emp_id','emp_name','status')->selectRaw('emp_name')->where('store','!=',null)->where('date',date('Y-m-d'))->get();
         // dd($companies);
 
         return view('home',
@@ -39,7 +39,9 @@ class HomeController extends Controller
             'users' => $users,
             'groups' => $groups,
             'stores' => $stores,
-            'companies' => $companies
+            'attendances' => $attendances,
+            'employees' => $employees,
+            
         )
     );
     }

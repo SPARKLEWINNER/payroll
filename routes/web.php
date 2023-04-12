@@ -17,7 +17,7 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function()
 {
 
-    
+    Route::get('sample','AttendanceController@sample');
     Route::get('/get-history','AttendanceController@get')->name('scum');
     
     Route::get('/', 'HomeController@index')->name('home');
@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth'], function()
 
     //users
     Route::get('/users','UserController@index')->name('users');
+    Route::post('change-pass','UserController@changepass');
 
     //groups
     Route::get('groups','GroupController@index')->name('groups');

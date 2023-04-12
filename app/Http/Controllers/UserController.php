@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Attendance;
 use Illuminate\Http\Request;
 use App\Store;
+use App\User;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class UserController extends Controller
 {
@@ -30,5 +32,17 @@ class UserController extends Controller
                 'personnels' => $personnel
             )
         );
+    }
+    public function changepass(Request $request)
+    {
+        $this->validate($request, [
+            'password' => 'required|confirmed',
+        ]);
+
+        $user = User::where('id',auth()->user()->id)->first();
+        $user->password = bcrypt($request->password);
+        $user->save();
+        Alert::success('Successfully Change Password')->persistent('Dismiss');
+        return back();
     }
 }

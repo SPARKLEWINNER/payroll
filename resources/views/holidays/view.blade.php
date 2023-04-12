@@ -1,32 +1,32 @@
-@extends('layouts.header')
+@extends('layouts.header_admin')
 
 @section('content')
-<div class="main-panel">
-    <div class="content-wrapper">
-        
+    <div class="row">
           <div class="col-lg-12 grid-margin stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">Holidays</h4>
-                <p class="card-description">
-                    <button type="button" class="btn btn-outline-success btn-icon-text" data-toggle="modal" data-target="#newHoliday">
-                      <i class="ti-plus btn-icon-prepend"></i>                                                    
-                      New Holiday
-                    </button>
-                  </p>
-             
+            <div class="ibox float-e-margins">
+              <div class="ibox-title">
+                  <h5> Holidays </h5> &nbsp;  <button class="btn btn-outline btn-primary btn-xs"  data-toggle="modal" data-target="#newHoliday" type="button"><i class="fa fa-plus"></i></button>
+                  <div class="ibox-tools">
+                      <a class="collapse-link">
+                          <i class="fa fa-chevron-up"></i>
+                      </a>
+                    
+                  </div>
+              </div>
+              <div class="ibox-content">
+      
                 <div class="table-responsive">
-                  <table class="table table-hover table-bordered tablewithSearch">
-                    <thead>
+                    <table class="table table-striped table-bordered table-hover dataTables-example" >
+                      <thead>
                         <tr>
                             
-                            <th>Holiday Date</th>
-                            <th>Holiday Name</th>
-                            <th>Holiday Type</th>
-                            <th>Holiday Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                          <th>Holiday Date</th>
+                          <th>Holiday Name</th>
+                          <th>Holiday Type</th>
+                          <th>Holiday Status</th>
+                      </tr>
+                      </thead>
+                      <tbody>
                         @foreach($holidays as $holiday)
                         <tr>
                             
@@ -37,12 +37,12 @@
                                 @if($holiday->status == "Permanent") 
                                     {{$holiday->status}}
                                 @else
-                                    <button type="button" class="btn btn-info btn-rounded btn-icon" href="#edit_holiday{{$holiday->id}}" data-toggle="modal" title='EDIT'>
-                                        <i class="ti-pencil-alt"></i>
+                                    <button type="button" class="btn btn-outline btn-primary dim btn-sm" href="#edit_holiday{{$holiday->id}}" data-toggle="modal" title='EDIT'>
+                                        <i class="fa fa-edit"></i>
                                     </button>
                                     <a href="delete-holiday/{{$holiday->id}}">
-                                        <button  title='DELETE' onclick="return confirm('Are you sure you want to delete this holiday?')" class="btn btn-rounded btn-danger btn-icon">
-                                            <i class="ti-trash"></i>
+                                        <button  title='DELETE' onclick="return confirm('Are you sure you want to delete this holiday?')" class="btn btn-outline btn-danger dim btn-sm">
+                                            <i class="fa fa-trash"></i>
                                         </button>
                                     </a>
                                 @endif
@@ -50,15 +50,19 @@
                         </tr>
                         @include('holidays.edit_holiday')
                         @endforeach
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
                 </div>
+      
               </div>
+       
             </div>
           </div>
-        
-        </div>
     </div>
-</div>
 @include('holidays.new_holiday')
+@endsection
+
+@section('js')
+<script src="{{ asset('admin/js/inspinia.js')}}"></script>
+<script src="{{ asset('admin/js/plugins/pace/pace.min.js')}}"></script>
 @endsection

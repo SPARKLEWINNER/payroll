@@ -54,6 +54,10 @@ class AttendanceController extends Controller
 
         return 'success';
     }
+    public function sample ()
+    {
+        return view('sample');
+    }
 }
 
 
