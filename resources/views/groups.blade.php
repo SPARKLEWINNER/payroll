@@ -46,14 +46,11 @@
                                                     @endforeach
                                                 </select>  
                                             </td>
-                                           
                                             <td>
-                                                
-                                                    <button type="submit" class="btn btn-primary btn-icon-text btn-sm ">
-                                                        <i class="fa fa-trash"></i>
-                                                        
-                                                    </button>
-
+                                                <button type="submit" class="btn btn-primary btn-icon-text btn-sm ">
+                                                    <i class="fa fa-trash"></i>
+                                                    
+                                                </button>
                                             </td>
                                         </form>
                                         {{-- <th>Action</th> --}}

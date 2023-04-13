@@ -42,6 +42,7 @@ class StoreController extends Controller
             )
         );
     }
+    
     public function dateRange( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
         $dates = [];
         $current = strtotime( $first );

@@ -1,15 +1,15 @@
 {{-- New Laborer --}}
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="ViewRecordData" aria-hidden="true">
+<div class="modal " id="viewRecord{{$employee->_id}}" tabindex="-1" role="dialog" aria-labelledby="ViewRecordData" aria-hidden="true">
   	<div class="modal-dialog modal-lg" role="document">
     	<div class="modal-content">
       		<div class="modal-header">
-        		<h5 class="modal-title" id="exampleModalLabel">Record</h5>
+        		<h5 class="modal-title" id="exampleModalLabel">Record - {{$employee->_id}}</h5>
         		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
           			<span aria-hidden="true">&times;</span>
         		</button>
       		</div>
       		<div class="modal-body">
-	      		<form method='get' enctype="multipart/form-data">
+	      		{{-- <form method='get' enctype="multipart/form-data">
 	      			<div class="row">
 		      			<div class='col-md-4 col-lg-4'>			
 				      		<div class="form-group row">
@@ -25,8 +25,7 @@
 			  		    </div>
 	  		       	</div>
 	  		       	<button type="submit" class="btn btn-outline btn-primary dim btn-sm" style="margin-right: 20px;">View</button>
-		      	</form>
-		      	@if(!empty($attedance))
+		      	</form> --}}
 		      	<table class="table table-hover table-bordered">
 		      	    <thead>
 		      	        <tr>
@@ -44,11 +43,31 @@
 		      	          <th>Night Diff</th>
 		      	        </tr>
 		      	      </thead>
-		      	    <tbody>
-		      	       
-		      	    </tbody>
+						<tbody>
+							@php
+								$attendance = $attendances->where('emp_id',$employee->_id);
+								$schedule = $schedules->where('emp_id',$employee->_id);
+							@endphp
+							@foreach($date_range as $date)
+							@php
+								$time_in = ($attendance->where('status','time-in')->where('date',$date))->first();
+								$time_out = ($attendance->where('status','time-out')->where('date',$date))->first();
+								$schedule = (($schedules)->where('date',$date))->first();
+							@endphp
+								<tr>
+									<td>{{date('M d, Y - l',strtotime($date))}}</td>
+									<td>Schedule</td>
+									<td>{{($time_in != null) ? date('h:i a',strtotime($time_in->time)) : ""}}</td>
+									<td>{{($time_out != null) ? date('h:i a',strtotime($time_out->time)) : ""}}</td>
+									<td>{{(($time_in != null) && ($time_out != null) ) ? get_working_hours($time_out->time,$time_in->time)." hrs" : "0.00 hrs" }}  </td>
+									<td>{{((($time_in != null) && ($time_out != null) && ($schedule != null)) ) ? get_late($schedule,$time_in->time)." hrs" : "0.00 hrs" }} </td>
+									<td>Undertime</td>
+									<td>Overtime</td>
+									<td>{{((($time_in != null) && ($time_out != null) && ($schedule != null)) ) ? night_difference(strtotime($time_in->time),strtotime($time_out->time))." hrs" : "0.00 hrs"}}</td>
+								</tr>
+							@endforeach
+						</tbody>
 		      	</table>
-		      	@endif
       		</div>
       		<div class="modal-footer">
 	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

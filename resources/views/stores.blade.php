@@ -43,7 +43,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                      
                                         <div class='col-md-3'>
                                             <button type="submit" class="form-control form-control-sm btn btn-primary mb-2 btn-sm">Generate</button>
                                         </div>

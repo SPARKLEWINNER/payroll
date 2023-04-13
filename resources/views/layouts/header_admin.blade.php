@@ -172,7 +172,7 @@
             </div>
          
           
-            <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="wrapper wrapper-content ">
                 @yield('content')
             </div>
         </div>
@@ -190,6 +190,10 @@
     function show() {
 			document.getElementById("loader").style.display = "block";
 		}
+        function get_min(value)
+      {
+        document.getElementById("to").min = value;
+      }
     </script>
 
        <!-- Mainly scripts -->

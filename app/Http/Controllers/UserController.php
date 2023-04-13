@@ -14,9 +14,16 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+        $storeController = new StoreController;
+        $from = $request->from;
+        $to = $request->to;
+        $date_range = $storeController->dateRange($from,$to);
+        // dd($date_range);
         $client = new \GuzzleHttp\Client();
         $personnel = [];
         $response = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->where('store','!=','undefined')->get();
+        $attendances = [];
+        $schedules = [];
         //dd($request->store); 
         if ($request->store != null) {
             $personnelRequest = $client->post('https://sparkle-time-keep.herokuapp.com/api/store/personnel', [
@@ -26,6 +33,10 @@ class UserController extends Controller
                 ])
             ]);
             $personnel = json_decode($personnelRequest->getBody());
+            // dd($personnel);
+            $personnelData= collect($personnel)->pluck('_id')->toArray();
+            $attendances = Attendance::whereIn('emp_id',$personnelData)->whereBetween('date',[$from,$to])->get();
+            $schedules = Schedule::whereIn('emp_id',$personnelData)->whereBetween('date',[$from,$to])->get();
 
         }
         $storeData = $request->store;
@@ -34,7 +45,12 @@ class UserController extends Controller
             array(
                 'stores' => $response,
                 'storeData' => $storeData,
-                'personnels' => $personnel
+                'personnels' => $personnel,
+                'to' => $to,
+                'from' => $from,
+                'attendances' => $attendances,
+                'date_range' => $date_range,
+                'schedules' => $schedules,
             )
         );
     }
