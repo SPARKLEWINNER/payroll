@@ -89,8 +89,9 @@
                         <a href="#"><i class="fa fa-list-ul"></i> <span class="nav-label">Masterfiles</span> <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li><a href="{{url('/groups')}}">Groups</a></li>
-                            <li><a href="{{url('/stores')}}">stores</a></li>
-                            <li><a href="{{url('/salaries')}}">salaries</a></li>
+                            <li><a href="{{url('/stores')}}">Stores</a></li>
+                            <li><a href="{{url('/users')}}">Personnel</a></li>
+                            <li><a href="{{url('/salaries')}}">Salaries</a></li>
                         </ul>
                     </li>
                     <li>

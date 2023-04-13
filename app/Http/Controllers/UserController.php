@@ -5,6 +5,7 @@ use App\Attendance;
 use Illuminate\Http\Request;
 use App\Store;
 use App\User;
+use App\Schedule;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class UserController extends Controller
@@ -15,17 +16,21 @@ class UserController extends Controller
     {
         $client = new \GuzzleHttp\Client();
         $personnel = [];
-        $response = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
-        $personnelRequest = $client->post('https://sparkle-time-keep.herokuapp.com/api/store/personnel', [
-            'headers' => ['Content-Type' => 'application/json'],
-            'body' => json_encode([
-                'store' => $request->store,
-            ])
-        ]);
-        $personnel = json_decode($personnelRequest->getBody());
+        $response = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->where('store','!=','undefined')->get();
+        //dd($request->store); 
+        if ($request->store != null) {
+            $personnelRequest = $client->post('https://sparkle-time-keep.herokuapp.com/api/store/personnel', [
+                'headers' => ['Content-Type' => 'application/json'],
+                'body' => json_encode([
+                    'store' => $request->store,
+                ])
+            ]);
+            $personnel = json_decode($personnelRequest->getBody());
+
+        }
         $storeData = $request->store;
         return view(
-            'users',
+            'users.view',
             array(
                 'stores' => $response,
                 'storeData' => $storeData,
@@ -44,5 +49,41 @@ class UserController extends Controller
         $user->save();
         Alert::success('Successfully Change Password')->persistent('Dismiss');
         return back();
+    }
+
+    public function getrecord(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|confirmed',
+        ]);
+        $id = $request->id;
+        $from = $request->from;
+        $to = $request->to;
+        $date_range =  $this->dateRange($from,$to);
+        $userAttendance = Attendance::where('emp_id',$id)->whereBetween('date',[$from,$to])->orderBy('date','desc')->get();
+        $userSchedule = Schedules::where('emp_id',$id)->whereBetween('date',[$from,$to])->orderBy('date','desc')->get();
+        return view('users.view',
+            array(
+                'attendance' => $userAttendance,
+                'schedule' => $userSchedule,
+                'from' => $from,
+                'to' => $to,
+                'date_range' => $date_range,
+            )
+        );
+    }
+
+    public function dateRange( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
+        $dates = [];
+        $current = strtotime( $first );
+        $last = strtotime( $last );
+    
+        while( $current <= $last ) {
+    
+            $dates[] = date( $format, $current );
+            $current = strtotime( $step, $current );
+        }
+    
+        return $dates;
     }
 }

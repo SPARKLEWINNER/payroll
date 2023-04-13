@@ -27,6 +27,7 @@ Route::group(['middleware' => 'auth'], function()
     //users
     Route::get('/users','UserController@index')->name('users');
     Route::post('change-pass','UserController@changepass');
+    Route::get('/record/{id}','UserController@getrecord')->name('record');
 
     //groups
     Route::get('groups','GroupController@index')->name('groups');
