@@ -47,6 +47,12 @@
         float: left;
         text-align: left;
         }
+        @media (min-width: 768px) {
+            .modal-xl {
+                width: 100%;
+                max-width:1700px;
+            }
+        }
     </style>
 </head>
 <body>
