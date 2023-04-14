@@ -16,7 +16,7 @@
                                     <div class=row>
                                         <div class='col-md-12 col-lg-12 col-sm-12'>
                                             <div class="form-group row">
-                                                <div class="col-sm-4 col-lg-4 col-md-4 p-0 m-3">
+                                                <div class="col-sm-4 col-lg-4 col-md-4 p-0 m-3 ">
                                                     <select data-placeholder="Select Store" class="form-control form-control-sm required js-example-basic-single p-0 " style='width:100%;' name='store' required>
                                                         <option value="">-- Select store --</option>
                                                         @foreach($stores as $store)

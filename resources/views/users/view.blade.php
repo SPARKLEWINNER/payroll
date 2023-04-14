@@ -11,7 +11,7 @@
                     <div class='row'>
                       <div class="col-lg-3">
                         <div class="form-group row">
-                          <label class="col-sm-4 col-form-label text-right">Select Store</label>
+                          <label class="col-sm-4 col-form-label text-right ">Select Store</label>
                           <div class="col-sm-8">
                               <select 
                                 data-placeholder="Select Store" 
