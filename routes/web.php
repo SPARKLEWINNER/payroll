@@ -54,6 +54,10 @@ Route::group(['middleware' => 'auth'], function()
     //Salaries
     Route::get('salaries','SalaryController@index')->name('salary');
     Route::post('new-salary','SalaryController@create')->name('new-salary');
+
+    //Rates
+    Route::get('rates/{id}','PayrollController@getRates')->name('rates');
+    Route::post('edit-rates','PayrollController@setRates')->name('edit-rates');
 });
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Attendance;
 use App\Holiday;
 use App\Payroll;
+use App\Rates;
 use PDF;
 use Illuminate\Http\Request;
 
@@ -91,5 +92,46 @@ class PayrollController extends Controller
         $pdf = PDF::loadView('test',array(
         ))->setPaper('legal', 'landscape');
         return $pdf->stream(date('m-d-Y').'.pdf');
+    }
+
+    public function getRates($id)
+    {
+        $findRates = Rates::where('uid', $id)->first();
+        if (empty($findRates)) {
+            $findRates = Rates::where('uid', 1)->first();
+        }
+        else {
+            $findRates = Rates::where('uid', $id)->first();
+        }
+        return ['status' => 'success',
+                'data' => $findRates];
+    }
+
+    public function setRates(Request $request)
+    {
+        /*dd($request->rateid);*/
+        $new_rates = Rates::updateOrCreate(['uid' => $request->rateid],
+            [
+                'uid' =>$request->rateid,
+                'daily' => $request->dailyRate, 
+                'nightshift' => $request->nightshift,
+                'restday' => $request->restday,
+                'restdayot' => $request->restdayot, 
+                'holiday' => $request->holidayRate,
+                'holidayot' => $request->holidayot,
+                'holidayrestday' => $request->holidayrestday,
+                'holidayrestdayot' => $request->holidayrestdayot,
+                'specialholiday' => $request->specialholiday,
+                'specialholidayot' => $request->specialholidayot,
+                'specialholidayrestday' => $request->specialholidayrestday,
+                'specialholidayrestdayot' => $request->specialholidayrestdayot,
+                'sss' => $request->sss,
+                'philhealth' => $request->philhealth,
+                'pagibig' => $request->pagibig,
+                'overtime' => $request->overtime,
+                'status' => $request->status
+            ]
+        );
+        return redirect()->back()->with('message', 'Save successful!');
     }
 }
