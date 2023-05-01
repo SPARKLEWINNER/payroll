@@ -24,6 +24,7 @@ class Rates extends Model
         'philhealth',
         'pagibig',
         'overtime',
-        'status'
+        'status',
+        'store'
     ];
 }

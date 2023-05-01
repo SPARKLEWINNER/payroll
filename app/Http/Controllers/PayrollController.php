@@ -106,6 +106,18 @@ class PayrollController extends Controller
         return ['status' => 'success',
                 'data' => $findRates];
     }
+    public function getRatesStore(Request $request)
+    {
+        $findRates = Rates::where('store', $request->store)->first();
+        if (empty($findRates)) {
+            $findRates = Rates::where('uid', 1)->first();
+        }
+        else {
+            $findRates = Rates::where('store', $request->store)->first();
+        }
+        return ['status' => 'success',
+                'data' => $findRates];
+    }
 
     public function setRates(Request $request)
     {
@@ -131,7 +143,34 @@ class PayrollController extends Controller
                 'overtime' => $request->overtime,
                 'status' => $request->status
             ]
-        );
+        );     
+        return redirect()->back()->with('message', 'Save successful!');
+    }
+    public function setStoreRates(Request $request)
+    {
+        $new_rates = Rates::updateOrCreate(['store' => $request->store],
+            [
+                'uid' =>$request->rateid,
+                'daily' => $request->dailyRate, 
+                'nightshift' => $request->nightshift,
+                'restday' => $request->restday,
+                'restdayot' => $request->restdayot, 
+                'holiday' => $request->holidayRate,
+                'holidayot' => $request->holidayot,
+                'holidayrestday' => $request->holidayrestday,
+                'holidayrestdayot' => $request->holidayrestdayot,
+                'specialholiday' => $request->specialholiday,
+                'specialholidayot' => $request->specialholidayot,
+                'specialholidayrestday' => $request->specialholidayrestday,
+                'specialholidayrestdayot' => $request->specialholidayrestdayot,
+                'sss' => $request->sss,
+                'philhealth' => $request->philhealth,
+                'pagibig' => $request->pagibig,
+                'overtime' => $request->overtime,
+                'status' => $request->status,
+                'store' => $request->store
+            ]
+        );     
         return redirect()->back()->with('message', 'Save successful!');
     }
 }
