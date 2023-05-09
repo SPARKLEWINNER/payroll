@@ -46,17 +46,16 @@
 						<tbody>
 							@php
 								$attendance = $attendances->where('emp_id',$employee->_id);
-								$schedule = $schedules->where('emp_id',$employee->_id);
 							@endphp
 							@foreach($date_range as $date)
 							@php
 								$time_in = ($attendance->where('status','time-in')->where('date',$date))->first();
 								$time_out = ($attendance->where('status','time-out')->where('date',$date))->first();
-								$schedule = (($schedules)->where('date',$date))->first();
+								$schedule = (($schedules)->where('emp_id',$employee->_id)->where('date',$date))->first();
 							@endphp
 								<tr>
 									<td>{{date('M d, Y - l',strtotime($date))}}</td>
-									<td>Schedule</td>
+									<td>{{($schedule != null) ? date('h:i a', strtotime($schedule->time_in)) . " to " . date('h:i a', strtotime($schedule->time_out)) : "No Schedule"}}</td>
 									<td>{{($time_in != null) ? date('h:i a',strtotime($time_in->time)) : ""}}</td>
 									<td>{{($time_out != null) ? date('h:i a',strtotime($time_out->time)) : ""}}</td>
 									<td>{{(($time_in != null) && ($time_out != null) ) ? get_working_hours($time_out->time,$time_in->time)." hrs" : "0.00 hrs" }}  </td>
