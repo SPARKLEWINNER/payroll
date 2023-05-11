@@ -223,7 +223,7 @@
                                         @php
                                             $time_in = (($employee->attendances)->where('status','time-in')->where('date',$date))->first();
                                             $time_out = (($employee->attendances)->where('status','time-out')->where('date',$date))->first();
-                                            $schedule = (($employee->schedules)->where('date',$date))->first();
+                                            $schedule = (($schedules)->where('emp_id',$employee->_id)->where('date',$date))->first();
                                         @endphp
                                         <tr>
                                             <td>{{date('M d, Y - l',strtotime($date))}}</td>
@@ -333,7 +333,7 @@
                     },
                     body: JSON.stringify(data)
                 }
-                const response = await fetch(`http://127.0.0.1:8000/api/rates`, option)
+                const response = await fetch(`https://payroll.sparkles.com.ph/api/rates`, option)
                 const d = await response.json()
                 if (d.status === "success") {
                     $('.modal-title').text(store + " RATES")
