@@ -17,6 +17,6 @@ class Attendance extends Model
     }
     public function rate()
     {
-        return $this->HasOne(Rates::class,'uid','emp_id')->orderBy('id','desc');
+        return $this->hasMany(Rates::class,'uid','emp_id')->orderBy('id','desc');
     }
 }

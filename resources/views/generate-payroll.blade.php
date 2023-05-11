@@ -146,7 +146,7 @@
                                             @endphp
                                         @endforeach
                                         @php
-                                            if($employee->rate != null)
+                                            if(count($employee->rate) >0)
                                             {
                                                 $rate_d = ($employee->rate)->first();
                                                 $rate_employee = $rate_d->daily;
