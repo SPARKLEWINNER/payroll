@@ -218,7 +218,7 @@
        <script>
            $(document).ready(function(){
                $('.dataTables-example').DataTable({
-                   pageLength: 10,
+                   pageLength: -1,
                    responsive: true,
                    ordering: false,
                    dom: '<"html5buttons"B>lTfgitp',
