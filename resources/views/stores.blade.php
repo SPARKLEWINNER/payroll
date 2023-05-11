@@ -1,6 +1,7 @@
 @extends('layouts.header_admin')
 @section('css')
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet">
+<meta name="_token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
         @if(session()->has('message'))
@@ -328,13 +329,15 @@
                 const option = {
                     method: "POST",
                     headers: {
-                      "Accept": 'application/json',
+                      "Accept": '*',
                       "Content-Type": "application/json",
+                      "X-CSRF-Token": $('meta[name="_token"]').attr('content')
                     },
                     body: JSON.stringify(data)
                 }
-                const response = await fetch(`https://payroll.sparkles.com.ph/api/rates`, option)
+                const response = await fetch(`https://payroll.sparkles.com.ph/rates`, option)
                 const d = await response.json()
+
                 if (d.status === "success") {
                     $('.modal-title').text(store + " RATES")
                     $('.dailyRate').val(d.data.daily)
