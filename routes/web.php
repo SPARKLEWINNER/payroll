@@ -14,6 +14,7 @@
 // Route::get('attendance','AttendanceController@create')->name('create-attendance');
 
 Auth::routes();
+Route::post('rates','PayrollController@getRatesStore')->name('store-rates');
 Route::group(['middleware' => 'auth'], function()
 {
 

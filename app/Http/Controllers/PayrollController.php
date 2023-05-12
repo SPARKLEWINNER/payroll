@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use App\Attendance;
 use App\Holiday;
 use App\Payroll;
+use App\SssTable;
+use App\Store;
+use App\Group;
 use App\Rates;
 use PDF;
 use Illuminate\Http\Request;
@@ -28,6 +31,8 @@ class PayrollController extends Controller
         $stores = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
         $employees = [];
         $schedulesData = [];
+        $rate = 0;
+        $sssTable = SssTable::orderBy('id','desc')->get();
         if($request->store)
         {
             $holidays = Holiday::where(function ($query) use ($start_month,$end_month)
@@ -42,13 +47,35 @@ class PayrollController extends Controller
             $employees = Attendance::with(['attendances' => function($q) use ($from,$to)
             {
                 $q->whereBetween('date',[$from,$to]);
-            }])->groupBy('emp_id','emp_name')->select('emp_id','emp_name')->where('store',$request->store)->orderBy('emp_name','asc')->get();
+            }])->with(['schedules' => function($q) use ($from,$to)
+            {
+                $q->whereBetween('date',[$from,$to])->orderBy('id','desc');
+            }])->groupBy('emp_id','emp_name')->with('rate')->select('emp_id','emp_name')->where('store',$request->store)->orderBy('emp_name','asc')->get();
+            $rateStore = Rates::where('store',$request->store)->first();
+            if($rateStore == null)
+            {
+                $group_id = Store::where('store',$request->store)->first();
+                if($group_id == null)
+                {
+                    $rate = [];
+                }
+                else
+                {
+                    $rate = Rates::where('uid',$group_id->group_id)->first();
+                    $rate = $rate->daily;
+                }
+            }
+            else
+            {
+                $rate = $rateStore->daily;
+            }
          
         }
         // dd($employees);
         return view('generate-payroll',
             array(
                 'stores' => $stores,
+                'sssTable' => $sssTable,
                 'holidays' => $holidays,
                 'storeData' => $storeData,
                 'from' => $from,
@@ -56,6 +83,7 @@ class PayrollController extends Controller
                 'date_range' => $date_range,
                 'employees' => $employees,
                 'schedulesData' => $schedulesData,
+                'rate' => $rate,
             )
         );
     }

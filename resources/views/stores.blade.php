@@ -320,6 +320,7 @@
           });
           const buttons = document.getElementById("set-rates");
           $('#set-rates').click(async function() {
+            let url = 'rates';
             const store = $("#storeList").val()
             if (store) {
                 document.getElementById("loader").style.display = "block"
@@ -331,11 +332,11 @@
                     headers: {
                       "Accept": '*',
                       "Content-Type": "application/json",
-                      "X-CSRF-Token": $('meta[name="_token"]').attr('content')
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     body: JSON.stringify(data)
                 }
-                const response = await fetch(`https://payroll.sparkles.com.ph/rates`, option)
+                const response = await fetch(url, option)
                 const d = await response.json()
 
                 if (d.status === "success") {
