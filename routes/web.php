@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth'], function()
 
     //generate payroll
     Route::get('generate','PayrollController@index')->name('generate-payroll');
+    Route::post('generate','PayrollController@save')->name('save-payroll');
     Route::get('payrolls','PayrollController@payrolls')->name('payrolls');
     Route::get('payroll/{id}','PayrollController@payroll')->name('payroll');
     Route::get('billing/{id}','PayrollController@billing')->name('billing');

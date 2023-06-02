@@ -50,211 +50,187 @@
                         </div>
                     </form> 
                 </div>
-                <div class="ibox-content">
-                    
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover dataTables-example">
-                            <thead>
-                                <tr>
-                                    <td colspan='26'>
-                                        {{$storeData}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan='26'>
-                                        Payroll Period of  {{date('M d, Y',strtotime($from))}}  to  {{date('M d, Y',strtotime($to))}}
-                                        {{-- @if(count($employees) >0)
-                                            <h5>Holidays <br>
-                                                @foreach($holidays as $holiday)
-                                                    {{$holiday->holiday_name}} - {{$holiday->holiday_date}} - {{$holiday->holiday_type}}  <br>
-                                                @endforeach
-                                            </h5>
-                                        @endif --}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                  <th>#</th>
-                                  <th>Employee Name</th>
-                                  <th>Daily Rate</th>
-                                  <th>Daily Rate/Hour </th>
-                                  <th>Days Work</th>
-                                  <th>Hours Work</th>
-                                  <th>Basic Pay</th>
-                                  <th>Hours Tardy</th>
-                                  <th>Hours Tardy Basic</th>
-                                  <th>Overtime</th>
-                                  <th>Amount Overtime</th>
-                                  <th>Special holiday</th>
-                                  <th>Amount Special holiday</th>
-                                  <th>Legal holiday</th>
-                                  <th>Amount Legal Holiday</th>
-                                  <th>Night Diff</th>
-                                  <th>Amount Night Diff</th>
-                                  <th>Gross Pay</th>
-                                  <th>Other Income Non Taxable</th>
-                                  <th>SSS Contribution</th>
-                                  <th>NHIP Contribution</th>
-                                  <th>HDMF Contribution</th>
-                                  <th>Other Deductions</th>
-                                  <th>Total Deductions</th>
-                                  <th>NET PAY</th>
-                                  <th>ATM</th>
-                                </tr>
-                              </thead>
-                            <tbody>
-                                @php
-                                    $c = 1;
-                                @endphp
-                                    @foreach($employees as $key => $employee)
-                                    @php
-                                        $day_works = 0;
-                                        $working_hours = 0;
-                                        $hours_tardy = 0;
-                                        $overtime = 0;
-                                        $special_holiday = 0;
-                                        $legal_holiday = 0;
-                                        $night_diff = 0;
-                                        $basic_pay = 0;
-                                    @endphp
-                                        @foreach($date_range as $date)
-                                            @php
-                                                $time_in = (($employee->attendances)->where('status','time-in')->where('date',$date))->first();
-                                                $time_out = (($employee->attendances)->where('status','time-out')->where('date',$date))->first();
-                                                $schedule = (($employee->schedules)->where('date',$date))->first();
-                                                if(($time_in != null) && ($time_out != null))
-                                                {
-                                                    $day_works = $day_works+1;
-                                                    $working = get_working_hours($time_out->time,$time_in->time);
-                                                    if($working > 8)
-                                                    {
-                                                        $working_hours = $working_hours + 8;
-                                                    }
-                                                    else 
-                                                    {
-                                                        $working_hours = $working_hours + $working;
-                                                    }
-                                                    if($schedule != null)
-                                                    {
-                                                        $late = get_late($schedule,$time_in->time);
-                                                        $hours_tardy = $hours_tardy+$late;
-                                                        $night_difference = night_difference(strtotime($time_in->time),strtotime($time_out->time));
-                                                        $night_diff = $night_diff+$night_difference;
-                                                    }
-                                                }
-
-                                               
-                                            @endphp
-                                        @endforeach
+                @if(count($employees) > 0)
+                <form method='POST' onsubmit='show();' enctype="multipart/form-data">
+                    @csrf
+                    <div class="ibox-content">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover dataTables-example">
+                                <thead>
+                                    <tr>
+                                        <td colspan='26'>
+                                            <div class='row'>
+                                                <div class="col-lg-12">
+                                                    <button type="submit" class="btn btn-danger ">Save</button>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    {{$storeData}}  
+                                                </div>
+                                                
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan='26'>
+                                            <input type='hidden' name='from_date' value='{{$from}}'>
+                                            <input type='hidden' name='from_to' value='{{$to}}'>
+                                            Payroll Period of  {{date('M d, Y',strtotime($from))}}  to  {{date('M d, Y',strtotime($to))}}
+                                            {{-- @if(count($employees) >0)
+                                                <h5>Holidays <br>
+                                                    @foreach($holidays as $holiday)
+                                                        {{$holiday->holiday_name}} - {{$holiday->holiday_date}} - {{$holiday->holiday_type}}  <br>
+                                                    @endforeach
+                                                </h5>
+                                            @endif --}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    <th>#</th>
+                                    <th>Employee Name</th>
+                                    <th>Daily Rate</th>
+                                    <th>Daily Rate/Hour </th>
+                                    <th>Days Work</th>
+                                    <th>Hours Work</th>
+                                    <th>Basic Pay</th>
+                                    <th>Hours Tardy</th>
+                                    <th>Hours Tardy Basic</th>
+                                    <th>Overtime</th>
+                                    <th>Amount Overtime</th>
+                                    <th>Special holiday</th>
+                                    <th>Amount Special holiday</th>
+                                    <th>Legal holiday</th>
+                                    <th>Amount Legal Holiday</th>
+                                    <th>Night Diff</th>
+                                    <th>Amount Night Diff</th>
+                                    <th>Gross Pay</th>
+                                    <th>Other Income Non Taxable</th>
+                                    <th>SSS Contribution</th>
+                                    <th>NHIP Contribution</th>
+                                    <th>HDMF Contribution</th>
+                                    <th>Other Deductions</th>
+                                    <th>Total Deductions</th>
+                                    <th>NET PAY</th>
+                                    <th>ATM</th>
+                                    </tr>
+                                </thead>
+                                    <tbody>
                                         @php
-                                            if(count($employee->rate) >0)
-                                            {
-                                                $rate_d = ($employee->rate)->first();
-                                                $rate_employee = $rate_d->daily;
-                                            }
-                                            else {
-                                                $rate_employee = $rate;
-                                            }
-
-                                                $basic_pay = ($rate_employee/8)*$working_hours;
-                                                $tardy_amount = ($rate_employee/60)*$hours_tardy;
-                                                $overtime_amount = ($rate_employee*1.25)*$overtime;
-                                                $nightdiff_amount = ($rate_employee*.1)*$night_diff;
-                                                $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount;
-                                                $other_income_non_tax = $day_works*15;
-                                                $sss = 0;
-                                                $philhealth = 0;
-                                                $pagibig = 0;
-                                                if($basic_pay >= 1)
-                                                {
-                                                    
-                                                    $sssData = $sssTable->where('from_range','<',$gross_pay)->first();
-                                                    if($sssData != null)
-                                                    {
-                                                        $sss = $sssData->ee;
-                                                    }
-                                                    $philhealth = ((($rate_employee*313*.04)/12)/2);
-                                                    $pagibig = 100.00;
-                                                    
-                                                }
-                                                $total_deduction = $sss + $philhealth + $pagibig;
-                                                $net = $gross_pay - $total_deduction + $other_income_non_tax;
-                                                
-                                                
+                                            $c = 1;
                                         @endphp
-                                        <tr >
-                                            <td>{{$c++}}</td>
-                                            <td>{{$employee->emp_name}}</td>
-                                            <td class='text-right'>{{number_format($rate_employee,2)}}</td>
-                                            <td class='text-right'>{{number_format($rate_employee/8,2)}}</td>
-                                            <td class='text-right'>{{number_format($day_works,2)}}</td>
-                                            <td class='text-right'>{{number_format($working_hours,2)}}</td>
-                                            <td class='text-right'>{{number_format($basic_pay,2)}}</td>
-                                            <td class='text-right'>{{number_format($hours_tardy,2)}}</td>
-                                            <td class='text-right'>{{number_format($tardy_amount,2)}}</td>
-                                            <td class='text-right'>{{number_format($overtime,2)}}</td>
-                                            <td class='text-right'>{{number_format($overtime_amount,2)}}</td>
-                                            <td class='text-right'>{{number_format($special_holiday,2)}}</td>
-                                            <td class='text-right'>0.00</td>
-                                            <td class='text-right'>{{number_format($legal_holiday,2)}}</td>
-                                            <td class='text-right'>0.00</td>
-                                            <td class='text-right'>{{number_format($night_diff,2)}}</td>
-                                            <td class='text-right'>{{number_format($nightdiff_amount,2)}}</td>
-                                            <td class='text-right'>{{number_format($gross_pay,2)}}</td>
-                                            <td class='text-right'>{{number_format($other_income_non_tax,2)}}</td>
-                                            <td class='text-right'>{{number_format($sss,2)}}</td>
-                                            <td class='text-right'>{{number_format($philhealth,2)}}</td>
-                                            <td class='text-right'>{{number_format($pagibig,2)}}</td>
-                                            <td class='text-right'>0.00</td>
-                                            <td class='text-right'>{{number_format($total_deduction,2)}}</td>
-                                            <td class='text-right'>{{number_format($net,2)}}</td>
-                                            <td></td>
-                                        </tr>
-                                    @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th colspan=23>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th class='text-right' colspan=2>
-                                        GRAND TOTALS 
-                                    </th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th>0.00</th>
-                                    <th></th>
-                                </tr>
-                                <tr>
-                                    <th class='text-right' colspan=3>
-                                        <p class='text-right'>{{count($employees)}} Records</p> 
-                                    </th>
-                                    <th colspan='23'></th>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                            @foreach($employees as $key => $employee)
+                                            @php
+                                                $day_works = 0;
+                                                $working_hours = 0;
+                                                $hours_tardy = 0;
+                                                $overtime = 0;
+                                                $special_holiday = 0;
+                                                $legal_holiday = 0;
+                                                $night_diff = 0;
+                                                $basic_pay = 0;
+                                            @endphp
+                                                @foreach($date_range as $date)
+                                                    @php
+                                                        $time_in = (($employee->attendances)->where('status','time-in')->where('date',$date))->first();
+                                                        $time_out = (($employee->attendances)->where('status','time-out')->where('date',$date))->first();
+                                                        $schedule = (($employee->schedules)->where('date',$date))->first();
+                                                        if(($time_in != null) && ($time_out != null))
+                                                        {
+                                                            $day_works = $day_works+1;
+                                                            $working = get_working_hours($time_out->time,$time_in->time);
+                                                            if($working > 8)
+                                                            {
+                                                                $working_hours = $working_hours + 8;
+                                                            }
+                                                            else 
+                                                            {
+                                                                $working_hours = $working_hours + $working;
+                                                            }
+                                                            if($schedule != null)
+                                                            {
+                                                                $late = get_late($schedule,$time_in->time);
+                                                                $hours_tardy = $hours_tardy+$late;
+                                                                $night_difference = night_difference(strtotime($time_in->time),strtotime($time_out->time));
+                                                                $night_diff = $night_diff+$night_difference;
+                                                            }
+                                                        }
+
+                                                    
+                                                    @endphp
+                                                @endforeach
+                                                @php
+                                                    if(count($employee->rate) >0)
+                                                    {
+                                                        $rate_d = ($employee->rate)->first();
+                                                        $rate_employee = $rate_d->daily;
+                                                    }
+                                                    else {
+                                                        $rate_employee = $rate;
+                                                    }
+
+                                                        $basic_pay = ($rate_employee/8)*$working_hours;
+                                                        $tardy_amount = ($rate_employee/60)*$hours_tardy;
+                                                        $overtime_amount = ($rate_employee*1.25)*$overtime;
+                                                        $nightdiff_amount = ($rate_employee*.1)*$night_diff;
+                                                        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount;
+                                                        $other_income_non_tax = $day_works*15;
+                                                        $sss = 0;
+                                                        $philhealth = 0;
+                                                        $pagibig = 0;
+                                                        if($basic_pay >= 1)
+                                                        {
+                                                            
+                                                            $sssData = $sssTable->where('from_range','<',$gross_pay)->first();
+                                                            if($sssData != null)
+                                                            {
+                                                                $sss = $sssData->ee;
+                                                                $sss_er = $sssData->er;
+                                                            }
+                                                            $philhealth = ((($rate_employee*313*.04)/12)/2);
+                                                            $pagibig = 100.00;
+                                                            
+                                                        }
+                                                        $total_deduction = $sss + $philhealth + $pagibig;
+                                                        $net = $gross_pay - $total_deduction + $other_income_non_tax;
+                                                        
+                                                        
+                                                @endphp
+                                                <tr >
+                                                    <td>{{$c++}}<input type='hidden' name='emp_id[]' value='{{$employee->emp_id}}'><input type='hidden' name='emp_name[]' value='{{$employee->emp_name}}'></td>
+                                                    <td>{{$employee->emp_name}}</td>
+                                                    <td class='text-right'>{{number_format($rate_employee,2)}} <input type='hidden' name='rate[]' value='{{$rate_employee}}'></td>
+                                                    <td class='text-right'>{{number_format($rate_employee/8,2)}} <input type='hidden' name='daily_rate[]' value='{{$rate_employee/8}}'></td>
+                                                    <td class='text-right'>{{number_format($day_works,2)}} <input type='hidden' name='day_works[]' value='{{$day_works}}'></td>
+                                                    <td class='text-right'>{{number_format($working_hours,2)}} <input type='hidden' name='working_hours[]' value='{{$working_hours}}'></td>
+                                                    <td class='text-right'>{{number_format($basic_pay,2)}} <input type='hidden' name='basic_pay[]' value='{{$basic_pay}}'></td>
+                                                    <td class='text-right'>{{number_format($hours_tardy,2)}} <input type='hidden' name='hours_tardy[]' value='{{$hours_tardy}}'></td>
+                                                    <td class='text-right'>{{number_format($tardy_amount,2)}} <input type='hidden' name='tardy_amount[]' value='{{$tardy_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($overtime,2)}} <input type='hidden' name='overtime[]' value='{{$overtime}}'></td>
+                                                    <td class='text-right'>{{number_format($overtime_amount,2)}} <input type='hidden' name='overtime_amount[]' value='{{$overtime_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($special_holiday,2)}} <input type='hidden' name='special_holiday[]' value='{{$special_holiday}}'></td>
+                                                    <td class='text-right'>0.00 <input type='hidden' name='special_holiday_amount[]' value='0.00'></td>
+                                                    <td class='text-right'>{{number_format($legal_holiday,2)}} <input type='hidden' name='legal_holiday[]' value='{{$legal_holiday}}'></td>
+                                                    <td class='text-right'>0.00 <input type='hidden' name='legal_holiday_amount[]' value='0.00'></td>
+                                                    <td class='text-right'>{{number_format($night_diff,2)}} <input type='hidden' name='night_diff[]' value='{{$night_diff}}'></td>
+                                                    <td class='text-right'>{{number_format($nightdiff_amount,2)}} <input type='hidden' name='nightdiff_amount[]' value='{{$nightdiff_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($gross_pay,2)}} <input type='hidden' name='gross_pay[]' value='{{$gross_pay}}'></td>
+                                                    <td class='text-right'>{{number_format($other_income_non_tax,2)}} <input type='hidden' name='other_income_non_tax[]' value='{{$other_income_non_tax}}'></td>
+                                                    <td class='text-right'>{{number_format($sss,2)}} <input type='hidden' name='sss[]' value='{{$sss}}'> <input type='hidden' name='sss_er[]' value='{{$sss_er}}'></td>
+                                                    <td class='text-right'>{{number_format($philhealth,2)}} <input type='hidden' name='philhealth[]' value='{{$philhealth}}'></td>
+                                                    <td class='text-right'>{{number_format($pagibig,2)}} <input type='hidden' name='pagibig[]' value='{{$pagibig}}'></td>
+                                                    <td class='text-right'>0.00 <input type='hidden' name='other_deduction[]' value=''></td>
+                                                    <td class='text-right'>{{number_format($total_deduction,2)}} <input type='hidden' name='total_deduction[]' value='{{$total_deduction}}'></td>
+                                                    <td class='text-right'>{{number_format($net,2)}} <input type='hidden' name='net[]' value='{{$net}}'></td>
+                                                    <td></td>
+                                                </tr>
+                                            @endforeach
+                                    </tbody>
+                                    
+                            
+                            </table>
+                        </div>
                     </div>
-                </div>
+                </form>
+                @endif
             </div>
         </div>
     </div>
