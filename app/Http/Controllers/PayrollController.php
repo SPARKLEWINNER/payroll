@@ -15,10 +15,9 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class PayrollController extends Controller
 {
-    //
     public function index(Request $request)
     {
-
+        $payroll_last = "";
         $printReport = new StoreController;
         $storeData = $request->store;
         $from = $request->from;
@@ -27,13 +26,18 @@ class PayrollController extends Controller
         $end_month = date('2019-m-d',strtotime($to));
         $holidays = [];
         $date_range =  $printReport->dateRange($from,$to);
-        $stores = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
+        $stores = Attendance::groupBy('store')->with('payroll')->selectRaw('store')->where('store','!=',null)->get();
         $employees = [];
         $schedulesData = [];
         $rate = 0;
         $sssTable = SssTable::orderBy('id','desc')->get();
         if($request->store)
         {
+            $payroll = Payroll::where('store',$request->store)->orderBy('payroll_from','desc')->first();
+            if($payroll != null)
+            {
+                $payroll_last = $payroll->payroll_to;
+            }
             $holidays = Holiday::where(function ($query) use ($start_month,$end_month)
             {
                 $query->where('status','Permanent')->whereBetween('holiday_date',[$start_month, $end_month]);
@@ -56,7 +60,7 @@ class PayrollController extends Controller
                 $group_id = Store::where('store',$request->store)->first();
                 if($group_id == null)
                 {
-                    $rate = [];
+                    $rate = null;
                 }
                 else
                 {
@@ -82,16 +86,19 @@ class PayrollController extends Controller
                 'employees' => $employees,
                 'schedulesData' => $schedulesData,
                 'rate' => $rate,
+                'payroll_last' => $payroll_last,
             )
         );
     }
     public function payrolls()
     {
-        $payrolls = Payroll::with('informations','user')->get();
+        $stores = Attendance::groupBy('store')->with('payroll')->selectRaw('store')->where('store','!=',null)->get();
+        $payrolls = Payroll::with('informations','user')->orderBy('payroll_to','desc')->get();
         return view(
             'payrolls',
             array(
                 'payrolls' => $payrolls,
+                'stores' => $stores,
 
             )
         );
@@ -201,7 +208,13 @@ class PayrollController extends Controller
     }
     public function save (Request $request)
     {
-        // dd($request->all());
+        $payrollExist = Payroll::where('payroll_from',$request->from)->where('payroll_to',$request->to)->where('store',$request->store)->first();
+        if($payrollExist)
+        {
+            Alert::warning('Please Go to Generated Payrolls, it already save.')->persistent('Dismiss');
+            return redirect('/payrolls');
+        }
+
         $payroll = new Payroll;
         $payroll->date_generated = date('Y-m-d');
         $payroll->generated_by = auth()->user()->id;
@@ -244,6 +257,16 @@ class PayrollController extends Controller
             $payroll_info->save();
         }
         Alert::success('Successfully Save to Payroll')->persistent('Dismiss');
-        return back();
+        return redirect('/payrolls');
+    }
+    public function editPayroll(Request $request,$id)
+    {
+        $payroll = Payroll::where('id',$id)->with('informations','user')->first();
+        return view('editPayroll',
+            array(
+                'payroll' => $payroll,
+            )
+        );
+
     }
 }

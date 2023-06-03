@@ -19,4 +19,8 @@ class Attendance extends Model
     {
         return $this->hasMany(Rates::class,'uid','emp_id')->orderBy('id','desc');
     }
+    public function payroll()
+    {
+        return $this->hasOne(Payroll::class,'store','store')->orderBy('payroll_from','desc')->latest();
+    }
 }

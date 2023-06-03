@@ -3,6 +3,7 @@
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet">
 @endsection
 @section('content')
+  
     <div class='row'>
         <div class="col-lg-12 grid-margin stretch-card">
             <div class="ibox float-e-margins">
@@ -14,16 +15,16 @@
                             <label class="col-sm-4 col-form-label text-right ">Select Store</label>
                             <div class="col-sm-8">
                                 <select 
-                                            data-placeholder="Select Store" 
-                                            class="form-control form-control-sm required chosen-select col-lg-8 col-sm-8" 
-                                            style='width:70%; margin-bottom: 10px; margin-right: 10px;'
-                                            name='store'
-                                            id="storeList"
-                                            required>
-                                            <option value="">-- Select store --</option>
-                                            @foreach($stores as $store)    
-                                                <option value="{{$store->store}}" @if ($store->store == $storeData) selected @endif>{{$store->store}}</option>
-                                            @endforeach
+                                    data-placeholder="Select Store" 
+                                    class="form-control form-control-sm required chosen-select col-lg-8 col-sm-8" 
+                                    style='width:70%; margin-bottom: 10px; margin-right: 10px;'
+                                    name='store'
+                                    id="storeList"
+                                    required onchange='get_last_payroll(this);'>
+                                    <option value="">-- Select store --</option>
+                                    @foreach($stores as $store)    
+                                        <option value="{{$store->store}}" @if ($store->store == $storeData) selected @endif>{{$store->store}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             </div>
@@ -32,7 +33,7 @@
                             <div class="form-group row">
                             <label class="col-sm-4 col-form-label text-right">From</label>
                             <div class="col-sm-8">
-                                <input type="date" value='{{$from}}' class="form-control" name="from" max='{{date('Y-m-d')}}' onchange='get_min(this.value);' required />
+                                <input type="date" value='{{$from}}' class="form-control" id='from' name="from" min='{{$payroll_last}}' max='{{date('Y-m-d')}}' onchange='get_min(this.value);' required />
                             </div>
                             </div>
                         </div>
@@ -40,7 +41,7 @@
                             <div class="form-group row">
                             <label class="col-sm-4 col-form-label text-right">To</label>
                             <div class="col-sm-8">
-                                <input type="date" value='{{$to}}' class="form-control" name="to" id='to' max='{{date('Y-m-d')}}' required />
+                                <input type="date" value='{{$to}}' class="form-control" name="to" min='{{$payroll_last}}' id='to' max='{{date('Y-m-d')}}' required />
                             </div>
                         </div>
                         </div>
@@ -61,7 +62,7 @@
                                         <td colspan='26'>
                                             <div class='row'>
                                                 <div class="col-lg-12">
-                                                    <button type="submit" class="btn btn-danger ">Save</button>
+                                                    <button type="submit" class="btn btn-danger" id='save' >Save Payroll</button>
                                                 </div>
                                                 <div class="col-lg-12">
                                                     {{$storeData}}  
@@ -176,6 +177,7 @@
                                                         $sss = 0;
                                                         $philhealth = 0;
                                                         $pagibig = 0;
+                                                        $sss_er = 0;
                                                         if($basic_pay >= 1)
                                                         {
                                                             
@@ -290,6 +292,7 @@
             return 0;
         }
     }
+   
 @endphp
 @endsection
 
@@ -301,6 +304,21 @@
     $(document).ready(function(){
       $('.chosen-select').chosen({width: "100%"});
     });
+
+    function get_last_payroll(data)
+    {   
+        document.getElementById("from").value = "";
+        document.getElementById("to").value = "";
+        document.getElementById("from").min = "";
+        document.getElementById("to").min = "";
+        let sites = {!! json_encode($stores) !!}
+        let searchIndex = sites.findIndex((site) => site.store==data.value);
+        if(sites[searchIndex].payroll != null)
+        {   
+            document.getElementById("to").min = sites[searchIndex].payroll.payroll_to;
+            document.getElementById("from").min = sites[searchIndex].payroll.payroll_to;
+        }
+    }
 </script>
 @endsection
 
