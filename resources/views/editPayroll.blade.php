@@ -62,7 +62,7 @@
                                     </a>
                                 </td>
                                 <td>{{$c++}}</td>
-                                <td>{{number_format($payrollInfo->employee_name,2)}}</td>
+                                <td>{{$payrollInfo->employee_name}}</td>
                                 <td>{{number_format($payrollInfo->daily_rate,2)}}</td>
                                 <td>{{number_format($payrollInfo->hour_rate,2)}}</td>
                                 <td>{{number_format($payrollInfo->days_work,2)}}</td>
