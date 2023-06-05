@@ -33,7 +33,7 @@
                             <div class="form-group row">
                             <label class="col-sm-4 col-form-label text-right">From</label>
                             <div class="col-sm-8">
-                                <input type="date" value='{{$from}}' class="form-control" id='from' name="from" min='{{$payroll_last}}' max='{{date('Y-m-d')}}' onchange='get_min(this.value);' required />
+                                <input type="date" value='{{$from}}' class="form-control" id='from' name="from" min='{{date('Y-m-d', strtotime("+1 day", strtotime($payroll_last)))}}' max='{{date('Y-m-d')}}' onchange='get_min(this.value);' required />
                             </div>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                             <div class="form-group row">
                             <label class="col-sm-4 col-form-label text-right">To</label>
                             <div class="col-sm-8">
-                                <input type="date" value='{{$to}}' class="form-control" name="to" min='{{$payroll_last}}' id='to' max='{{date('Y-m-d')}}' required />
+                                <input type="date" value='{{$to}}' class="form-control" name="to" min='{{date('Y-m-d', strtotime("+1 day", strtotime($payroll_last)))}}' id='to' max='{{date('Y-m-d')}}' required />
                             </div>
                         </div>
                         </div>
@@ -219,7 +219,7 @@
                                                     <td class='text-right'>{{number_format($sss,2)}} <input type='hidden' name='sss[]' value='{{$sss}}'> <input type='hidden' name='sss_er[]' value='{{$sss_er}}'></td>
                                                     <td class='text-right'>{{number_format($philhealth,2)}} <input type='hidden' name='philhealth[]' value='{{$philhealth}}'></td>
                                                     <td class='text-right'>{{number_format($pagibig,2)}} <input type='hidden' name='pagibig[]' value='{{$pagibig}}'></td>
-                                                    <td class='text-right'>0.00 <input type='hidden' name='other_deduction[]' value=''></td>
+                                                    <td class='text-right'>0.00 <input type='hidden' name='other_deduction[]' value='0.00'></td>
                                                     <td class='text-right'>{{number_format($total_deduction,2)}} <input type='hidden' name='total_deduction[]' value='{{$total_deduction}}'></td>
                                                     <td class='text-right'>{{number_format($net,2)}} <input type='hidden' name='net[]' value='{{$net}}'></td>
                                                     <td></td>
@@ -306,7 +306,7 @@
     });
 
     function get_last_payroll(data)
-    {   
+    {
         document.getElementById("from").value = "";
         document.getElementById("to").value = "";
         document.getElementById("from").min = "";
@@ -314,9 +314,12 @@
         let sites = {!! json_encode($stores) !!}
         let searchIndex = sites.findIndex((site) => site.store==data.value);
         if(sites[searchIndex].payroll != null)
-        {   
-            document.getElementById("to").min = sites[searchIndex].payroll.payroll_to;
-            document.getElementById("from").min = sites[searchIndex].payroll.payroll_to;
+        {  
+            let date = new Date(sites[searchIndex].payroll.payroll_to);
+                date = date.setDate(date.getDate() + 1);
+                console.log(date.toLocaleDateString());
+            document.getElementById("to").min = date;
+            document.getElementById("from").min = date;
         }
     }
 </script>
