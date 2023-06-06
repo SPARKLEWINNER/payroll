@@ -169,7 +169,7 @@
                                                     }
 
                                                         $basic_pay = ($rate_employee/8)*$working_hours;
-                                                        $tardy_amount = ($rate_employee/60)*$hours_tardy;
+                                                        $tardy_amount = ($rate_employee/8/60)*$hours_tardy;
                                                         $overtime_amount = ($rate_employee*1.25)*$overtime;
                                                         $nightdiff_amount = ($rate_employee*.1)*$night_diff;
                                                         $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount;
@@ -219,15 +219,13 @@
                                                     <td class='text-right'>{{number_format($sss,2)}} <input type='hidden' name='sss[]' value='{{$sss}}'> <input type='hidden' name='sss_er[]' value='{{$sss_er}}'></td>
                                                     <td class='text-right'>{{number_format($philhealth,2)}} <input type='hidden' name='philhealth[]' value='{{$philhealth}}'></td>
                                                     <td class='text-right'>{{number_format($pagibig,2)}} <input type='hidden' name='pagibig[]' value='{{$pagibig}}'></td>
-                                                    <td class='text-right'>0.00 <input type='hidden' name='other_deduction[]' value='0.00'></td>
+                                                    <td class='text-right'>0.00<input type='hidden' name='other_deduction[]' value='0.00'></td>
                                                     <td class='text-right'>{{number_format($total_deduction,2)}} <input type='hidden' name='total_deduction[]' value='{{$total_deduction}}'></td>
                                                     <td class='text-right'>{{number_format($net,2)}} <input type='hidden' name='net[]' value='{{$net}}'></td>
                                                     <td></td>
                                                 </tr>
                                             @endforeach
                                     </tbody>
-                                    
-                            
                             </table>
                         </div>
                     </div>
@@ -317,11 +315,23 @@
         {  
             let date = new Date(sites[searchIndex].payroll.payroll_to);
                 date = date.setDate(date.getDate() + 1);
-                console.log(date.toLocaleDateString());
-            document.getElementById("to").min = date;
-            document.getElementById("from").min = date;
+            document.getElementById("to").min = formatDate(date);
+            document.getElementById("from").min = formatDate(date);
         }
     }
+    function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
 </script>
 @endsection
 

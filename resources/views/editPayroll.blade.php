@@ -56,7 +56,7 @@
                             @foreach($payroll->informations as $payrollInfo)
                             <tr>
                                 <td>
-                                    <a title='Edit Payroll'  ><button type="button"  class="btn btn-success btn-icon">
+                                    <a title='Edit Payroll' href="#editPayroll{{$payrollInfo->id}}" data-toggle="modal" title='EDIT'  ><button type="button"  class="btn btn-success btn-icon">
                                         <i class="fa fa-edit"></i>
                                         </button>
                                     </a>
@@ -83,10 +83,11 @@
                                 <td>{{number_format($payrollInfo->sss_contribution,2)}}</td>
                                 <td>{{number_format($payrollInfo->nhip_contribution,2)}}</td>
                                 <td>{{number_format($payrollInfo->hdmf_contribution,2)}}</td>
-                                <td>0.00</td>
+                                <td>{{number_format($payrollInfo->other_deduction,2)}}</td>
                                 <td>{{number_format($payrollInfo->total_deductions,2)}}</td>
                                 <td>{{number_format($payrollInfo->net_pay,2)}}</td>
                             </tr>
+                            @include('edit_payroll_data')
                             @endforeach
                         </tbody>
                     </table>

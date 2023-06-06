@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Attendance;
 use App\Holiday;
 use App\Payroll;
@@ -22,59 +23,47 @@ class PayrollController extends Controller
         $storeData = $request->store;
         $from = $request->from;
         $to = $request->to;
-        $start_month = date('2019-m-d',strtotime($from));
-        $end_month = date('2019-m-d',strtotime($to));
+        $start_month = date('2019-m-d', strtotime($from));
+        $end_month = date('2019-m-d', strtotime($to));
         $holidays = [];
-        $date_range =  $printReport->dateRange($from,$to);
-        $stores = Attendance::groupBy('store')->with('payroll')->selectRaw('store')->where('store','!=',null)->get();
+        $date_range =  $printReport->dateRange($from, $to);
+        $stores = Attendance::groupBy('store')->with('payroll')->selectRaw('store')->where('store', '!=', null)->get();
         $employees = [];
         $schedulesData = [];
         $rate = 0;
-        $sssTable = SssTable::orderBy('id','desc')->get();
-        if($request->store)
-        {
-            $payroll = Payroll::where('store',$request->store)->orderBy('payroll_from','desc')->first();
-            if($payroll != null)
-            {
+        $sssTable = SssTable::orderBy('id', 'desc')->get();
+        if ($request->store) {
+            $payroll = Payroll::where('store', $request->store)->orderBy('payroll_from', 'desc')->first();
+            if ($payroll != null) {
                 $payroll_last = $payroll->payroll_to;
             }
-            $holidays = Holiday::where(function ($query) use ($start_month,$end_month)
-            {
-                $query->where('status','Permanent')->whereBetween('holiday_date',[$start_month, $end_month]);
+            $holidays = Holiday::where(function ($query) use ($start_month, $end_month) {
+                $query->where('status', 'Permanent')->whereBetween('holiday_date', [$start_month, $end_month]);
             })
-            ->orWhere(function ($query) use ($from,$to)
-            {
-                $query->where('status',null)->whereBetween('holiday_date',[$from, $to]);
-            })
-            ->orderBy('holiday_date','asc')->get();
-            $employees = Attendance::with(['attendances' => function($q) use ($from,$to)
-            {
-                $q->whereBetween('date',[$from,$to]);
-            }])->with(['schedules' => function($q) use ($from,$to)
-            {
-                $q->whereBetween('date',[$from,$to])->orderBy('id','desc');
-            }])->groupBy('emp_id','emp_name')->with('rate')->select('emp_id','emp_name')->where('store',$request->store)->orderBy('emp_name','asc')->get();
-            $rateStore = Rates::where('store',$request->store)->first();
-            if($rateStore == null)
-            {
-                $group_id = Store::where('store',$request->store)->first();
-                if($group_id == null)
-                {
+                ->orWhere(function ($query) use ($from, $to) {
+                    $query->where('status', null)->whereBetween('holiday_date', [$from, $to]);
+                })
+                ->orderBy('holiday_date', 'asc')->get();
+            $employees = Attendance::with(['attendances' => function ($q) use ($from, $to) {
+                $q->whereBetween('date', [$from, $to]);
+            }])->with(['schedules' => function ($q) use ($from, $to) {
+                $q->whereBetween('date', [$from, $to])->orderBy('id', 'desc');
+            }])->groupBy('emp_id', 'emp_name')->with('rate')->select('emp_id', 'emp_name')->where('store', $request->store)->orderBy('emp_name', 'asc')->get();
+            $rateStore = Rates::where('store', $request->store)->first();
+            if ($rateStore == null) {
+                $group_id = Store::where('store', $request->store)->first();
+                if ($group_id == null) {
                     $rate = null;
-                }
-                else
-                {
-                    $rate = Rates::where('uid',$group_id->group_id)->first();
+                } else {
+                    $rate = Rates::where('uid', $group_id->group_id)->first();
                     $rate = $rate->daily;
                 }
-            }
-            else
-            {
+            } else {
                 $rate = $rateStore->daily;
             }
-         
         }
-        return view('generate-payroll',
+        return view(
+            'generate-payroll',
             array(
                 'stores' => $stores,
                 'sssTable' => $sssTable,
@@ -92,8 +81,8 @@ class PayrollController extends Controller
     }
     public function payrolls()
     {
-        $stores = Attendance::groupBy('store')->with('payroll')->selectRaw('store')->where('store','!=',null)->get();
-        $payrolls = Payroll::with('informations','user')->orderBy('payroll_to','desc')->get();
+        $stores = Attendance::groupBy('store')->with('payroll')->selectRaw('store')->where('store', '!=', null)->get();
+        $payrolls = Payroll::with('informations', 'user')->orderBy('payroll_to', 'desc')->get();
         return view(
             'payrolls',
             array(
@@ -105,26 +94,25 @@ class PayrollController extends Controller
     }
     public function payroll($id)
     {
-        $payroll = Payroll::with('informations','user')->where('id',$id)->first();
-        $pdf = PDF::loadView('payroll_pdf',array(
+        $payroll = Payroll::with('informations', 'user')->where('id', $id)->first();
+        $pdf = PDF::loadView('payroll_pdf', array(
             'payroll' => $payroll,
         ))->setPaper('legal', 'landscape');
-        return $pdf->stream(date('mm-dd-yyyy').'-payroll-'.$payroll->store.'.pdf');
+        return $pdf->stream(date('mm-dd-yyyy') . '-payroll-' . $payroll->store . '.pdf');
     }
     public function billing($id)
     {
-        $payroll = Payroll::with('informations','user')->where('id',$id)->first();
-        $pdf = PDF::loadView('billing',array(
+        $payroll = Payroll::with('informations', 'user')->where('id', $id)->first();
+        $pdf = PDF::loadView('billing', array(
             'payroll' => $payroll,
         ))->setPaper('legal', 'landscape');
-        return $pdf->stream(date('m-d-Y').'-billing-'.$payroll->store.'.pdf');
+        return $pdf->stream(date('m-d-Y') . '-billing-' . $payroll->store . '.pdf');
     }
 
     public function test()
     {
-        $pdf = PDF::loadView('test',array(
-        ))->setPaper('legal', 'landscape');
-        return $pdf->stream(date('m-d-Y').'.pdf');
+        $pdf = PDF::loadView('test', array())->setPaper('legal', 'landscape');
+        return $pdf->stream(date('m-d-Y') . '.pdf');
     }
 
     public function getRates($id)
@@ -132,36 +120,39 @@ class PayrollController extends Controller
         $findRates = Rates::where('uid', $id)->first();
         if (empty($findRates)) {
             $findRates = Rates::where('uid', 1)->first();
-        }
-        else {
+        } else {
             $findRates = Rates::where('uid', $id)->first();
         }
-        return ['status' => 'success',
-                'data' => $findRates];
+        return [
+            'status' => 'success',
+            'data' => $findRates
+        ];
     }
     public function getRatesStore(Request $request)
     {
         $findRates = Rates::where('store', $request->store)->first();
         if (empty($findRates)) {
             $findRates = Rates::where('uid', 1)->first();
-        }
-        else {
+        } else {
             $findRates = Rates::where('store', $request->store)->first();
         }
-        return ['status' => 'success',
-                'data' => $findRates];
+        return [
+            'status' => 'success',
+            'data' => $findRates
+        ];
     }
 
     public function setRates(Request $request)
     {
         /*dd($request->rateid);*/
-        $new_rates = Rates::updateOrCreate(['uid' => $request->rateid],
+        $new_rates = Rates::updateOrCreate(
+            ['uid' => $request->rateid],
             [
-                'uid' =>$request->rateid,
-                'daily' => $request->dailyRate, 
+                'uid' => $request->rateid,
+                'daily' => $request->dailyRate,
                 'nightshift' => $request->nightshift,
                 'restday' => $request->restday,
-                'restdayot' => $request->restdayot, 
+                'restdayot' => $request->restdayot,
                 'holiday' => $request->holidayRate,
                 'holidayot' => $request->holidayot,
                 'holidayrestday' => $request->holidayrestday,
@@ -176,18 +167,19 @@ class PayrollController extends Controller
                 'overtime' => $request->overtime,
                 'status' => $request->status
             ]
-        );     
+        );
         return redirect()->back()->with('message', 'Save successful!');
     }
     public function setStoreRates(Request $request)
     {
-        $new_rates = Rates::updateOrCreate(['store' => $request->store],
+        $new_rates = Rates::updateOrCreate(
+            ['store' => $request->store],
             [
-                'uid' =>$request->rateid,
-                'daily' => $request->dailyRate, 
+                'uid' => $request->rateid,
+                'daily' => $request->dailyRate,
                 'nightshift' => $request->nightshift,
                 'restday' => $request->restday,
-                'restdayot' => $request->restdayot, 
+                'restdayot' => $request->restdayot,
                 'holiday' => $request->holidayRate,
                 'holidayot' => $request->holidayot,
                 'holidayrestday' => $request->holidayrestday,
@@ -203,14 +195,13 @@ class PayrollController extends Controller
                 'status' => $request->status,
                 'store' => $request->store
             ]
-        );     
+        );
         return redirect()->back()->with('message', 'Save successful!');
     }
-    public function save (Request $request)
+    public function save(Request $request)
     {
-        $payrollExist = Payroll::where('payroll_from',$request->from)->where('payroll_to',$request->to)->where('store',$request->store)->first();
-        if($payrollExist)
-        {
+        $payrollExist = Payroll::where('payroll_from', $request->from)->where('payroll_to', $request->to)->where('store', $request->store)->first();
+        if ($payrollExist) {
             Alert::warning('Please Go to Generated Payrolls, it already save.')->persistent('Dismiss');
             return redirect('/payrolls');
         }
@@ -223,8 +214,7 @@ class PayrollController extends Controller
         $payroll->store = $request->store;
         $payroll->save();
 
-        foreach($request->emp_id as $key => $emp_id)
-        {
+        foreach ($request->emp_id as $key => $emp_id) {
             $payroll_info = new PayrollInfo;
             $payroll_info->payroll_id = $payroll->id;
             $payroll_info->employee_id = $emp_id;
@@ -259,14 +249,27 @@ class PayrollController extends Controller
         Alert::success('Successfully Save to Payroll')->persistent('Dismiss');
         return redirect('/payrolls');
     }
-    public function editPayroll(Request $request,$id)
+    public function editPayroll(Request $request, $id)
     {
-        $payroll = Payroll::where('id',$id)->with('informations','user')->first();
-        return view('editPayroll',
+        $payroll = Payroll::where('id', $id)->with('informations', 'user')->first();
+        return view(
+            'editPayroll',
             array(
                 'payroll' => $payroll,
             )
         );
-
+    }
+    public function saveEditPayroll(Request $request, $id)
+    {
+        dd($request->all());
+        $payroll = PayrollInfo::where('id', $id)->first();
+        $daily_rate = $request->daily_rate;
+        $hour_rate = $request->hour_rate;
+        $basic_pay = $hour_rate * $request->hours_work;
+        $tardy_amount = ($hour_rate / 60) * $request->hours_tardy;
+        $overtime_amount = ($hour_rate * 1.25) * $request->overtime;
+        $nightdiff_amount = ($hour_rate * .1) * $request->night_diff;
+        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount;
+        $sssData = SssTable::where('from_range', '<', $gross_pay)->first();
     }
 }
