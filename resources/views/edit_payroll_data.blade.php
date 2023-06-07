@@ -78,7 +78,7 @@
           <div class="row">
             <div class='col-md-12 form-group'>
                Other Deduction
-              <input type="number" name='other_deduction' class="form-control form-control-sm" value='{{$payrollInfo->other_deduction}}' required>
+              <input type="number" name='other_deduction' class="form-control form-control-sm" value='{{$payrollInfo->other_deductions}}' required>
             </div>
           </div>
           <div class="modal-footer">

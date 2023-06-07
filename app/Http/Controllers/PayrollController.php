@@ -9,6 +9,7 @@ use App\PayrollInfo;
 use App\SssTable;
 use App\Store;
 use App\Group;
+use App\PayrollLog;
 use App\Rates;
 use PDF;
 use Illuminate\Http\Request;
@@ -261,15 +262,72 @@ class PayrollController extends Controller
     }
     public function saveEditPayroll(Request $request, $id)
     {
-        dd($request->all());
+        $sss = 0;
+        $philhealth = 0;
+        $pagibig = 0;
+        $sss_er = 0;
         $payroll = PayrollInfo::where('id', $id)->first();
+        $old_data = $payroll;
+        $days_work = $request->days_work;
         $daily_rate = $request->daily_rate;
         $hour_rate = $request->hour_rate;
         $basic_pay = $hour_rate * $request->hours_work;
         $tardy_amount = ($hour_rate / 60) * $request->hours_tardy;
+        $special_holiday_amount = $request->special_holiday * 1.3;
+        $legal_holiday_amount = $request->legal_holiday * 2;
         $overtime_amount = ($hour_rate * 1.25) * $request->overtime;
         $nightdiff_amount = ($hour_rate * .1) * $request->night_diff;
-        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount;
-        $sssData = SssTable::where('from_range', '<', $gross_pay)->first();
+        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount + $special_holiday_amount + $legal_holiday_amount;
+        $other_income_non_tax = $request->other_income_non_taxable;
+        $other_deduction = $request->other_deduction;
+        $sssTable = SssTable::where('from_range', '<', $gross_pay)->first();
+
+        if ($basic_pay >= 1) {
+
+            $sssData = $sssTable->where('from_range', '<', $gross_pay)->first();
+            if ($sssData != null) {
+                $sss = $sssData->ee;
+                $sss_er = $sssData->er;
+            }
+            $philhealth = ((($daily_rate * 313 * .04) / 12) / 2);
+            $pagibig = 100.00;
+        }
+        $total_deduction = $sss + $philhealth + $pagibig + $other_deduction;
+        $net = $gross_pay - $total_deduction + $other_income_non_tax;
+        $payroll->daily_rate = $daily_rate;
+        $payroll->hour_rate = $hour_rate;
+        $payroll->days_work = $days_work;
+        $payroll->hours_work = $request->hours_work;
+        $payroll->basic_pay = $basic_pay;
+        $payroll->hours_tardy = $request->hours_tardy;
+        $payroll->hours_tardy_basic = $tardy_amount;
+        $payroll->overtime = $request->overtime;
+        $payroll->amount_overtime = $overtime_amount;
+        $payroll->special_holiday = $request->special_holiday;
+        $payroll->amount_special_holiday = $special_holiday_amount;
+        $payroll->legal_holiday = $request->legal_holiday;
+        $payroll->amount_legal_holiday = $legal_holiday_amount;
+        $payroll->night_diff = $request->night_diff;
+        $payroll->amount_night_diff = $nightdiff_amount;
+        $payroll->gross_pay = $gross_pay;
+        $payroll->other_income_non_taxable = $other_income_non_tax;
+        $payroll->sss_contribution = $sss;
+        $payroll->nhip_contribution = $philhealth;
+        $payroll->hdmf_contribution = $pagibig;
+        $payroll->total_deductions = $total_deduction;
+        $payroll->other_deductions = $other_deduction;
+        $payroll->net_pay = $net;
+        $payroll->save();
+        $newdata = $payroll;
+        $log = new PayrollLog;
+        $log->table = "payroll_infos";
+        $log->action = "Update";
+        $log->table_id = $id;
+        $log->data_from = $old_data;
+        $log->data_to = $newdata;
+        $log->edit_by = auth()->user()->id;
+        $log->save();
+        Alert::success('Successfully Update')->persistent('Dismiss');
+        return back();
     }
 }
