@@ -57,7 +57,9 @@ class PayrollController extends Controller
                     $rate = null;
                 } else {
                     $rate = Rates::where('uid', $group_id->group_id)->first();
-                    $rate = $rate->daily;
+                    if ($rate != null) {
+                        $rate = $rate->daily;
+                    }
                 }
             } else {
                 $rate = $rateStore->daily;
@@ -219,33 +221,34 @@ class PayrollController extends Controller
             $payroll_info = new PayrollInfo;
             $payroll_info->payroll_id = $payroll->id;
             $payroll_info->employee_id = $emp_id;
-            $payroll_info->employee_name = $request->emp_name[$key];
-            $payroll_info->daily_rate = $request->rate[$key];
-            $payroll_info->hour_rate = $request->daily_rate[$key];
-            $payroll_info->days_work = $request->day_works[$key];
-            $payroll_info->hours_work = $request->working_hours[$key];
-            $payroll_info->basic_pay = $request->basic_pay[$key];
-            $payroll_info->hours_tardy = $request->hours_tardy[$key];
-            $payroll_info->hours_tardy_basic = $request->tardy_amount[$key];
-            $payroll_info->overtime = $request->overtime[$key];
-            $payroll_info->amount_overtime = $request->overtime_amount[$key];
-            $payroll_info->special_holiday = $request->special_holiday[$key];
-            $payroll_info->amount_special_holiday = $request->special_holiday_amount[$key];
-            $payroll_info->legal_holiday = $request->legal_holiday[$key];
-            $payroll_info->amount_legal_holiday = $request->legal_holiday_amount[$key];
-            $payroll_info->night_diff = $request->night_diff[$key];
-            $payroll_info->amount_night_diff = $request->nightdiff_amount[$key];
-            $payroll_info->gross_pay = $request->gross_pay[$key];
-            $payroll_info->other_income_non_taxable = $request->other_income_non_tax[$key];
-            $payroll_info->sss_contribution = $request->sss[$key];
-            $payroll_info->nhip_contribution = $request->philhealth[$key];
-            $payroll_info->hdmf_contribution = $request->pagibig[$key];
-            $payroll_info->tax = 0.00;
-            $payroll_info->total_deductions = $request->total_deduction[$key];
-            $payroll_info->other_deductions = $request->other_deduction[$key];
-            $payroll_info->net_pay = $request->net[$key];
-            $payroll_info->sss_er = $request->sss_er[$key];
-            $payroll_info->save();
+            if (isset($request->emp_name[$key])) {
+                $payroll_info->employee_name = $request->emp_name[$key];
+                $payroll_info->daily_rate = $request->rate[$key];
+                $payroll_info->hour_rate = $request->daily_rate[$key];
+                $payroll_info->days_work = $request->day_works[$key];
+                $payroll_info->hours_work = $request->working_hours[$key];
+                $payroll_info->basic_pay = $request->basic_pay[$key];
+                $payroll_info->hours_tardy = $request->hours_tardy[$key];
+                $payroll_info->hours_tardy_basic = $request->tardy_amount[$key];
+                $payroll_info->overtime = $request->overtime[$key];
+                $payroll_info->amount_overtime = $request->overtime_amount[$key];
+                $payroll_info->special_holiday = $request->special_holiday[$key];
+                $payroll_info->amount_special_holiday = $request->special_holiday_amount[$key];
+                $payroll_info->legal_holiday = $request->legal_holiday[$key];
+                $payroll_info->amount_legal_holiday = $request->legal_holiday_amount[$key];
+                $payroll_info->night_diff = $request->night_diff[$key];
+                $payroll_info->amount_night_diff = $request->nightdiff_amount[$key];
+                $payroll_info->gross_pay = $request->gross_pay[$key];
+                $payroll_info->other_income_non_taxable = $request->other_income_non_tax[$key];
+                $payroll_info->sss_contribution = $request->sss[$key];
+                $payroll_info->nhip_contribution = $request->philhealth[$key];
+                $payroll_info->hdmf_contribution = $request->pagibig[$key];
+                $payroll_info->total_deductions = $request->total_deduction[$key];
+                $payroll_info->other_deductions = $request->other_deduction[$key];
+                $payroll_info->net_pay = $request->net[$key];
+                $payroll_info->sss_er = $request->sss_er[$key];
+                $payroll_info->save();
+            }
         }
         Alert::success('Successfully Save to Payroll')->persistent('Dismiss');
         return redirect('/payrolls');
