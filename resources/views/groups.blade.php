@@ -114,6 +114,8 @@
                                                             <input type="text" name="specialholidayrestday" placeholder='Holiday Name' class="form-control specialholidayrestday" required>
                                                             <label >Special Holiday RD OT Rate:</label>
                                                             <input type="text" name="specialholidayrestdayot" placeholder='Holiday Name' class="form-control specialholidayrestdayot" required>
+                                                            <label >Allowance:</label>
+                                                            <input type="text" name="allowance" placeholder='Allowance' class="form-control allowance" required>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                                 <button type="submit" id='submit1' class="btn btn-primary">Save</button>

@@ -58,7 +58,9 @@ class PayrollController extends Controller
                 } else {
                     $rate = Rates::where('uid', $group_id->group_id)->first();
                     if ($rate != null) {
+                        $rates = $rate;
                         $rate = $rate->daily;
+
                     }
                 }
             } else {
@@ -78,6 +80,7 @@ class PayrollController extends Controller
                 'employees' => $employees,
                 'schedulesData' => $schedulesData,
                 'rate' => $rate,
+                'rates' => $rates,
                 'payroll_last' => $payroll_last,
             )
         );
@@ -168,7 +171,8 @@ class PayrollController extends Controller
                 'philhealth' => $request->philhealth,
                 'pagibig' => $request->pagibig,
                 'overtime' => $request->overtime,
-                'status' => $request->status
+                'status' => $request->status,
+                'allowance' => $request->allowance
             ]
         );
         return redirect()->back()->with('message', 'Save successful!');
@@ -196,7 +200,8 @@ class PayrollController extends Controller
                 'pagibig' => $request->pagibig,
                 'overtime' => $request->overtime,
                 'status' => $request->status,
-                'store' => $request->store
+                'store' => $request->store,
+                'allowance' => $request->allowance
             ]
         );
         return redirect()->back()->with('message', 'Save successful!');

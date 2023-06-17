@@ -25,6 +25,7 @@ class Rates extends Model
         'pagibig',
         'overtime',
         'status',
-        'store'
+        'store',
+        'allowance'
     ];
 }
