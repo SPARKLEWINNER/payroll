@@ -32,6 +32,7 @@ class PayrollController extends Controller
         $employees = [];
         $schedulesData = [];
         $rate = 0;
+        $rates = [];
         $sssTable = SssTable::orderBy('id', 'desc')->get();
         if ($request->store) {
             $payroll = Payroll::where('store', $request->store)->orderBy('payroll_from', 'desc')->first();
@@ -64,6 +65,7 @@ class PayrollController extends Controller
                     }
                 }
             } else {
+                $rates = $rateStore;
                 $rate = $rateStore->daily;
             }
         }

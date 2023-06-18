@@ -89,7 +89,7 @@
                                     
                                     <th>#</th>
                                     <th>Employee Name</th>
-                                    @if($rates->daily != "undefined" && $rates->daily > 0)
+                                    @if(!empty($rates) && $rates->daily > 0)
                                         <th>Daily Rate</th>
                                         <th>Daily Rate/Hour </th>
                                     @endif
@@ -208,7 +208,7 @@
                                                 <tr >
                                                     <td>{{$c++}}<input type='hidden' name='emp_id[]' value='{{$employee->emp_id}}'><input type='hidden' name='emp_name[]' value='{{$employee->emp_name}}'></td>
                                                     <td>{{$employee->emp_name}}</td>
-                                                    @if($rates->daily != "undefined" && $rates->daily > 0)
+                                                    @if(!empty($rates) && $rates->daily > 0)
                                                     <td class='text-right'>{{number_format($rate_employee,2)}}<input type='hidden' name='rate[]' value='{{$rate_employee}}'></td>
                                                     
                                                     <td class='text-right'>{{number_format($rate_employee/8,2)}} <input type='hidden' name='daily_rate[]' value='{{$rate_employee/8}}'></td>

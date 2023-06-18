@@ -214,6 +214,7 @@
                         $('.specialholidayot').val(d.data.specialholidayot)
                         $('.specialholidayrestday').val(d.data.specialholidayrestday)
                         $('.specialholidayrestdayot').val(d.data.specialholidayrestdayot)
+                        $('.allowance').val(d.data.allowance)
                         $(`#edit_rates`).modal().show();
                         document.getElementById("loader").style.display = "none";
                     }
