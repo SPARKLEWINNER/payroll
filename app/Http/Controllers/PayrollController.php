@@ -282,8 +282,8 @@ class PayrollController extends Controller
         $hour_rate = $request->hour_rate;
         $basic_pay = $hour_rate * $request->hours_work;
         $tardy_amount = ($hour_rate / 60) * $request->hours_tardy;
-        $special_holiday_amount = $request->special_holiday * 1.3 * $daily_rate;
-        $legal_holiday_amount = $request->legal_holiday * 2 * $daily_rate;
+        $special_holiday_amount = $request->special_holiday * .3 * $daily_rate;
+        $legal_holiday_amount = $request->legal_holiday * $daily_rate;
         $overtime_amount = ($hour_rate * 1.25) * $request->overtime;
         $nightdiff_amount = ($hour_rate * .1) * $request->night_diff;
         $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount + $special_holiday_amount + $legal_holiday_amount;
