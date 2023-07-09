@@ -29,7 +29,7 @@
 		      	<table class="table table-hover table-bordered table-hover dataTables-example">
 		      	    <thead>
 		      	        <tr>
-		      	            <td colspan='11'>{{$employee->emp_name}}</td>
+		      	            <td colspan='11'>{{strtoupper($employee->emp_name)}}</td>
 		      	          </tr>
 		      	        <tr>
 		      	          <th>Date</th>

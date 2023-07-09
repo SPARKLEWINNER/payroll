@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\User;
 use App\Group;
 use App\Store;
@@ -29,20 +30,21 @@ class HomeController extends Controller
     {
         $users = User::get();
         $groups = Group::get();
-        $stores = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
-        $attendances = Attendance::orderBy('id','desc')->take(1000)->get();
-        $employees = Attendance::groupBy('emp_id','emp_name','status')->selectRaw('emp_name')->where('store','!=',null)->where('date',date('Y-m-d'))->get();
+        $stores = Attendance::groupBy('store')->selectRaw('store')->where('store', '!=', null)->get();
+        $attendances = Attendance::orderBy('id', 'desc')->take(100)->get();
+        $employees = Attendance::groupBy('emp_id', 'emp_name', 'status')->selectRaw('emp_name')->where('store', '!=', null)->where('date', date('Y-m-d'))->get();
         // dd($companies);
 
-        return view('home',
-        array(
-            'users' => $users,
-            'groups' => $groups,
-            'stores' => $stores,
-            'attendances' => $attendances,
-            'employees' => $employees,
-            
-        )
-    );
+        return view(
+            'home',
+            array(
+                'users' => $users,
+                'groups' => $groups,
+                'stores' => $stores,
+                'attendances' => $attendances,
+                'employees' => $employees,
+
+            )
+        );
     }
 }

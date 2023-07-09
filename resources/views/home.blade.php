@@ -71,7 +71,7 @@
         <div class="ibox-content">
 
           <div class="table-responsive">
-              <table class="table table-striped table-bordered table-hover dataTables-example" >
+              <table class="table table-striped table-bordered table-hover home-payroll" >
                 <thead>
                   <tr>
                       <th>Date - Time</th>
@@ -84,7 +84,7 @@
                     @foreach($attendances as $attendance)
                     <tr>
                         <td>{{date('M d, Y H:i:s',strtotime($attendance->time))}}</td>
-                        <td>{{$attendance->emp_name}}</td>
+                        <td>{{strtoupper($attendance->emp_name)}}</td>
                         <td>{{$attendance->store}}</td>
                         <td>{{$attendance->status}}</td>
                     </tr>

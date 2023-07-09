@@ -1,6 +1,7 @@
 @extends('layouts.header_admin')
 @section('css')
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet">
+<link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet">
 @endsection
 @section('content')
 <div class="row">
@@ -81,8 +82,12 @@
                                 <tr>
                                     <td > 
                                         @if($payroll->status == "")
-                                        <a title='Edit Payroll' href='{{url("edit-payroll/".$payroll->id)}}' ><button type="button"  class="btn btn-success btn-icon">
+                                        <a title='Edit Payroll' href='{{url("edit-payroll/".$payroll->id)}}' ><button type="button"  class="btn btn-success btn-icon btn-sm">
                                             <i class="fa fa-edit"></i>
+                                            </button>
+                                        </a>
+                                        <a title='Delete Payroll' class='delete-payroll' id='{{$payroll->id}}' ><button type="button"  class="btn btn-danger btn-icon btn-sm">
+                                            <i class="fa fa-trash"></i>
                                             </button>
                                         </a>
                                         @else
@@ -115,11 +120,43 @@
         </div>
     </div>
 </div>
-@include('new_group')
 @endsection
 @section('js')
 <script src="{{ asset('admin/js/plugins/chosen/chosen.jquery.js')}}"></script>
 <script src="{{ asset('admin/js/inspinia.js')}}"></script>
 <script src="{{ asset('admin/js/plugins/pace/pace.min.js')}}"></script>
+<script src="{{ asset('admin/js/plugins/sweetalert/sweetalert.min.js')}}"></script>
+<script>
+    $('.delete-payroll').click(function () {
+        
+        var id = this.id;
+            swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this payroll",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            }, function (){
+                $.ajax({
+                    dataType: 'json',
+                    type:'POST',
+                    url:  '{{url("delete-payroll")}}',
+                    data:{id:id},
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                }).done(function(data){
+                    console.log(data);
+                    swal("Deleted!", "Your record been deleted.", "success");
+                    location.reload();
+                }).fail(function(data)
+                {
+                    
+                swal("Deleted!", "Your record been deleted.", "success");
+                location.reload();
+                });
+            });
+        });
+</script>
 @endsection
 

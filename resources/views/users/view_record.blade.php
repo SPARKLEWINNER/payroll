@@ -29,7 +29,7 @@
 		      	<table class="table table-hover table-bordered">
 		      	    <thead>
 		      	        <tr>
-		      	            <td colspan='11'>{{$employee->_id}} - {{$employee->displayName}}</td>
+		      	            <td colspan='11'>{{$employee->_id}} - {{strtoupper($employee->displayName)}}</td>
 		      	          </tr>
 		      	        <tr>
 		      	          <th>Date</th>

@@ -1,6 +1,7 @@
 @extends('layouts.header_admin')
 @section('css')
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet">
+<link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet">
 @endsection
 @section('content')
 <div class='row'>
@@ -52,17 +53,28 @@
                         <tbody>
                             @php
                                 $c = 1;
+                                $height = 28;
                             @endphp
                             @foreach($payroll->informations as $payrollInfo)
                             <tr>
+                                
+                            @include('transfer_employee')
+                            
+                            @include('edit_government')
                                 <td>
-                                    <a title='Edit Payroll' href="#editPayroll{{$payrollInfo->id}}" data-toggle="modal" title='EDIT'  ><button type="button"  class="btn btn-success btn-icon">
-                                        <i class="fa fa-edit"></i>
-                                        </button>
-                                    </a>
+                                    <div class="btn-group">
+                                        <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><i class="fa fa-ellipsis-v"></i> </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a title='Edit Payroll' href="#editPayroll{{$payrollInfo->id}}" data-toggle="modal" >Edit</a></li>
+                                            <li><a title='Transfer Payroll' href="#transfer{{$payrollInfo->id}}" data-toggle="modal"  >Transfer</a></li>
+                                            <li><a title='Edit Government Benefits' href="#editgov{{$payrollInfo->id}}" data-toggle="modal" >Edit Government</a></li>
+                                            <li class="divider"></li>
+                                            <li><a title='Delete' class='remove-payroll' id='{{$payrollInfo->id}}' data-toggle="modal" title='Delete'  >Remove Employee</a></li>
+                                        </ul>
+                                    </div>
                                 </td>
                                 <td>{{$c++}}</td>
-                                <td>{{$payrollInfo->employee_name}}</td>
+                                <td>{{strtoupper($payrollInfo->employee_name)}}</td>
                                 <td>{{number_format($payrollInfo->daily_rate,2)}}</td>
                                 <td>{{number_format($payrollInfo->hour_rate,2)}}</td>
                                 <td>{{number_format($payrollInfo->days_work,2)}}</td>
@@ -83,13 +95,42 @@
                                 <td>{{number_format($payrollInfo->sss_contribution,2)}}</td>
                                 <td>{{number_format($payrollInfo->nhip_contribution,2)}}</td>
                                 <td>{{number_format($payrollInfo->hdmf_contribution,2)}}</td>
-                                <td>{{number_format($payrollInfo->other_deduction,2)}}</td>
+                                <td>{{number_format($payrollInfo->other_deductions,2)}}</td>
                                 <td>{{number_format($payrollInfo->total_deductions,2)}}</td>
                                 <td>{{number_format($payrollInfo->net_pay,2)}}</td>
                             </tr>
                             @include('edit_payroll_data')
+                            
                             @endforeach
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan='3' class='text-right'>Total</td>
+                                <td>{{number_format($payrollInfo->sum('daily_rate'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('hour_rate'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('days_work'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('hours_work'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('basic_pay'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('hours_tardy'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('hours_tardy_basic'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('overtime'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('amount_overtime'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('special_holiday'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('amount_special_holiday'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('legal_holiday'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('amount_legal_holiday'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('night_diff'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('amount_night_diff'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('gross_pay'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('other_income_non_taxable'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('sss_contribution'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('nhip_contribution'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('hdmf_contribution'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('other_deductions'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('total_deductions'),2)}}</td>
+                                <td>{{number_format($payrollInfo->sum('net_pay'),2)}}</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -102,5 +143,42 @@
 <script src="{{ asset('admin/js/plugins/chosen/chosen.jquery.js')}}"></script>
 <script src="{{ asset('admin/js/inspinia.js')}}"></script>
 <script src="{{ asset('admin/js/plugins/pace/pace.min.js')}}"></script>
+<script src="{{ asset('admin/js/plugins/sweetalert/sweetalert.min.js')}}"></script>
+<script>
+    $(document).ready(function(){
+      $('.chosen-select').chosen({width: "100%"});
+    });
+
+    $('.remove-payroll').click(function () {
+        
+        var id = this.id;
+            swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this payroll",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            }, function (){
+                $.ajax({
+                    dataType: 'json',
+                    type:'POST',
+                    url:  '{{url("remove-payroll")}}',
+                    data:{id:id},
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                }).done(function(data){
+                    console.log(data);
+                    swal("Deleted!", "Your record been deleted.", "success");
+                    location.reload();
+                }).fail(function(data)
+                {
+                    
+                swal("Deleted!", "Your record been deleted.", "success");
+                location.reload();
+                });
+            });
+        });
+</script>
 @endsection
 

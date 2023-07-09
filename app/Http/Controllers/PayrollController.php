@@ -262,10 +262,12 @@ class PayrollController extends Controller
     public function editPayroll(Request $request, $id)
     {
         $payroll = Payroll::where('id', $id)->with('informations', 'user')->first();
+        $payrolls = Payroll::where('payroll_from', $payroll->payroll_from)->where('id', '!=', $id)->get();
         return view(
             'editPayroll',
             array(
                 'payroll' => $payroll,
+                'payrolls' => $payrolls,
             )
         );
     }
@@ -289,7 +291,7 @@ class PayrollController extends Controller
         $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount + $special_holiday_amount + $legal_holiday_amount;
         $other_income_non_tax = $request->other_income_non_taxable;
         $other_deduction = $request->other_deduction;
-        $sssTable = SssTable::where('from_range', '<', $gross_pay)->first();
+        $sssTable = SssTable::where('from_range', '<', $gross_pay)->orderBy('id', 'desc')->first();
 
         if ($basic_pay >= 1) {
 
@@ -338,5 +340,74 @@ class PayrollController extends Controller
         $log->save();
         Alert::success('Successfully Update')->persistent('Dismiss');
         return back();
+    }
+    public function transferPayroll(Request $request, $id)
+    {
+        // dd($id);
+        $payroll = PayrollInfo::where('id', $id)->first();
+        $old_data = $payroll;
+        $payroll->payroll_id = $request->store;
+        $payroll->save();
+        $log = new PayrollLog;
+        $log->table = "payroll_infos";
+        $log->action = "Update";
+        $log->table_id = $id;
+        $log->data_from = $old_data;
+        $log->data_to = $payroll;
+        $log->edit_by = auth()->user()->id;
+        $log->save();
+        Alert::success('Successfully Transfered')->persistent('Dismiss');
+        return back();
+    }
+    public function removePayroll(Request $request)
+    {
+        // dd($id);
+        $payroll = PayrollInfo::where('id', $request->id)->first();
+        $log = new PayrollLog;
+        $log->table = "payroll_infos";
+        $log->action = "Delete";
+        $log->table_id = $request->id;
+        $log->data_from = $payroll;
+        $log->data_to = "";
+        $log->edit_by = auth()->user()->id;
+        $log->save();
+
+        $payroll->delete();
+        return "success";
+    }
+    public function editGovernment(Request $request, $id)
+    {
+        $payroll = PayrollInfo::where('id', $id)->first();
+        $old_data = $payroll;
+        $payroll->sss_contribution = $request->sss_contribution;
+        $payroll->nhip_contribution = $request->nhip_contribution;
+        $payroll->hdmf_contribution = $request->hdmf_contribution;
+        $payroll->total_deductions = $payroll->sss_contribution + $payroll->nhip_contribution + $payroll->hdmf_contribution + $payroll->other_deductions;
+        $payroll->save();
+        $log = new PayrollLog;
+        $log->table = "payroll_infos";
+        $log->action = "Update";
+        $log->table_id = $id;
+        $log->data_from = $old_data;
+        $log->data_to = $payroll;
+        $log->edit_by = auth()->user()->id;
+        $log->save();
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+    public function deletePayroll(Request $request)
+    {
+        $payroll = Payroll::where('id', $request->id)->first();
+        $log = new PayrollLog;
+        $log->table = "payroll_infos";
+        $log->action = "Delete";
+        $log->table_id = $request->id;
+        $log->data_from = $payroll;
+        $log->data_to = "";
+        $log->edit_by = auth()->user()->id;
+        $log->save();
+
+        $payroll->delete();
+        return "success";
     }
 }

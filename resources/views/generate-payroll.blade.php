@@ -76,13 +76,13 @@
                                             <input type='hidden' name='from_date' value='{{$from}}'>
                                             <input type='hidden' name='from_to' value='{{$to}}'>
                                             Payroll Period of  {{date('M d, Y',strtotime($from))}}  to  {{date('M d, Y',strtotime($to))}}
-                                            {{-- @if(count($employees) >0)
+                                            @if(count($employees) >0)
                                                 <h5>Holidays <br>
                                                     @foreach($holidays as $holiday)
                                                         {{$holiday->holiday_name}} - {{$holiday->holiday_date}} - {{$holiday->holiday_type}}  <br>
                                                     @endforeach
                                                 </h5>
-                                            @endif --}}
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr>

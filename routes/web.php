@@ -53,6 +53,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('test', 'PayrollController@test')->name('test');
     Route::get('edit-payroll/{id}', 'PayrollController@editPayroll');
     Route::post('edit-payroll/edit-payroll/{id}', 'PayrollController@saveEditPayroll');
+    Route::post('transfer-payroll/{id}', 'PayrollController@transferPayroll');
+    Route::post('remove-payroll', 'PayrollController@removePayroll');
+    Route::post('edit-government/{id}', 'PayrollController@editGovernment');
+    Route::post('delete-payroll', 'PayrollController@deletePayroll');
 
     //Salaries
     Route::get('salaries', 'SalaryController@index')->name('salary');

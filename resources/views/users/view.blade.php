@@ -70,7 +70,7 @@
                       <tbody>
                         @foreach($personnels as $key => $employee)
                             <tr>
-                                <td id="{{$employee->_id}}">{{$employee->displayName}}</td>
+                                <td id="{{$employee->_id}}">{{strtoupper($employee->displayName)}}</td>
                                 <td style="width: 20%"> 
                                     <button type="button" class="btn btn-outline btn-primary dim btn-sm" data-target="#viewRecord{{$employee->_id}}" data-toggle="modal" title='RECORD'>
                                         View Record
