@@ -269,7 +269,8 @@
                 
                 <div class="ibox-content">
                     <div class="alert alert-warning">
-                        No rates found for {{$storeData}}
+                        No rates found for {{$storeData}} <br>
+                        <b>Please click <a href='{{url('/stores')}}' target="_blank">{{$storeData}}</a>, select store then set rates. </b>
                     </div>
                 </div>
 
