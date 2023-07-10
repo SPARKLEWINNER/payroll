@@ -198,7 +198,7 @@
                                                         $special_holiday_amount = $special_holiday * .3 * $rate_employee;
                                                         $legal_holiday_amount = $legal_holiday * $rate_employee;
                                                         $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount +$special_holiday_amount +$legal_holiday_amount;
-                                                        $other_income_non_tax = $day_works*15;
+                                                        $other_income_non_tax = 0;
                                                       
                                                         $sss = 0;
                                                         $philhealth = 0;
