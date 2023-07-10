@@ -79,7 +79,7 @@
                                             @if(count($employees) >0)
                                                 <h5>Holidays <br>
                                                     @foreach($holidays as $holiday)
-                                                        {{$holiday->holiday_name}} - {{$holiday->holiday_date}} - {{$holiday->holiday_type}}  <br>
+                                                        {{$holiday->holiday_name}} - {{date('M d',strtotime($holiday->holiday_date))}} - {{$holiday->holiday_type}}  <br>
                                                     @endforeach
                                                 </h5>
                                             @endif
@@ -140,6 +140,18 @@
                                             @endphp
                                                 @foreach($date_range as $date)
                                                     @php
+                                                        $holi = $holidays->pluck('holiday_date');
+                                                        $holiday = $holidays->where('holiday_date',$date)->first();
+                                                        if($holiday != null)
+                                                        {
+                                                            if($holiday->holiday_type == "Special Holiday")
+                                                            {
+                                                                $special_holiday = $special_holiday+1;
+                                                            }
+                                                            else {
+                                                                $legal_holiday = $legal_holiday+1;
+                                                            }
+                                                        }
                                                         $time_in = (($employee->attendances)->where('status','time-in')->where('date',$date))->first();
                                                         $time_out = (($employee->attendances)->where('status','time-out')->where('date',$date))->first();
                                                         $schedule = (($employee->schedules)->where('date',$date))->first();
@@ -181,8 +193,11 @@
                                                         $tardy_amount = ($rate_employee/8/60)*$hours_tardy;
                                                         $overtime_amount = ($rate_employee*1.25)*$overtime;
                                                         $nightdiff_amount = ($rate_employee*.1)*$night_diff;
-                                                        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount;
+                                                        $special_holiday_amount = $special_holiday * .3 * $rate_employee;
+                                                        $legal_holiday_amount = $legal_holiday * $rate_employee;
+                                                        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount +$special_holiday_amount +$legal_holiday_amount;
                                                         $other_income_non_tax = $day_works*15;
+                                                      
                                                         $sss = 0;
                                                         $philhealth = 0;
                                                         $pagibig = 0;
@@ -222,11 +237,11 @@
                                                     <td class='text-right'>{{number_format($overtime_amount,2)}} <input type='hidden' name='overtime_amount[]' value='{{$overtime_amount}}'></td>
                                                     @if($rates->specialholiday != "undefined" && $rates->specialholiday > 0)
                                                     <td class='text-right'>{{number_format($special_holiday,2)}} <input type='hidden' name='special_holiday[]' value='{{$special_holiday}}'></td>
-                                                    <td class='text-right'>0.00 <input type='hidden' name='special_holiday_amount[]' value='0.00'></td>
+                                                    <td class='text-right'>{{number_format($special_holiday_amount,2)}}  <input type='hidden' name='special_holiday_amount[]' value='{{$special_holiday_amount}}'></td>
                                                     @endif
                                                     @if($rates->holiday != "undefined" && $rates->holiday > 0)
                                                     <td class='text-right'>{{number_format($legal_holiday,2)}} <input type='hidden' name='legal_holiday[]' value='{{$legal_holiday}}'></td>
-                                                    <td class='text-right'>0.00 <input type='hidden' name='legal_holiday_amount[]' value='0.00'></td>
+                                                    <td class='text-right'>{{number_format($legal_holiday_amount,2)}} <input type='hidden' name='legal_holiday_amount[]' value='{{$legal_holiday_amount}}'></td>
                                                     @endif
                                                     @if($rates->nightshift != "undefined" && $rates->nightshift > 0)
                                                     <td class='text-right'>{{number_format($night_diff,2)}} <input type='hidden' name='night_diff[]' value='{{$night_diff}}'></td>
