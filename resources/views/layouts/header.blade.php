@@ -127,9 +127,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/stores') }}" onclick='show();'>Stores</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link" href="{{ url('/salaries') }}" onclick='show();'>Salaries</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
               </li>
