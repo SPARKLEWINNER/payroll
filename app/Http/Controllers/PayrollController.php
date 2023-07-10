@@ -383,6 +383,7 @@ class PayrollController extends Controller
         $payroll->nhip_contribution = $request->nhip_contribution;
         $payroll->hdmf_contribution = $request->hdmf_contribution;
         $payroll->total_deductions = $payroll->sss_contribution + $payroll->nhip_contribution + $payroll->hdmf_contribution + $payroll->other_deductions;
+        $payroll->net = $payroll->gross_pay - $payroll->total_deductions;
         $payroll->save();
         $log = new PayrollLog;
         $log->table = "payroll_infos";
