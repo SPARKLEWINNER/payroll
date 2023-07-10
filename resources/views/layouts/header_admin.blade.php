@@ -97,7 +97,7 @@
                             <li><a href="{{url('/groups')}}">Groups</a></li>
                             <li><a href="{{url('/stores')}}">Stores</a></li>
                             <li><a href="{{url('/users')}}">Personnel</a></li>
-                            <li><a href="{{url('/salaries')}}">Salaries</a></li>
+                            {{-- <li><a href="{{url('/salaries')}}">Salaries</a></li> --}}
                         </ul>
                     </li>
                     <li>
