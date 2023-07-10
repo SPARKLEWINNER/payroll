@@ -51,7 +51,9 @@
                         </div>
                     </form> 
                 </div>
+            
                 @if(count($employees) > 0)
+                @if($rates != null)
                 <form method='POST' onsubmit='show();' enctype="multipart/form-data">
                     @csrf
                     <div class="ibox-content">
@@ -263,7 +265,17 @@
                         </div>
                     </div>
                 </form>
+                @else
+                
+                <div class="ibox-content">
+                    <div class="alert alert-warning">
+                        No rates found for {{$storeData}}
+                    </div>
+                </div>
+
                 @endif
+                @endif
+               
             </div>
         </div>
     </div>
