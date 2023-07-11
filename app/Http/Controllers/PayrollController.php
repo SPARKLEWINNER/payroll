@@ -389,6 +389,24 @@ class PayrollController extends Controller
         $payroll->delete();
         return "success";
     }
+    public function savePayroll(Request $request)
+    {
+        // dd($id);
+        $payroll = Payroll::where('id', $request->id)->first();
+        $old_data = $payroll;
+        $payroll->status = "Save";
+        $payroll->save();
+        $log = new PayrollLog;
+        $log->table = "payrolls";
+        $log->action = "Update";
+        $log->table_id = $request->id;
+        $log->data_from = $old_data;
+        $log->data_to = $payroll;
+        $log->edit_by = auth()->user()->id;
+        $log->save();
+
+        return "success";
+    }
     public function editGovernment(Request $request, $id)
     {
         $payroll = PayrollInfo::where('id', $id)->first();
@@ -424,5 +442,38 @@ class PayrollController extends Controller
 
         $payroll->delete();
         return "success";
+    }
+    public function payslips(Request $request)
+    {
+        $cutoffs = Payroll::groupBy('payroll_from', 'payroll_to')->select('payroll_from', 'payroll_to')->where('status', '!=', null)->orderBy('payroll_to', 'desc')->get();
+        $stores = Payroll::groupBy('store')->select('store')->where('status', '!=', null)->get();
+        $payrollsInfo = [];
+        if ($request->store) {
+            $payroll = Payroll::with('informations')->where('store', $request->store)->where('payroll_from', $request->from)->first();
+            if ($payroll != null) {
+                $payrollsInfo = $payroll->informations;
+            }
+        }
+
+        return view(
+            'payslips',
+            array(
+                'stores' => $stores,
+                'cutoffs' => $cutoffs,
+                'payrollsInfo' => $payrollsInfo,
+                'payrolldate' => $request->from,
+                'storeData' => $request->store,
+            )
+        );
+    }
+    public function payslip(Request $request, $id)
+    {
+
+        $payroll = PayrollInfo::with('payroll')->where('id', $id)->first();
+        $customPaper = array(0, 0, 360, 400);
+        $pdf = PDF::loadView('payslip', array(
+            'payroll' => $payroll,
+        ))->setPaper($customPaper);
+        return $pdf->stream(date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf');
     }
 }

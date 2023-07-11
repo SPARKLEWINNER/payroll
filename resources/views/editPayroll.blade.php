@@ -67,6 +67,8 @@
                                         <ul class="dropdown-menu">
                                             <li><a title='Edit Payroll' href="#editPayroll{{$payrollInfo->id}}" data-toggle="modal" >Edit</a></li>
                                             <li><a title='Transfer Payroll' href="#transfer{{$payrollInfo->id}}" data-toggle="modal"  >Transfer</a></li>
+                                            <li><a title='Additional Income' href="#AdditionalIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Income</a></li>
+                                            <li><a title='Additional Deduction' href="#AdditionalDeduction{{$payrollInfo->id}}" data-toggle="modal"  >Additional Deduction</a></li>
                                             <li><a title='Edit Government Benefits' href="#editgov{{$payrollInfo->id}}" data-toggle="modal" >Edit Government</a></li>
                                             <li class="divider"></li>
                                             <li><a title='Delete' class='remove-payroll' id='{{$payrollInfo->id}}' data-toggle="modal" title='Delete'  >Remove Employee</a></li>

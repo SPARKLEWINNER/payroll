@@ -105,6 +105,7 @@
                         <ul class="nav nav-second-level collapse">
                             <li><a href="{{url('/generate')}}">Generate Payroll</a></li>
                             <li><a href="{{url('/payrolls')}}">Payrolls</a></li>
+                            <li><a href="{{url('/payslips')}}">Payslips</a></li>
                         </ul>
                     </li>
                 </ul>

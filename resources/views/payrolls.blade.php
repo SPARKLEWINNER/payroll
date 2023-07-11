@@ -90,11 +90,15 @@
                                             <i class="fa fa-trash"></i>
                                             </button>
                                         </a>
+                                        <a title='Save Payroll' class='save-payroll' id='{{$payroll->id}}' ><button type="button"  class="btn btn-warning btn-icon btn-sm">
+                                            <i class="fa fa-save"></i>
+                                            </button>
+                                        </a>
                                         @else
-                                        <a title='Payroll' href='{{url("payroll/".$payroll->id)}}' target="_blank"><button type="button"  class="btn btn-danger btn-icon">
+                                        <a title='Print Payroll' href='{{url("payroll/".$payroll->id)}}' target="_blank"><button type="button"  class="btn btn-danger btn-icon btn-sm">
                                         <i class="fa fa-file-pdf-o"></i>
                                         </button></a>
-                                        <a title='Billing' href='{{url("billing/".$payroll->id)}}' target="_blank"><button type="button"  class="btn btn-info btn-icon">
+                                        <a title='Print Billing' href='{{url("billing/".$payroll->id)}}' target="_blank"><button type="button"  class="btn btn-info btn-icon btn-sm">
                                         <i class="fa fa-file-pdf-o"></i>
                                         </button></a>
                                         @endif
@@ -153,6 +157,36 @@
                 {
                     
                 swal("Deleted!", "Your record been deleted.", "success");
+                location.reload();
+                });
+            });
+        });
+    $('.save-payroll').click(function () {
+        
+        var id = this.id;
+            swal({
+                title: "Are you sure to save this payroll?",
+                text: "After saving, you cannot edit this payroll anymore",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            }, function (){
+                $.ajax({
+                    dataType: 'json',
+                    type:'POST',
+                    url:  '{{url("save-payroll")}}',
+                    data:{id:id},
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                }).done(function(data){
+                    console.log(data);
+                    swal("Saved!", "Successfully Saved.", "success");
+                    location.reload();
+                }).fail(function(data)
+                {
+                    
+                swal("Saved!", "Successfully Saved.", "success");
                 location.reload();
                 });
             });
