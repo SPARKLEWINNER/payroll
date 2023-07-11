@@ -1,6 +1,8 @@
 @extends('layouts.header_admin')
 @section('css')
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet">
+
+<link href="{{ asset('admin/css/plugins/switchery/switchery.css')}}" rel="stylesheet">
 <meta name="_token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
@@ -75,6 +77,11 @@
                                             <input type="hidden" name="status" value="2" placeholder='status' class="form-control status" required>
                                             <input type="hidden" name="rateid" placeholder='status' class="form-control rateid" required>
                                             <input type="hidden" name="store" placeholder='status' class="form-control store" required>
+                                            
+                                            <label >Lates:</label>
+                                            <input type="checkbox" class="js-switch form-control late" name='late'  checked/>
+                                            <label >Undertime:</label>
+                                            <input type="checkbox" class="js-switch_2 form-control undertime" name='undertime' checked /> <br>
                                             <label>Daily Rate:</label>
                                             <input type="text" name="dailyRate" placeholder='Holiday Name'class="form-control dailyRate" required>
                                             <label >Holiday Rate:</label>
@@ -316,7 +323,14 @@
     <script src="{{ asset('admin/js/plugins/chosen/chosen.jquery.js')}}"></script>
     <script src="{{ asset('admin/js/inspinia.js')}}"></script>
     <script src="{{ asset('admin/js/plugins/pace/pace.min.js')}}"></script>
+    
+    <!-- Switchery -->
+   <script src="{{ asset('admin/js/plugins/switchery/switchery.js')}}"></script>
     <script>
+           var elem = document.querySelector('.js-switch');
+            var switchery = new Switchery(elem, { color: '#1AB394' });
+           var elem = document.querySelector('.js-switch_2');
+            var switchery = new Switchery(elem, { color: '#1AB394' });
           $(document).ready(function(){
             $('.chosen-select').chosen({width: "100%"});
           });
@@ -342,6 +356,7 @@
                 const d = await response.json()
 
                 if (d.status === "success") {
+                    console.log(d);
                     $('.modal-title').text(store + " RATES")
                     $('.dailyRate').val(d.data.daily)
                     $('.rateid').val(0)
@@ -362,7 +377,23 @@
                     $('.specialholidayrestdayot').val(d.data.specialholidayrestdayot)
                     $('.store').val(store)
                     $('.allowance').val(d.data.allowance)
+                    $('.late').prop('checked', false);
+                    $('.undertime').prop('checked', false);
+                    if(d.data.late == null)
+                    {
+                        $('.late').prop('checked', true);
+                    }
+                    if(d.data.undertime == null)
+                    {
+                        $('.undertime').prop('checked', true);
+                    }
+                    $('.switchery-default').remove();
+                    var elem = document.querySelector('.js-switch');
+                    var switchery = new Switchery(elem, { color: '#1AB394' });
+                    var elem = document.querySelector('.js-switch_2');
+                    var switchery = new Switchery(elem, { color: '#1AB394' });
                     $(`#edit_rates`).modal().show();
+
                     document.getElementById("loader").style.display = "none";
 
                 }

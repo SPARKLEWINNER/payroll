@@ -8,7 +8,7 @@ class Rates extends Model
 {
     protected $fillable = [
         'daily',
-        'uid', 
+        'uid',
         "nightshift",
         "restday",
         "restdayot",
@@ -26,6 +26,9 @@ class Rates extends Model
         'overtime',
         'status',
         'store',
-        'allowance'
+        'allowance',
+        'late',
+        'undertime',
+
     ];
 }

@@ -180,6 +180,18 @@ class PayrollController extends Controller
     }
     public function setStoreRates(Request $request)
     {
+        $late = $request->late;
+        $undertime = $request->undertime;
+        if ($request->late == "on") {
+            $late = null;
+        } else {
+            $late = 1;
+        }
+        if ($request->undertime == "on") {
+            $undertime = null;
+        } else {
+            $undertime = 1;
+        }
         $new_rates = Rates::updateOrCreate(
             ['store' => $request->store],
             [
@@ -202,7 +214,9 @@ class PayrollController extends Controller
                 'overtime' => $request->overtime,
                 'status' => $request->status,
                 'store' => $request->store,
-                'allowance' => $request->allowance
+                'allowance' => $request->allowance,
+                'late' => $late,
+                'undertime' => $undertime,
             ]
         );
         return redirect()->back()->with('message', 'Save successful!');

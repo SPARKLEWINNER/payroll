@@ -171,7 +171,11 @@
                                                             }
                                                             if($schedule != null)
                                                             {
-                                                                $late = get_late($schedule,$time_in->time);
+                                                                if($rates->late == null)
+                                                                {
+                                                                    $late = get_late($schedule,$time_in->time);
+                                                                }
+                                                                
                                                                 $hours_tardy = $hours_tardy+$late;
                                                                 $night_difference = night_difference(strtotime($time_in->time),strtotime($time_out->time));
                                                                 $night_diff = $night_diff+$night_difference;
