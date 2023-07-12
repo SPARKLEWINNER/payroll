@@ -4,14 +4,15 @@
         <div class="modal-header">
           <h5 class="modal-title" >Edit Government</h5>
         </div>
+        
+        <div class="modal-body">
         <form  method='POST' action='{{url("edit-government/".$payrollInfo->id)}}' onsubmit='show()' >
           @csrf
-          <div class="modal-body">
             <div class="row">
-              <div class='col-md-12 form-group'>
-                 Employee Name  : {{$payrollInfo->employee_name}}
+                <div class='col-md-12 form-group'>
+                  Employee Name  : {{$payrollInfo->employee_name}}
+              </div>
             </div>
-          </div>
          
           <div class="row">
             <div class='col-md-12 form-group'>
@@ -37,6 +38,8 @@
             <button type="submit" class="btn btn-primary">Save</button>
           </div>
         </form> 
+        
+      </div>
       </div>
     </div>
   </div>

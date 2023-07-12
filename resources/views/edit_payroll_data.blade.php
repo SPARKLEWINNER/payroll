@@ -69,14 +69,15 @@
           <div class="row">
             <div class='col-md-12 form-group'>
                Other Income Non-Taxable
-              <input type="number" name='other_income_non_taxable' class="form-control form-control-sm" value='{{$payrollInfo->other_income_non_taxable}}' required>
+              <input type="number" name='other_income_non_taxable' class="form-control form-control-sm" value='{{$payrollInfo->other_income_non_taxable}}' readonly required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Other Deduction
-              <input type="number" name='other_deduction' class="form-control form-control-sm" value='{{$payrollInfo->other_deductions}}' required>
+              <input type="number" name='other_deduction' class="form-control form-control-sm" value='{{$payrollInfo->other_deductions}}'  required>
             </div>
+          </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

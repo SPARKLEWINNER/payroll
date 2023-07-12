@@ -59,7 +59,6 @@
     <div id="loader" style="display:none;" class="loader">
 	</div>
     <div id="wrapper">
-
         <nav class="navbar-default navbar-static-side" role="navigation">
             <div class="sidebar-collapse">
                 <ul class="nav metismenu" id="side-menu">
@@ -113,13 +112,13 @@
             </div>
         </nav>
     
-            <div id="page-wrapper" class="gray-bg">
+        <div id="page-wrapper" class="gray-bg">
             <div class="row border-bottom">
             <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-header">
-                <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-                
-            </div>
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    
+                </div>
                 <ul class="nav navbar-top-links navbar-right">
                     <li>
                         <span class="m-r-sm text-muted welcome-message">Welcome to Sparkle Payroll.</span>
@@ -196,6 +195,9 @@
 		}    
     function show() {
 			document.getElementById("loader").style.display = "block";
+		}
+    function unshow() {
+			document.getElementById("loader").style.display = "None";
 		}
         function get_min(value)
       {

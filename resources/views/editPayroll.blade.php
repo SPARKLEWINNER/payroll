@@ -56,11 +56,9 @@
                                 $height = 28;
                             @endphp
                             @foreach($payroll->informations as $payrollInfo)
-                            <tr>
-                                
-                            @include('transfer_employee')
                             
-                            @include('edit_government')
+                          
+                            <tr>
                                 <td>
                                     <div class="btn-group">
                                         <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><i class="fa fa-ellipsis-v"></i> </button>
@@ -68,7 +66,7 @@
                                             <li><a title='Edit Payroll' href="#editPayroll{{$payrollInfo->id}}" data-toggle="modal" >Edit</a></li>
                                             <li><a title='Transfer Payroll' href="#transfer{{$payrollInfo->id}}" data-toggle="modal"  >Transfer</a></li>
                                             <li><a title='Additional Income' href="#AdditionalIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Income</a></li>
-                                            <li><a title='Additional Deduction' href="#AdditionalDeduction{{$payrollInfo->id}}" data-toggle="modal"  >Additional Deduction</a></li>
+                                            {{-- <li><a title='Additional Deduction' href="#AdditionalDeduction{{$payrollInfo->id}}" data-toggle="modal"  >Additional Deduction</a></li> --}}
                                             <li><a title='Edit Government Benefits' href="#editgov{{$payrollInfo->id}}" data-toggle="modal" >Edit Government</a></li>
                                             <li class="divider"></li>
                                             <li><a title='Delete' class='remove-payroll' id='{{$payrollInfo->id}}' data-toggle="modal" title='Delete'  >Remove Employee</a></li>
@@ -101,9 +99,9 @@
                                 <td>{{number_format($payrollInfo->total_deductions,2)}}</td>
                                 <td>{{number_format($payrollInfo->net_pay,2)}}</td>
                             </tr>
-                            @include('edit_payroll_data')
                             
                             @endforeach
+                         
                         </tbody>
                         <tfoot>
                             <tr>
@@ -139,7 +137,12 @@
         </div>
     </div>
 </div>
-
+@foreach($payroll->informations as $payrollInfo)
+@include('additional_income')
+@include('edit_payroll_data')
+@include('edit_government')
+@include('transfer_employee')
+@endforeach
 @endsection
 @section('js')
 <script src="{{ asset('admin/js/plugins/chosen/chosen.jquery.js')}}"></script>
@@ -181,6 +184,36 @@
                 });
             });
         });
+        function add_income(id)
+        {
+            show();
+            var lastItemID = $('#allowance-'+id).children().last().attr('id');
+            if(lastItemID){
+                var last_id = lastItemID.split("-");
+                finalLastId = parseInt(last_id[2]) + 1;
+            }else{
+                finalLastId = 0;
+            }
+            var item = "<div class='row ' id='allowance-"+id+"-"+finalLastId+"'>";
+            item += "<div class='col-md-5 border form-group'><input name='allowance_name[]' type='text' min='0' placeholder='Meal Allowance' class='form-control form-control-sm' required>";
+            item += "</div>";
+            item += "<div class='col-md-5 border form-group'><input name='allowance_amount[]' type='number' min='0' placeholder='1.00' class='form-control form-control-sm' required>";
+            item += "</div>";
+            item += "<div class='col-md-2 border form-group'><button class='btn btn-danger btn-circle' onclick='remove_allowance("+id+","+finalLastId+")' type='button'><i class='fa fa-minus'></i></button>";
+            item += "</div>";
+            item += "</div>";
+          
+            $("#allowance-"+id).append(item);
+            unshow();
+            
+        }
+        function remove_allowance(id,finalId)
+        {
+            show();
+            $("#allowance-"+id+"-"+finalId).remove();
+            unshow();
+        }
+
 </script>
 @endsection
 

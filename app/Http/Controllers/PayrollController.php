@@ -10,6 +10,7 @@ use App\SssTable;
 use App\Store;
 use App\Group;
 use App\PayrollLog;
+use App\PayrollAllowance;
 use App\Rates;
 use PDF;
 use Illuminate\Http\Request;
@@ -275,7 +276,7 @@ class PayrollController extends Controller
     }
     public function editPayroll(Request $request, $id)
     {
-        $payroll = Payroll::where('id', $id)->with('informations', 'user')->first();
+        $payroll = Payroll::where('id', $id)->with('informations.payroll_allowances', 'user')->first();
         $payrolls = Payroll::where('payroll_from', $payroll->payroll_from)->where('id', '!=', $id)->get();
         return view(
             'editPayroll',
@@ -475,5 +476,34 @@ class PayrollController extends Controller
             'payroll' => $payroll,
         ))->setPaper($customPaper);
         return $pdf->stream(date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf');
+    }
+    public function additionaIncome(Request $request, $id)
+    {
+
+        $payroll_allowances = PayrollAllowance::where('payroll_info_id', $id)->delete();
+        $payroll_info = PayrollInfo::findOrfail($id);
+        $other_income = 0;
+        foreach ($request->allowance_name as $key => $name) {
+            $allowance = new PayrollAllowance;
+            $allowance->name = $name;
+            $allowance->amount = $request->allowance_amount[$key];
+            $allowance->payroll_info_id = $id;
+            $allowance->save();
+            $other_income = $other_income + $request->allowance_amount[$key];
+            $log = new PayrollLog;
+            $log->table = "payroll_allowances";
+            $log->action = "Create";
+            $log->table_id = $allowance->id;
+            $log->data_from = "";
+            $log->data_to = $allowance;
+            $log->edit_by = auth()->user()->id;
+            $log->save();
+        }
+        $other_income_non_taxable = $payroll_info->other_income_non_taxable;
+        $payroll_info->other_income_non_taxable = $other_income;
+        $payroll_info->net_pay = $payroll_info->net_pay - $other_income_non_taxable + $other_income;
+        $payroll_info->save();
+        Alert::success('Successfully Add Allowance')->persistent('Dismiss');
+        return back();
     }
 }
