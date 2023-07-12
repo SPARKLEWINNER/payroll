@@ -10,7 +10,7 @@ ini_set("memory_limit", "-1");
     <link rel="icon" type="image/png" href="{{ asset('/images/icon.png')}}"/>
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">   
     <title>{{ config('app.name', 'Laravel') }}</title>
     <style>
         .page_break { page-break-before: always; }
@@ -26,7 +26,7 @@ ini_set("memory_limit", "-1");
             font-size : 8px;
         }
         body{
-            font-family: Calibri;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 8px;
         }
         .page-break {
@@ -34,12 +34,12 @@ ini_set("memory_limit", "-1");
         }
         header {
             position: fixed;
-            top: -35px;
+            top: -10px;
             left: 0px;
             right: 0px;
             color: black;
             text-align: left;
-            background-color:gray;
+            background-color:#BEBEBE;
         }
         .text-right
         {
@@ -62,21 +62,205 @@ ini_set("memory_limit", "-1");
             height: 20px;
         }
         .page-number:after { content: counter(page); }
+        table{
+            table-layout: fixed;
+            width: 390px;
+        }
     </style>
     
 </head>
 <body> 
     
     <header>
-        <div class='text-center'  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;'>
-            <br>
-            <b>{{strtoupper($payroll->payroll->store)}}</b>
-                <br>
-                PAYSLIP
+        <div class="row bg-grey mb-3"  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;'>
+           <div class='col-md-12 text-center'>    
+                <b style='font-size:14px;'>{{strtoupper($payroll->payroll->store)}}</b> <br>
+                <span style='font-size:12px;'>P A Y S L I P</span>
+           </div>
         </div>
+       
     </header>
+    <div class="row pl-2" >
+        <div class='col-md-6 text-left'>    
+          {{strtoupper($payroll->employee_name)}}
+        </div>
+        <div class='col-md-3 text-left'>    
+             DATE COVERED : {{date('M d, Y',strtotime($payroll->payroll->payroll_from))}} - {{date('M d, Y',strtotime($payroll->payroll->payroll_to))}}
+        </div>
+     </div>
+    <table style='font-size:9px;' width='100%' border='1' >
+        <thead>
+            <tr >
+                <th style='50%' style='width:50%' colspan='2' class='text-center'>
+                    EARNINGS
+                </th>
+                <th style='50%'  style='width:50%' colspan='2' class='text-center'>
+                    DEDUCTIONS
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td  class='text-left'>
+                    REGULAR HOURS
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->hours_work,2)}}
+                </td>
+                <td   class='text-left'>
+                    SSS
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->sss_contribution,2)}}
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                    TOTAL DAYS
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->days_work,2)}}
+                </td>
+                <td   class='text-left'>
+                    PHILHEALTH
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->nhip_contribution,2)}}
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                    REGULAR PAY
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->basic_pay,2)}}
+                </td>
+                <td   class='text-left'>
+                    PAGIBIG
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->hdmf_contribution,2)}}
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                    OVERTIME PAY
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->amount_overtime,2)}}
+                </td>
+                <td   class='text-left'>
+                    OTHER DEDUCTIONS
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->other_deductions,2)}}
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                    LEGAL HOLIDAY
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->amount_legal_holiday,2)}}
+                </td>
+                <td   class='text-left'>
+                    
+                </td>
+                <td  class='text-right'>
+                    
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                    SPECIAL HOLIDAY
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->amount_special_holiday,2)}}
+                </td>
+                <td   class='text-left'>
+                    
+                </td>
+                <td  class='text-right'>
+                    
+                </td>
+            </tr>
+            @foreach($payroll->payroll_allowances as $allow)
+            <tr>
+                <td  class='text-left'>
+                   {{strtoupper($allow->name)}}
+                </td>
+                <td  class='text-right'>
+                  {{number_format($allow->amount,2)}}
+                </td>
+                <td   class='text-left'>
+                    
+                </td>
+                <td  class='text-right'>
+                    
+                </td>
+            </tr>
+            @endforeach
+            <tr>
+                <td  class='text-left' colspan='4'>
+                  
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                   GROSS PAY
+                </td>
+                <td  class='text-right'>
+                  {{number_format($payroll->gross_pay,2)}}
+                </td>
+                <td   class='text-left'>
+                    TOTAL DEDUCTIONS
+                </td>
+                <td  class='text-right'>
+                   {{number_format($payroll->total_deductions,2)}}
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-center' colspan='2'>
+                 <b>SUMMARY </b> 
+                </td>
+                <td   class='text-center'  colspan='2'>
+                    <b> ACKNOWLEDGEMENT</b> 
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                 GROSS PAY
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->gross_pay,2)}}
+                </td>
+                <td   class='text-center' rowspan='3'  colspan='2'>
+                  <span style='font-size : 8px;'> I HAVE READ AND UNDERSTOOD THE ABOVE COMPUTATIONS OF MY SALARY.</span>
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                 Total Deductions
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->total_deductions,2)}}
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
+                <b>NET PAY</b>
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->net_pay,2)}}
+                </td>
+            </tr>
+          
+        </tbody>
+    </table>
     
     
-
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>

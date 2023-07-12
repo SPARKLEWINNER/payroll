@@ -470,7 +470,7 @@ class PayrollController extends Controller
     public function payslip(Request $request, $id)
     {
 
-        $payroll = PayrollInfo::with('payroll')->where('id', $id)->first();
+        $payroll = PayrollInfo::with('payroll', 'payroll_allowances')->where('id', $id)->first();
         $customPaper = array(0, 0, 360, 400);
         $pdf = PDF::loadView('payslip', array(
             'payroll' => $payroll,
