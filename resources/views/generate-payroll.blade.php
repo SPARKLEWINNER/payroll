@@ -227,40 +227,40 @@
                                                         
                                                 @endphp
                                                 <tr >
-                                                    <td>{{$c++}}<input type='hidden' name='emp_id[]' value='{{$employee->emp_id}}'><input type='hidden' name='emp_name[]' value='{{$employee->emp_name}}'></td>
+                                                    <td>{{$c++}}<input type='hidden' name='emp_id[{{$key}}]' value='{{$employee->emp_id}}'><input type='hidden' name='emp_name[{{$key}}]' value='{{$employee->emp_name}}'></td>
                                                     <td>{{$employee->emp_name}}</td>
                                                     @if(!empty($rates) && $rates->daily > 0)
-                                                    <td class='text-right'>{{number_format($rate_employee,2)}}<input type='hidden' name='rate[]' value='{{$rate_employee}}'></td>
+                                                    <td class='text-right'>{{number_format($rate_employee,2)}}<input type='hidden' name='rate[{{$key}}]' value='{{$rate_employee}}'></td>
                                                     
-                                                    <td class='text-right'>{{number_format($rate_employee/8,2)}} <input type='hidden' name='daily_rate[]' value='{{$rate_employee/8}}'></td>
+                                                    <td class='text-right'>{{number_format($rate_employee/8,2)}} <input type='hidden' name='daily_rate[{{$key}}]' value='{{$rate_employee/8}}'></td>
                                                     @endif
-                                                    <td class='text-right'>{{number_format($day_works,2)}} <input type='hidden' name='day_works[]' value='{{$day_works}}'></td>
-                                                    <td class='text-right'>{{number_format($working_hours,2)}} <input type='hidden' name='working_hours[]' value='{{$working_hours}}'></td>
-                                                    <td class='text-right'>{{number_format($basic_pay,2)}} <input type='hidden' name='basic_pay[]' value='{{$basic_pay}}'></td>
-                                                    <td class='text-right'>{{number_format($hours_tardy,2)}} <input type='hidden' name='hours_tardy[]' value='{{$hours_tardy}}'></td>
-                                                    <td class='text-right'>{{number_format($tardy_amount,2)}} <input type='hidden' name='tardy_amount[]' value='{{$tardy_amount}}'></td>
-                                                    <td class='text-right'>{{number_format($overtime,2)}} <input type='hidden' name='overtime[]' value='{{$overtime}}'></td>
-                                                    <td class='text-right'>{{number_format($overtime_amount,2)}} <input type='hidden' name='overtime_amount[]' value='{{$overtime_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($day_works,2)}} <input type='hidden' name='day_works[{{$key}}]' value='{{$day_works}}'></td>
+                                                    <td class='text-right'>{{number_format($working_hours,2)}} <input type='hidden' name='working_hours[{{$key}}]' value='{{$working_hours}}'></td>
+                                                    <td class='text-right'>{{number_format($basic_pay,2)}} <input type='hidden' name='basic_pay[{{$key}}]' value='{{$basic_pay}}'></td>
+                                                    <td class='text-right'>{{number_format($hours_tardy,2)}} <input type='hidden' name='hours_tardy[{{$key}}]' value='{{$hours_tardy}}'></td>
+                                                    <td class='text-right'>{{number_format($tardy_amount,2)}} <input type='hidden' name='tardy_amount[{{$key}}]' value='{{$tardy_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($overtime,2)}} <input type='hidden' name='overtime[{{$key}}]' value='{{$overtime}}'></td>
+                                                    <td class='text-right'>{{number_format($overtime_amount,2)}} <input type='hidden' name='overtime_amount[{{$key}}]' value='{{$overtime_amount}}'></td>
                                                     @if($rates->specialholiday != "undefined" && $rates->specialholiday > 0)
-                                                    <td class='text-right'>{{number_format($special_holiday,2)}} <input type='hidden' name='special_holiday[]' value='{{$special_holiday}}'></td>
-                                                    <td class='text-right'>{{number_format($special_holiday_amount,2)}}  <input type='hidden' name='special_holiday_amount[]' value='{{$special_holiday_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($special_holiday,2)}} <input type='hidden' name='special_holiday[{{$key}}]' value='{{$special_holiday}}'></td>
+                                                    <td class='text-right'>{{number_format($special_holiday_amount,2)}}  <input type='hidden' name='special_holiday_amount[{{$key}}]' value='{{$special_holiday_amount}}'></td>
                                                     @endif
                                                     @if($rates->holiday != "undefined" && $rates->holiday > 0)
-                                                    <td class='text-right'>{{number_format($legal_holiday,2)}} <input type='hidden' name='legal_holiday[]' value='{{$legal_holiday}}'></td>
-                                                    <td class='text-right'>{{number_format($legal_holiday_amount,2)}} <input type='hidden' name='legal_holiday_amount[]' value='{{$legal_holiday_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($legal_holiday,2)}} <input type='hidden' name='legal_holiday[{{$key}}]' value='{{$legal_holiday}}'></td>
+                                                    <td class='text-right'>{{number_format($legal_holiday_amount,2)}} <input type='hidden' name='legal_holiday_amount[{{$key}}]' value='{{$legal_holiday_amount}}'></td>
                                                     @endif
                                                     @if($rates->nightshift != "undefined" && $rates->nightshift > 0)
-                                                    <td class='text-right'>{{number_format($night_diff,2)}} <input type='hidden' name='night_diff[]' value='{{$night_diff}}'></td>
-                                                    <td class='text-right'>{{number_format($nightdiff_amount,2)}} <input type='hidden' name='nightdiff_amount[]' value='{{$nightdiff_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($night_diff,2)}} <input type='hidden' name='night_diff[{{$key}}]' value='{{$night_diff}}'></td>
+                                                    <td class='text-right'>{{number_format($nightdiff_amount,2)}} <input type='hidden' name='nightdiff_amount[{{$key}}]' value='{{$nightdiff_amount}}'></td>
                                                     @endif
-                                                    <td class='text-right'>{{number_format($gross_pay,2)}} <input type='hidden' name='gross_pay[]' value='{{$gross_pay}}'></td>
-                                                    <td class='text-right'>{{number_format($other_income_non_tax,2)}} <input type='hidden' name='other_income_non_tax[]' value='{{$other_income_non_tax}}'></td>
-                                                    <td class='text-right'>{{number_format($sss,2)}} <input type='hidden' name='sss[]' value='{{$sss}}'> <input type='hidden' name='sss_er[]' value='{{$sss_er}}'></td>
-                                                    <td class='text-right'>{{number_format($philhealth,2)}} <input type='hidden' name='philhealth[]' value='{{$philhealth}}'></td>
-                                                    <td class='text-right'>{{number_format($pagibig,2)}} <input type='hidden' name='pagibig[]' value='{{$pagibig}}'></td>
-                                                    <td class='text-right'>0.00<input type='hidden' name='other_deduction[]' value='0.00'></td>
-                                                    <td class='text-right'>{{number_format($total_deduction,2)}} <input type='hidden' name='total_deduction[]' value='{{$total_deduction}}'></td>
-                                                    <td class='text-right'>{{number_format($net,2)}} <input type='hidden' name='net[]' value='{{$net}}'></td>
+                                                    <td class='text-right'>{{number_format($gross_pay,2)}} <input type='hidden' name='gross_pay[{{$key}}]' value='{{$gross_pay}}'></td>
+                                                    <td class='text-right'>{{number_format($other_income_non_tax,2)}} <input type='hidden' name='other_income_non_tax[{{$key}}]' value='{{$other_income_non_tax}}'></td>
+                                                    <td class='text-right'>{{number_format($sss,2)}} <input type='hidden' name='sss[]' value='{{$sss}}'> <input type='hidden' name='sss_er[{{$key}}]' value='{{$sss_er}}'></td>
+                                                    <td class='text-right'>{{number_format($philhealth,2)}} <input type='hidden' name='philhealth[{{$key}}]' value='{{$philhealth}}'></td>
+                                                    <td class='text-right'>{{number_format($pagibig,2)}} <input type='hidden' name='pagibig[{{$key}}]' value='{{$pagibig}}'></td>
+                                                    <td class='text-right'>0.00<input type='hidden' name='other_deduction[{{$key}}]' value='0.00'></td>
+                                                    <td class='text-right'>{{number_format($total_deduction,2)}} <input type='hidden' name='total_deduction[{{$key}}]' value='{{$total_deduction}}'></td>
+                                                    <td class='text-right'>{{number_format($net,2)}} <input type='hidden' name='net[{{$key}}]' value='{{$net}}'></td>
                                                     <td></td>
                                                 </tr>
                                             @endforeach

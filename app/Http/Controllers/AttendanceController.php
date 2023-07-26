@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Attendance;
 use Illuminate\Http\Request;
 
@@ -13,51 +14,46 @@ class AttendanceController extends Controller
         $attendance->emp_id = $request->emp_id;
         $attendance->emp_name = $request->emp_name;
         $attendance->status = $request->status;
-        $attendance->time = date('Y-m-d H:i:s',strtotime($request->time));
+        $attendance->time = date('Y-m-d H:i:s', strtotime($request->time));
         $attendance->store = $request->store;
         $attendance->remarks = url('');
-        $attendance->date = date('Y-m-d',strtotime($request->date));
+        $attendance->date = date('Y-m-d', strtotime($request->date));
         $attendance->record_id = $request->record_id;
         $attendance->save();
 
-        return ['status' => 'success',
-                'data' => $attendance];
-
+        return [
+            'status' => 'success',
+            'data' => $attendance
+        ];
     }
 
     public function get(Request $request)
     {
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'https://time-in-production-api.onrender.com/api/user/recordsv2/'.$request->store_id.'/'.$request->from.'/'.$request->to);
+        $response = $client->request('GET', 'https://time-in-production-api.onrender.com/api/user/recordsv2/' . $request->store_id . '/' . $request->from . '/' . $request->to);
         $employees = json_decode((string) $response->getBody(), true);
 
-        foreach($employees as $emp)
-        {
+        foreach ($employees as $emp) {
             // dd($emp);
-            if(count($emp['reports']) > 0)
-            {
-                foreach($emp['reports']['0']['record'] as $record)
-                {
+            if (count($emp['reports']) > 0) {
+                foreach ($emp['reports']['0']['record'] as $record) {
                     $attendance = new Attendance;
                     $attendance->emp_id = $emp['Employee']['_id'];
                     $attendance->emp_name = $emp['Employee']['displayName'];
                     $attendance->status = $record['status'];
-                    $attendance->time = date('Y-m-d H:i:s',strtotime(str_replace("Z"," ",$record['dateTime'])));
+                    $attendance->time = date('Y-m-d H:i:s', strtotime(str_replace("Z", " ", $record['dateTime'])));
                     $attendance->store = "Star Concorde Group";
                     $attendance->remarks = url('');
                     $attendance->date = $emp['date'];
                     $attendance->save();
                 }
             }
-           
         }
 
         return 'success';
     }
-    public function sample ()
+    public function sample()
     {
         return view('sample');
     }
 }
-
-

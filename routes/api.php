@@ -14,10 +14,10 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
+    Route::post('attendance', 'AttendanceController@create')->name('create-attendance');
     return $request->user();
 });
 
-Route::post('attendance','AttendanceController@create')->name('create-attendance');
-Route::post('schedule','ScheduleController@create')->name('create-schedule');
-Route::post('rates','PayrollController@getRatesStore')->name('rates');
-
+Route::post('attendance', 'AttendanceController@create')->name('create-attendance');
+Route::post('schedule', 'ScheduleController@create')->name('create-schedule');
+Route::post('rates', 'PayrollController@getRatesStore')->name('rates');

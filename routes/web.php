@@ -39,11 +39,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('delete-holiday/{id}', 'HolidayController@delete_holiday');
     Route::post('edit-holiday/{id}', 'HolidayController@edit_holiday');
 
-
-    //Stores
-    Route::get('stores', 'StoreController@index')->name('store');
-    Route::get('store-remove', 'StoreController@remove')->name('store-remove');
-
+    Route::group(['middleware' => 'store-account'], function () {
+        //Stores
+        Route::get('stores', 'StoreController@index')->name('store');
+        Route::get('store-remove', 'StoreController@remove')->name('store-remove');
+    });
     //generate payroll
     Route::get('generate', 'PayrollController@index')->name('generate-payroll');
     Route::post('generate', 'PayrollController@save')->name('save-payroll');
