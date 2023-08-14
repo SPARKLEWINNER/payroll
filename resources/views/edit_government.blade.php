@@ -23,13 +23,13 @@
           <div class="row">
             <div class='col-md-12 form-group'>
                Philhealth Contribution
-              <input type="number" name='nhip_contribution' class="form-control form-control-sm" step="0.25" value='{{$payrollInfo->nhip_contribution}}' min='0.00' required>
+              <input type="number" name='nhip_contribution' class="form-control form-control-sm" step="0.01" value='{{$payrollInfo->nhip_contribution}}' min='0.00' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Pagibig Contribution
-              <input type="number" name='hdmf_contribution' class="form-control form-control-sm" step="0.25" value='{{$payrollInfo->hdmf_contribution}}' min='0.00' required>
+              <input type="number" name='hdmf_contribution' class="form-control form-control-sm" step="0.01" value='{{$payrollInfo->hdmf_contribution}}' min='0.00' required>
             </div>
           </div>
          
