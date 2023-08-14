@@ -161,6 +161,11 @@
                                                         {
                                                             $day_works = $day_works+1;
                                                             $working = get_working_hours($time_out->time,$time_in->time);
+                                                            if($rates->late != null)
+                                                            {
+                                                                $working = 8;
+                                                            }
+
                                                             if($working > 8)
                                                             {
                                                                 $working_hours = $working_hours + 8;
