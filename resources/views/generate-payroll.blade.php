@@ -224,6 +224,7 @@
                                                             }
                                                             
                                                             $philhealth = ((($rate_employee*313*.04)/12)/2);
+                                                            $philhealth = 200;
                                                             $pagibig = 100.00;
                                                             
                                                         }
