@@ -72,7 +72,7 @@ ini_set("memory_limit", "-1");
 <body> 
     
     <header>
-        <div class="row"  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;background-color:#4db8ff;'>
+        <div class="row"  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;background-color:#95B3D7;'>
            <div class='col-md-12 text-center'>    
                 <b style='font-size:14px;'>7-STAR MANPOWER<br> SERVICES OF THE PHILIPPINES</b> <br>
                 {{-- <span style='font-size:12px;'>P A Y S L I P</span> --}}
