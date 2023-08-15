@@ -501,7 +501,7 @@ class PayrollController extends Controller
         }
         $other_income_non_taxable = $payroll_info->other_income_non_taxable;
         $payroll_info->other_income_non_taxable = $other_income;
-        $payroll_info->net_pay = $payroll_info->net_pay - $other_income_non_taxable + $other_income;
+        $payroll_info->net_pay = $payroll_info->net_pay + $other_income;
         $payroll_info->save();
         Alert::success('Successfully Add Allowance')->persistent('Dismiss');
         return back();
