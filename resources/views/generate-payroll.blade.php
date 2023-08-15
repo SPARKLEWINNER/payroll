@@ -222,6 +222,7 @@
                                                                 $sss = $sssData->ee;
                                                                 $sss_er = $sssData->er;
                                                             }
+                                                            
                                                             $philhealth = ((($rate_employee*313*.04)/12)/2);
                                                             $pagibig = 100.00;
                                                             

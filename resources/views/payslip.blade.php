@@ -34,7 +34,7 @@ ini_set("memory_limit", "-1");
         }
         header {
             position: fixed;
-            top: -10px;
+            top: -5px;
             left: 0px;
             right: 0px;
             color: black;
@@ -72,17 +72,21 @@ ini_set("memory_limit", "-1");
 <body> 
     
     <header>
-        <div class="row bg-grey"  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;'>
+        <div class="row"  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;background-color:#4db8ff;'>
            <div class='col-md-12 text-center'>    
-                <b style='font-size:14px;'>{{strtoupper($payroll->payroll->store)}}</b> <br>
+                <b style='font-size:14px;'>7-STAR MANPOWER<br> SERVICES OF THE PHILIPPINES</b> <br>
                 {{-- <span style='font-size:12px;'>P A Y S L I P</span> --}}
            </div>
         </div>
        
     </header>
-    <div class="row pl-2" >
+    <div class="row" >
         <div class='col-md-6 text-left'>    
-          {{strtoupper($payroll->employee_name)}}
+         EMPLOYEE : {{strtoupper($payroll->employee_name)}}
+        </div>
+        <div class='col-md-6 text-left'>   
+             
+        ASSIGNED AT :    {{strtoupper($payroll->payroll->store)}}
         </div>
         <div class='col-md-3 text-left'>    
              DATE COVERED : {{date('M d, Y',strtotime($payroll->payroll->payroll_from))}} - {{date('M d, Y',strtotime($payroll->payroll->payroll_to))}}
