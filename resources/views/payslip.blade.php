@@ -72,10 +72,10 @@ ini_set("memory_limit", "-1");
 <body> 
     
     <header>
-        <div class="row bg-grey mb-3"  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;'>
+        <div class="row bg-grey"  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;'>
            <div class='col-md-12 text-center'>    
                 <b style='font-size:14px;'>{{strtoupper($payroll->payroll->store)}}</b> <br>
-                <span style='font-size:12px;'>P A Y S L I P</span>
+                {{-- <span style='font-size:12px;'>P A Y S L I P</span> --}}
            </div>
         </div>
        

@@ -81,11 +81,12 @@
                         
                                 <tr>
                                     <td > 
-                                        @if($payroll->status == "")
                                         <a title='Edit Payroll' href='{{url("edit-payroll/".$payroll->id)}}' ><button type="button"  class="btn btn-success btn-icon btn-sm">
                                             <i class="fa fa-edit"></i>
                                             </button>
                                         </a>
+                                        @if($payroll->status == "")
+                                        
                                         <a title='Delete Payroll' class='delete-payroll' id='{{$payroll->id}}' ><button type="button"  class="btn btn-danger btn-icon btn-sm">
                                             <i class="fa fa-trash"></i>
                                             </button>

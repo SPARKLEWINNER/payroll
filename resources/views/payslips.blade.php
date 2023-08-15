@@ -63,7 +63,7 @@
                         <table class="table table-striped table-bordered table-hover dataTables-example">
                             <thead>
                                 <tr>
-                                    <th>Payslip</th>
+                                    <th>Payslip </th>
                                     <th>Employee</th>
                                     <th>Gross Pay</th>
                                     <th>Net Pay</th>

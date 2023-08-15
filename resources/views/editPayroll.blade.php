@@ -60,6 +60,7 @@
                           
                             <tr>
                                 <td>
+                                    @if($payroll->status == null)
                                     <div class="btn-group">
                                         <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><i class="fa fa-ellipsis-v"></i> </button>
                                         <ul class="dropdown-menu">
@@ -72,6 +73,7 @@
                                             <li><a title='Delete' class='remove-payroll' id='{{$payrollInfo->id}}' data-toggle="modal" title='Delete'  >Remove Employee</a></li>
                                         </ul>
                                     </div>
+                                    @endif
                                 </td>
                                 <td>{{$c++}}</td>
                                 <td>{{strtoupper($payrollInfo->employee_name)}}</td>
