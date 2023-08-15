@@ -61,6 +61,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('payslips', 'PayrollController@payslips');
     Route::get('payslip/{id}', 'PayrollController@payslip');
     Route::post('additional-income/{id}', 'PayrollController@additionaIncome');
+    Route::post('deduction-income/{id}', 'PayrollController@deductionIncome');
 
     //Salaries
     Route::get('salaries', 'SalaryController@index')->name('salary');

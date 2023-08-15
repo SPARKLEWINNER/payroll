@@ -11,6 +11,7 @@ use App\Store;
 use App\Group;
 use App\PayrollLog;
 use App\PayrollAllowance;
+use App\PayrollDeduction;
 use App\Rates;
 use PDF;
 use Illuminate\Http\Request;
@@ -478,12 +479,46 @@ class PayrollController extends Controller
         ))->setPaper($customPaper);
         return $pdf->stream(date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf');
     }
+    public function deductionIncome(Request $request, $id)
+    {
+
+        $payroll_deductions = PayrollDeduction::where('payroll_info_id', $id)->delete();
+        $payroll_info = PayrollInfo::findOrfail($id);
+        $other_deduc = 0;
+        if($request->deduction_name != null)
+        {
+        foreach ($request->deduction_name as $key => $name) {
+            $allowance = new PayrollDeduction;
+            $allowance->name = $name;
+            $allowance->amount = $request->deduction_amount[$key];
+            $allowance->payroll_info_id = $id;
+            $allowance->save();
+            $other_deduc = $other_deduc + $request->deduction_amount[$key];
+            $log = new PayrollLog;
+            $log->table = "payroll_deductions";
+            $log->action = "Create";
+            $log->table_id = $allowance->id;
+            $log->data_from = "";
+            $log->data_to = $allowance;
+            $log->edit_by = auth()->user()->id;
+            $log->save();
+        }
+    }
+        $other_deductions = $payroll_info->other_deductions;
+        $payroll_info->other_deductions = $other_deduc;
+        $payroll_info->net_pay = $payroll_info->net_pay - $other_deduc + $other_deductions;
+        $payroll_info->save();
+        Alert::success('Successfully Add Deduction')->persistent('Dismiss');
+        return back();
+    }
     public function additionaIncome(Request $request, $id)
     {
 
         $payroll_allowances = PayrollAllowance::where('payroll_info_id', $id)->delete();
         $payroll_info = PayrollInfo::findOrfail($id);
         $other_income = 0;
+        if($request->allowance_name != null)
+        {
         foreach ($request->allowance_name as $key => $name) {
             $allowance = new PayrollAllowance;
             $allowance->name = $name;
@@ -500,9 +535,10 @@ class PayrollController extends Controller
             $log->edit_by = auth()->user()->id;
             $log->save();
         }
+        }
         $other_income_non_taxable = $payroll_info->other_income_non_taxable;
         $payroll_info->other_income_non_taxable = $other_income;
-        $payroll_info->net_pay = $payroll_info->net_pay + $other_income;
+        $payroll_info->net_pay = $payroll_info->net_pay + $other_income - $other_income_non_taxable;
         $payroll_info->save();
         Alert::success('Successfully Add Allowance')->persistent('Dismiss');
         return back();
