@@ -316,6 +316,7 @@ class PayrollController extends Controller
                 $sss_er = $sssData->er;
             }
             $philhealth = ((($daily_rate * 313 * .04) / 12) / 2);
+            $philhealth = 200;
             $pagibig = 100.00;
         }
         $total_deduction = $sss + $philhealth + $pagibig + $other_deduction;
