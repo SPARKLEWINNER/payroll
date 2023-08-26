@@ -225,6 +225,7 @@
                    responsive: true,
                    ordering: false,
                    dom: '<"html5buttons"B>lTfgitp',
+                   
                    buttons: [
                        {extend: 'csv'},
                        {extend: 'excel', title: 'ExampleFile'},

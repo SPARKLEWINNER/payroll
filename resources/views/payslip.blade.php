@@ -74,7 +74,31 @@ ini_set("memory_limit", "-1");
     <header>
         <div class="row"  style='vertical-align:top;padding-right:30px;width:100%;text-align:center;background-color:#95B3D7;'>
            <div class='col-md-12 text-center'>    
-                <b style='font-size:14px;'>7-STAR MANPOWER<br> SERVICES OF THE PHILIPPINES</b> <br>
+                <b style='font-size:14px;'>
+                    @php
+                        $store = strtolower($payroll->payroll->store);
+                        $company = "7-STAR MANPOWER";
+                     
+                        if(str_contains($store,"syzygy"))
+                        {
+                            $company = "SYZYGY STAFFING";
+                        }
+
+                        if($company == "7-STAR MANPOWER")
+                        {
+                            $store_name = explode("-",$payroll->payroll->store);
+                            $store_name_data = $store_name[count($store_name)-1];
+                        }
+                        else {
+                            
+                            $store_name = explode("_",$payroll->payroll->store);
+
+                            $store_name_data = $store_name[count($store_name)-1];
+                        }
+
+                        
+                    @endphp
+                    {{$company}}<br> SERVICES OF THE PHILIPPINES</b> <br>
                 {{-- <span style='font-size:12px;'>P A Y S L I P</span> --}}
            </div>
         </div>
@@ -188,7 +212,7 @@ ini_set("memory_limit", "-1");
                     
                 </td>
             </tr>
-            @foreach($payroll->payroll_allowances as $allow)
+            @foreach($payroll->payroll_allowances as $key => $allow)
             <tr>
                 <td  class='text-left'>
                    {{strtoupper($allow->name)}}
@@ -197,7 +221,7 @@ ini_set("memory_limit", "-1");
                   {{number_format($allow->amount,2)}}
                 </td>
                 <td   class='text-left'>
-                    
+                   
                 </td>
                 <td  class='text-right'>
                     
@@ -244,7 +268,7 @@ ini_set("memory_limit", "-1");
             </tr>
             <tr>
                 <td  class='text-left'>
-                 Total Deductions
+                 TOTAL DEDUCTIONS
                 </td>
                 <td  class='text-right'>
                     {{number_format($payroll->total_deductions,2)}}
