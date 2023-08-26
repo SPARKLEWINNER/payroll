@@ -263,7 +263,9 @@ ini_set("memory_limit", "-1");
                     {{number_format($payroll->gross_pay,2)}}
                 </td>
                 <td   class='text-center' rowspan='3'  colspan='2'>
-                  <span style='font-size : 8px;'> I HAVE READ AND UNDERSTOOD THE ABOVE COMPUTATIONS OF MY SALARY.</span>
+                  <span style='font-size : 8px;'> I HAVE READ AND UNDERSTOOD THE ABOVE COMPUTATIONS OF MY SALARY.</span> <br><br>
+                  _______________________<br>
+                  Signature with Date
                 </td>
             </tr>
             <tr>
