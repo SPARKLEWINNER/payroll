@@ -110,7 +110,7 @@ ini_set("memory_limit", "-1");
         </div>
         <div class='col-md-6 text-left'>   
              
-        ASSIGNED AT :    {{strtoupper($payroll->payroll->store)}}
+        ASSIGNED AT :    {{strtoupper($store_name_data)}}
         </div>
         <div class='col-md-3 text-left'>    
              DATE COVERED : {{date('M d, Y',strtotime($payroll->payroll->payroll_from))}} - {{date('M d, Y',strtotime($payroll->payroll->payroll_to))}}
