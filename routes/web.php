@@ -60,6 +60,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('save-payroll', 'PayrollController@savePayroll');
     Route::get('payslips', 'PayrollController@payslips');
     Route::get('payslip/{id}', 'PayrollController@payslip');
+    Route::get('payslips_all','PayrollController@payslips_all');
     Route::post('additional-income/{id}', 'PayrollController@additionaIncome');
     Route::post('deduction-income/{id}', 'PayrollController@deductionIncome');
 

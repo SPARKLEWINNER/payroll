@@ -63,7 +63,10 @@
                         <table class="table table-striped table-bordered table-hover dataTables-example">
                             <thead>
                                 <tr>
-                                    <th>Payslip </th>
+                                    <th>Payslip @if(count($payrollsInfo) > 0) <a title='Print Payslip' target='_blank' href='{{url('/payslips_all?store='.$storeData.'&from='.$payrolldate)}}'  ><button type="button"  class="btn btn-danger btn-icon btn-sm">
+                                        <i class="fa fa-print"></i>
+                                        </button>
+                                    </a> @endif </th>
                                     <th>Employee</th>
                                     <th>Gross Pay</th>
                                     <th>Net Pay</th>

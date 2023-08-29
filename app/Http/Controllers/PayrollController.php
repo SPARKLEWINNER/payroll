@@ -479,6 +479,22 @@ class PayrollController extends Controller
         ))->setPaper($customPaper);
         return $pdf->stream(date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf');
     }
+    public function payslips_all(Request $request)
+    {
+        // dd($request->all());
+        $payrollsInfo = [];
+        if ($request->store) {
+            $payroll = Payroll::with('informations')->where('store', $request->store)->where('payroll_from', $request->from)->first();
+            if ($payroll != null) {
+                $payrollsInfo = $payroll->informations;
+            }
+        }
+        $customPaper = array(0, 0, 360, 400);
+        $pdf = PDF::loadView('payslips_all', array(
+            'payrollsInfo' => $payrollsInfo,
+        ))->setPaper($customPaper);
+        return $pdf->stream(date('mm-dd-yyyy') . '-payslips.pdf');
+    }
     public function deductionIncome(Request $request, $id)
     {
 
