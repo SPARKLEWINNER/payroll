@@ -66,6 +66,7 @@
                                         <ul class="dropdown-menu">
                                             <li><a title='Edit Payroll' href="#editPayroll{{$payrollInfo->id}}" data-toggle="modal" >Edit</a></li>
                                             <li><a title='Transfer Payroll' href="#transfer{{$payrollInfo->id}}" data-toggle="modal"  >Transfer</a></li>
+                                            {{-- <li><a title='Additional Gross Income' href="#AdditionalGrossIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Gross Allowance</a></li> --}}
                                             <li><a title='Additional Income' href="#AdditionalIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Income</a></li>
                                             <li><a title='Additional Deduction' href="#DeductionIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Deduction</a></li>
                                             <li><a title='Edit Government Benefits' href="#editgov{{$payrollInfo->id}}" data-toggle="modal" >Edit Government</a></li>
@@ -141,6 +142,7 @@
 </div>
 @foreach($payroll->informations as $payrollInfo)
 @include('additional_income')
+@include('gross_allowances')
 @include('deduction')
 @include('edit_payroll_data')
 @include('edit_government')
@@ -210,6 +212,29 @@
             unshow();
             
         }
+        function add_income_gross(id)
+        {
+            show();
+            var lastItemID = $('#allowance-gross-'+id).children().last().attr('id');
+            if(lastItemID){
+                var last_id = lastItemID.split("-");
+                finalLastId = parseInt(last_id[2]) + 1;
+            }else{
+                finalLastId = 0;
+            }
+            var item = "<div class='row ' id='allowance-"+id+"-"+finalLastId+"'>";
+            item += "<div class='col-md-5 border form-group'><input name='allowance_name[]' type='text' min='0' placeholder='Meal Allowance' class='form-control form-control-sm' required>";
+            item += "</div>";
+            item += "<div class='col-md-5 border form-group'><input name='allowance_amount[]' type='number' min='0' placeholder='1.00' class='form-control form-control-sm' required>";
+            item += "</div>";
+            item += "<div class='col-md-2 border form-group'><button class='btn btn-danger btn-circle' onclick='remove_allowance("+id+","+finalLastId+")' type='button'><i class='fa fa-minus'></i></button>";
+            item += "</div>";
+            item += "</div>";
+          
+            $("#allowance-gross-"+id).append(item);
+            unshow();
+            
+        }
         function add_deduction(id)
         {
             show();
@@ -237,6 +262,12 @@
         {
             show();
             $("#allowance-"+id+"-"+finalId).remove();
+            unshow();
+        }
+        function remove_allowance(id,finalId)
+        {
+            show();
+            $("#allowance-gross-"+id+"-"+finalId).remove();
             unshow();
         }
         function remove_deduction(id,finalId)

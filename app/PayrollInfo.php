@@ -15,6 +15,10 @@ class PayrollInfo extends Model
     {
         return $this->hasMany(PayrollAllowance::class);
     }
+    public function payroll_gross_allowances()
+    {
+        return $this->hasMany(PayrollGrossAllowance::class);
+    }
     public function deductions()
     {
         return $this->hasMany(PayrollDeduction::class);

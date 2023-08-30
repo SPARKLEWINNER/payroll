@@ -12,6 +12,7 @@ use App\Group;
 use App\PayrollLog;
 use App\PayrollAllowance;
 use App\PayrollDeduction;
+use App\PayrollGrossAllowance;
 use App\Rates;
 use PDF;
 use Illuminate\Http\Request;
@@ -555,6 +556,39 @@ class PayrollController extends Controller
         $other_income_non_taxable = $payroll_info->other_income_non_taxable;
         $payroll_info->other_income_non_taxable = $other_income;
         $payroll_info->net_pay = $payroll_info->net_pay + $other_income - $other_income_non_taxable;
+        $payroll_info->save();
+        Alert::success('Successfully Add Allowance')->persistent('Dismiss');
+        return back();
+    }
+    public function additionaGrossIncome(Request $request, $id)
+    {
+
+        $payroll_allowances = PayrollGrossAllowance::where('payroll_info_id', $id)->delete();
+        $payroll_info = PayrollInfo::findOrfail($id);
+        $other_income = 0;
+        if($request->allowance_name != null)
+        {
+        foreach ($request->allowance_name as $key => $name) {
+            $allowance = new PayrollGrossAllowance;
+            $allowance->name = $name;
+            $allowance->amount = $request->allowance_amount[$key];
+            $allowance->payroll_info_id = $id;
+            $allowance->save();
+            $other_income = $other_income + $request->allowance_amount[$key];
+            $log = new PayrollLog;
+            $log->table = "payroll_gross_allowances";
+            $log->action = "Create";
+            $log->table_id = $allowance->id;
+            $log->data_from = "";
+            $log->data_to = $allowance;
+            $log->edit_by = auth()->user()->id;
+            $log->save();
+        }
+        }
+        $other_income_taxable = $payroll_info->other_income_taxable;
+        $payroll_info->other_income_taxable = $other_income;
+        $gross_pay = $payroll_info->gross_pay+$other_income_taxable;
+        $payroll_info->net_pay = $payroll_info->net_pay + $other_income - $other_income_taxable;
         $payroll_info->save();
         Alert::success('Successfully Add Allowance')->persistent('Dismiss');
         return back();
