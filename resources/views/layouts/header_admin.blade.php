@@ -206,12 +206,12 @@
     </script>
 
        <!-- Mainly scripts -->
-       <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
-       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.7/metisMenu.min.js"></script>
-       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
+       <script type="text/javascript" src="/admin/js/jquery-3.1.1.min.js"></script>
+       <script type="text/javascript" src="/admin/js/bootstrap.min.js"></script>
+       <script type="text/javascript" src="/admin/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+       <script type="text/javascript" src="/admin/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
    
-       <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+       <script type="text/javascript" src="/admin/js/plugins/dataTables/datatables.min.js"></script>
    
        <!-- Custom and plugin javascript -->
        @yield('js')
