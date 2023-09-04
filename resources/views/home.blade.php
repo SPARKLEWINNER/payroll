@@ -101,6 +101,6 @@
 @endsection
 
 @section('js')
-<script src="/admin/js/inspinia.js"></script>
-<script src="/admin/js/plugins/pace/pace.min.js"></script>
+<script src="{{ asset('admin/js/inspinia.js')}}"></script>
+<script src="{{ asset('admin/js/plugins/pace/pace.min.js')}}"></script>
 @endsection
