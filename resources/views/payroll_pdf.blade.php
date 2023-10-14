@@ -106,6 +106,7 @@ ini_set("memory_limit", "-1");
                 <th>Amount Night Diff</th>
                 <th>Gross Pay</th>
                 <th>Other Income Non Taxable</th>
+                <th>Other Income Remarks</th>
                 <th>SSS Contribution</th>
                 <th>NHIP Contribution</th>
                 <th>HDMF Contribution</th>
@@ -142,6 +143,7 @@ ini_set("memory_limit", "-1");
                     <td class='text-right'>{{number_format($pay->amount_night_diff,2)}}</td>
                     <td class='text-right'>{{number_format($pay->gross_pay,2)}}</td>
                     <td class='text-right'>{{number_format($pay->other_income_non_taxable,2)}}</td>
+                    <td class='text-right'>{{$pay->income_remarks}}</td>
                     <td class='text-right'>{{number_format($pay->sss_contribution,2)}}</td>
                     <td class='text-right'>{{number_format($pay->nhip_contribution,2)}}</td>
                     <td class='text-right'>{{number_format($pay->hdmf_contribution,2)}}</td>
@@ -180,12 +182,15 @@ ini_set("memory_limit", "-1");
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('amount_night_diff')),2)}}</th>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('gross_pay')),2)}}</th>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('other_income_non_taxable')),2)}}</th>
+                <th class='text-right'>{{number_format(0.00, 2)}}</td>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('sss_contribution')),2)}}</th>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('nhip_contribution')),2)}}</th>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('hdmf_contribution')),2)}}</th>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('tax')),2)}}</th>
-                <th class='text-right'>{{number_format((($payroll->informations)->sum('total_deductions')),2)}}</th>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('other_deductions')),2)}}</th>
+                <th class='text-right'>{{number_format(0.00, 2)}}</td>
+                <th class='text-right'>{{number_format((($payroll->informations)->sum('total_deductions')),2)}}</th>
+
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('net_pay')),2)}}</th>
                 <th>&nbsp;</th>
             </tr>

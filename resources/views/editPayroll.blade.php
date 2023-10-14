@@ -41,11 +41,13 @@
                                 <th>Hours Tardy Basic</th>
                                 <th>Amount Night Diff</th>
                                 <th>Other Income Non Taxable</th>
+                                <th>Other Income Remarks</th>
                                 <th>Gross Pay</th>
                                 <th>SSS Contribution</th>
                                 <th>NHIP Contribution</th>
                                 <th>HDMF Contribution</th>
                                 <th>Other Deductions</th>
+                                <th>Other Deductions Remarks</th>
                                 <th>Total Deductions</th>
                                 <th>NET PAY</th>
                             </tr>
@@ -93,14 +95,30 @@
                                 <td>{{number_format($payrollInfo->amount_legal_holiday,2)}}</td>
                                 <td>{{number_format($payrollInfo->amount_night_diff,2)}}</td>
                                 <td>{{number_format($payrollInfo->hours_tardy_basic,2)}}</td>
+                                @if($payroll->status == null)                          
+                                <td contenteditable="true" onkeydown="add_other_payments(event,'{{$payrollInfo->gross_pay}}','{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')" id="otherPayments">{{number_format($payrollInfo->other_income_non_taxable,2)}}</td>
+                                <td contenteditable="true" onkeydown="add_additional_remarks(event, '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')">{{$payrollInfo->income_remarks}}</td>
+                                <td id="{{$payrollInfo->employee_id}}" data="{{$payrollInfo->gross_pay}}">{{number_format($payrollInfo->gross_pay,2)}}</td>
+                                @else
                                 <td>{{number_format($payrollInfo->other_income_non_taxable,2)}}</td>
+                                <td>{{$payrollInfo->income_remarks}}</td>
                                 <td>{{number_format($payrollInfo->gross_pay,2)}}</td>
+                                @endif
                                 <td>{{number_format($payrollInfo->sss_contribution,2)}}</td>
                                 <td>{{number_format($payrollInfo->nhip_contribution,2)}}</td>
                                 <td>{{number_format($payrollInfo->hdmf_contribution,2)}}</td>
+
+                                @if($payroll->status == null)                          
+                                <td contenteditable="true" onkeydown="add_other_deduction(event,'{{$payrollInfo->gross_pay}}','{{$payrollInfo->total_deductions}}', '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')" id="otherDeductions-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->other_deductions,2)}}</td>
+                                <td contenteditable="true" onkeydown="add_deduction_remarks(event, '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')">{{$payrollInfo->deduction_remarks}}</td>
+                                <td id="deductions-{{$payrollInfo->employee_id}}" data="{{$payrollInfo->gross_pay}}">{{number_format($payrollInfo->total_deductions,2)}}</td>
+                                @else
                                 <td>{{number_format($payrollInfo->other_deductions,2)}}</td>
-                                <td>{{number_format($payrollInfo->total_deductions,2)}}</td>
-                                <td>{{number_format($payrollInfo->net_pay,2)}}</td>
+                                <td>{{$payrollInfo->deduction_remarks}}</td>
+                                <td id="deductions-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->total_deductions,2)}}</td>
+                                @endif
+                                
+                                <td id="netpay-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->net_pay,2)}}</td>
                             </tr>
                             
                             @endforeach
@@ -126,6 +144,8 @@
                                 <td>{{number_format(($payroll->informations)->sum('hours_tardy_basic'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('other_income_non_taxable'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('gross_pay'),2)}}</td>
+                                <td>{{number_format(($payroll->informations)->sum('additional_income'),2)}}</td>
+                                <td>0.00</td>
                                 <td>{{number_format(($payroll->informations)->sum('sss_contribution'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('nhip_contribution'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('hdmf_contribution'),2)}}</td>
@@ -275,6 +295,106 @@
             show();
             $("#deduction-"+id+"-"+finalId).remove();
             unshow();
+        }
+        async function add_other_payments(e, gross, emp, id)
+        {
+            if (event.key === 'Tab') {
+                const formatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const result = (parseFloat(gross) + parseFloat(e.target.innerText)).toFixed(2);
+                const formattedNumber = formatter.format(result);
+                const deduction = $(`#deductions-${emp}`).text();
+                $(`#${emp}`).text(formattedNumber);
+                const net = (Number(result) - parseFloat(deduction)).toFixed(2);
+                const formattedNet = formatter.format(net);
+                $(`#netpay-${emp}`).text(formattedNet);
+                const body = {
+                    "emp_id": emp,
+                    "income": Number(e.target.innerText),
+                    "remarks": ""
+                }
+                const response = await fetch(`http://127.0.0.1:8000/api/additional/${id}`, {
+                  method: 'post',
+                  body: JSON.stringify(body),
+                  headers: {'Content-Type': 'application/json'}
+                });
+                if (response.status !== 200) {
+                  await logError(err, "Reports", req.body, id, "POST");
+                  return res.status(400).json({
+                    success: false,
+                    msg: "Connection to payroll error",
+                  });  
+                }
+            }
+        }
+        async function add_additional_remarks(e, emp, id)
+        {
+            if (event.key === 'Tab') {
+                const body = {
+                    "emp_id": emp,
+                    "remarks": e.target.innerText
+                }
+                const response = await fetch(`http://127.0.0.1:8000/api/additional-remarks/${id}`, {
+                  method: 'post',
+                  body: JSON.stringify(body),
+                  headers: {'Content-Type': 'application/json'}
+                });
+                if (response.status !== 200) {
+                  await logError(err, "Reports", req.body, id, "POST");
+                  return res.status(400).json({
+                    success: false,
+                    msg: "Connection to payroll error",
+                  });  
+                }
+            }
+        }
+        async function add_other_deduction(e, gross, deduction, emp, id)
+        {
+            if (event.key === 'Tab') {
+                const formatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const result = (parseFloat(deduction) + parseFloat(e.target.innerText)).toFixed(2);
+                const formattedNumber = formatter.format(result);
+                $(`#deductions-${emp}`).text(formattedNumber);
+                const net = (Number(gross) - parseFloat(result)).toFixed(2);
+                const formattedNet = formatter.format(net);
+                $(`#netpay-${emp}`).text(formattedNet);
+                const body = {
+                    "emp_id": emp,
+                    "deduction": Number(e.target.innerText),
+                }
+                const response = await fetch(`http://127.0.0.1:8000/api/deduction/${id}`, {
+                  method: 'post',
+                  body: JSON.stringify(body),
+                  headers: {'Content-Type': 'application/json'}
+                });
+                if (response.status !== 200) {
+                  await logError(err, "Reports", req.body, id, "POST");
+                  return res.status(400).json({
+                    success: false,
+                    msg: "Connection to payroll error",
+                  });  
+                }
+            }
+        }
+        async function add_deduction_remarks(e, emp, id)
+        {
+            if (event.key === 'Tab') {
+                const body = {
+                    "emp_id": emp,
+                    "remarks": e.target.innerText
+                }
+                const response = await fetch(`http://127.0.0.1:8000/api/deduction-remarks/${id}`, {
+                  method: 'post',
+                  body: JSON.stringify(body),
+                  headers: {'Content-Type': 'application/json'}
+                });
+                if (response.status !== 200) {
+                  await logError(err, "Reports", req.body, id, "POST");
+                  return res.status(400).json({
+                    success: false,
+                    msg: "Connection to payroll error",
+                  });  
+                }
+            }
         }
 
 </script>

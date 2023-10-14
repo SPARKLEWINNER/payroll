@@ -593,4 +593,36 @@ class PayrollController extends Controller
         Alert::success('Successfully Add Allowance')->persistent('Dismiss');
         return back();
     }
+    public function additionalIncome(Request $request, $id)
+    {
+        $payroll = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
+        $payroll->gross_pay = $payroll->gross_pay + $request->income;
+        $payroll->other_income_non_taxable = $request->income;
+        $payroll->net_pay = $payroll->gross_pay - $payroll->total_deduction;
+        $payroll->save();
+        return 'success';  
+    }
+    public function additionalRemarks(Request $request, $id)
+    {
+        $payroll = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
+        $payroll->income_remarks = $request->remarks;
+        $payroll->save();
+        return 'success';  
+    }
+    public function additionalDeduction(Request $request, $id)
+    {
+        $payroll = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
+        $payroll->total_deductions = $payroll->total_deductions + $request->deduction;
+        $payroll->other_deductions = $request->deduction;
+        $payroll->net_pay = $payroll->gross_pay - $payroll->total_deductions;
+        $payroll->save();
+        return 'success';  
+    }
+    public function deductionRemarks(Request $request, $id)
+    {
+        $payroll = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
+        $payroll->deduction_remarks = $request->remarks;
+        $payroll->save();
+        return 'success';  
+    }
 }
