@@ -63,7 +63,7 @@
         <div class="ibox float-e-margins">
             <div class="ibox-content">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover dataTables-example">
+                    <table class="table table-striped table-bordered table-hover home-payroll">
                         <thead>
                             <tr>
                                 <th>Action</th>

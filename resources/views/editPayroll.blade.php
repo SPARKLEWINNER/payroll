@@ -38,8 +38,8 @@
                                 <th>Amount Overtime</th>
                                 <th>Amount Special holiday</th>
                                 <th>Amount Legal Holiday</th>
-                                <th>Hours Tardy Basic</th>
                                 <th>Amount Night Diff</th>
+                                <th>Hours Tardy Basic</th>
                                 <th>Other Income Non Taxable</th>
                                 <th>Other Income Remarks</th>
                                 <th>Gross Pay</th>
@@ -120,7 +120,12 @@
                                 
                                 <td id="netpay-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->net_pay,2)}}</td>
                             </tr>
-                            
+                            @include('additional_income')
+                            @include('gross_allowances')
+                            @include('deduction')
+                            @include('edit_payroll_data')
+                            @include('edit_government')
+                            @include('transfer_employee')
                             @endforeach
                          
                         </tbody>
@@ -143,13 +148,13 @@
                                 <td>{{number_format(($payroll->informations)->sum('amount_night_diff'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('hours_tardy_basic'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('other_income_non_taxable'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('gross_pay'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('additional_income'),2)}}</td>
                                 <td>0.00</td>
+                                <td>{{number_format(($payroll->informations)->sum('gross_pay'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('sss_contribution'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('nhip_contribution'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('hdmf_contribution'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('other_deductions'),2)}}</td>
+                                <td>0.00</td>
                                 <td>{{number_format(($payroll->informations)->sum('total_deductions'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('net_pay'),2)}}</td>
                             </tr>
@@ -161,12 +166,7 @@
     </div>
 </div>
 @foreach($payroll->informations as $payrollInfo)
-@include('additional_income')
-@include('gross_allowances')
-@include('deduction')
-@include('edit_payroll_data')
-@include('edit_government')
-@include('transfer_employee')
+
 @endforeach
 @endsection
 @section('js')
