@@ -19,6 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('attendance', 'AttendanceController@create')->name('create-attendance');
+Route::get('get-history', 'AttendanceController@get')->name('get-attendance');
+Route::post('save', 'PayrollController@save')->name('save-payroll');
 Route::post('schedule', 'ScheduleController@create')->name('create-schedule');
 Route::post('rates', 'PayrollController@getRatesStore')->name('rates');
 Route::post('additional/{id}', 'PayrollController@additionalIncome')->name('additional-income');

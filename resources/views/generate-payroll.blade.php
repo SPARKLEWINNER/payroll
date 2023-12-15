@@ -54,11 +54,11 @@
             
                 @if(count($employees) > 0)
                 @if($rates != null)
-                <form method='POST' onsubmit='show();' enctype="multipart/form-data">
+                <form onsubmit="handleSubmit(event);">
                     @csrf
                     <div class="ibox-content">
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover dataTables-example">
+                            <table class="table table-striped table-bordered table-hover dataTables-example" id="myTable">
                                 <thead>
                                     <tr>
                                         <td colspan='26'>
@@ -75,8 +75,10 @@
                                     </tr>
                                     <tr>
                                         <td colspan='26'>
-                                            <input type='hidden' name='from_date' value='{{$from}}'>
-                                            <input type='hidden' name='from_to' value='{{$to}}'>
+                                            <input type='hidden' name='from_date' id="fromDate" value='{{$from}}'>
+                                            <input type='hidden' name='from_to' id="toDate" value='{{$to}}'>
+                                            <input type='hidden' id="store" value='{{$storeData}}'>
+                                            <input type='hidden' id="id" value='{{ auth()->id() }}'>
                                             Payroll Period of  {{date('M d, Y',strtotime($from))}}  to  {{date('M d, Y',strtotime($to))}}
                                             @if(count($employees) >0)
                                                 <h5>Holidays <br>
@@ -234,40 +236,40 @@
                                                         
                                                 @endphp
                                                 <tr >
-                                                    <td>{{$c++}}<input type='hidden' name='emp_id[{{$key}}]' value='{{$employee->emp_id}}'><input type='hidden' name='emp_name[{{$key}}]' value='{{$employee->emp_name}}'></td>
+                                                    <td>{{$c++}}<input type='hidden' id='emp_id[{{$key}}]' value='{{$employee->emp_id}}'><input type='hidden' id='emp_name[{{$key}}]' value='{{$employee->emp_name}}'></td>
                                                     <td>{{$employee->emp_name}}</td>
                                                     @if(!empty($rates) && $rates->daily > 0)
-                                                    <td class='text-right'>{{number_format($rate_employee,2)}}<input type='hidden' name='rate[{{$key}}]' value='{{$rate_employee}}'></td>
-                                                    
-                                                    <td class='text-right'>{{number_format($rate_employee/8,2)}} <input type='hidden' name='daily_rate[{{$key}}]' value='{{$rate_employee/8}}'></td>
+                                                    <td class='text-right'>{{number_format($rate_employee,2)}}<input type='hidden' id='rate[{{$key}}]' value='{{$rate_employee}}'></td>
+
+                                                    <td class='text-right'>{{number_format($rate_employee/8,2)}} <input type='hidden' id='daily_rate[{{$key}}]' value='{{$rate_employee/8}}'></td>
                                                     @endif
-                                                    <td class='text-right'>{{number_format($day_works,2)}} <input type='hidden' name='day_works[{{$key}}]' value='{{$day_works}}'></td>
-                                                    <td class='text-right'>{{number_format($working_hours,2)}} <input type='hidden' name='working_hours[{{$key}}]' value='{{$working_hours}}'></td>
-                                                    <td class='text-right'>{{number_format($basic_pay,2)}} <input type='hidden' name='basic_pay[{{$key}}]' value='{{$basic_pay}}'></td>
-                                                    <td class='text-right'>{{number_format($hours_tardy,2)}} <input type='hidden' name='hours_tardy[{{$key}}]' value='{{$hours_tardy}}'></td>
-                                                    <td class='text-right'>{{number_format($tardy_amount,2)}} <input type='hidden' name='tardy_amount[{{$key}}]' value='{{$tardy_amount}}'></td>
-                                                    <td class='text-right'>{{number_format($overtime,2)}} <input type='hidden' name='overtime[{{$key}}]' value='{{$overtime}}'></td>
-                                                    <td class='text-right'>{{number_format($overtime_amount,2)}} <input type='hidden' name='overtime_amount[{{$key}}]' value='{{$overtime_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($day_works,2)}} <input type='hidden' id='day_works[{{$key}}]' value='{{$day_works}}'></td>
+                                                    <td class='text-right'>{{number_format($working_hours,2)}} <input type='hidden' id='working_hours[{{$key}}]' value='{{$working_hours}}'></td>
+                                                    <td class='text-right'>{{number_format($basic_pay,2)}} <input type='hidden' id='basic_pay[{{$key}}]' value='{{$basic_pay}}'></td>
+                                                    <td class='text-right'>{{number_format($hours_tardy,2)}} <input type='hidden' id='hours_tardy[{{$key}}]' value='{{$hours_tardy}}'></td>
+                                                    <td class='text-right'>{{number_format($tardy_amount,2)}} <input type='hidden' id='tardy_amount[{{$key}}]' value='{{$tardy_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($overtime,2)}} <input type='hidden' id='overtime[{{$key}}]' value='{{$overtime}}'></td>
+                                                    <td class='text-right'>{{number_format($overtime_amount,2)}} <input type='hidden' id='overtime_amount[{{$key}}]' value='{{$overtime_amount}}'></td>
                                                     @if($rates->specialholiday != "undefined" && $rates->specialholiday > 0)
-                                                    <td class='text-right'>{{number_format($special_holiday,2)}} <input type='hidden' name='special_holiday[{{$key}}]' value='{{$special_holiday}}'></td>
-                                                    <td class='text-right'>{{number_format($special_holiday_amount,2)}}  <input type='hidden' name='special_holiday_amount[{{$key}}]' value='{{$special_holiday_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($special_holiday,2)}} <input type='hidden' id='special_holiday[{{$key}}]' value='{{$special_holiday}}'></td>
+                                                    <td class='text-right'>{{number_format($special_holiday_amount,2)}}  <input type='hidden' id='special_holiday_amount[{{$key}}]' value='{{$special_holiday_amount}}'></td>
                                                     @endif
                                                     @if($rates->holiday != "undefined" && $rates->holiday > 0)
-                                                    <td class='text-right'>{{number_format($legal_holiday,2)}} <input type='hidden' name='legal_holiday[{{$key}}]' value='{{$legal_holiday}}'></td>
-                                                    <td class='text-right'>{{number_format($legal_holiday_amount,2)}} <input type='hidden' name='legal_holiday_amount[{{$key}}]' value='{{$legal_holiday_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($legal_holiday,2)}} <input type='hidden' id='legal_holiday[{{$key}}]' value='{{$legal_holiday}}'></td>
+                                                    <td class='text-right'>{{number_format($legal_holiday_amount,2)}} <input type='hidden' id='legal_holiday_amount[{{$key}}]' value='{{$legal_holiday_amount}}'></td>
                                                     @endif
                                                     @if($rates->nightshift != "undefined" && $rates->nightshift > 0)
-                                                    <td class='text-right'>{{number_format($night_diff,2)}} <input type='hidden' name='night_diff[{{$key}}]' value='{{$night_diff}}'></td>
-                                                    <td class='text-right'>{{number_format($nightdiff_amount,2)}} <input type='hidden' name='nightdiff_amount[{{$key}}]' value='{{$nightdiff_amount}}'></td>
+                                                    <td class='text-right'>{{number_format($night_diff,2)}} <input type='hidden' id='night_diff[{{$key}}]' value='{{$night_diff}}'></td>
+                                                    <td class='text-right'>{{number_format($nightdiff_amount,2)}} <input type='hidden' id='nightdiff_amount[{{$key}}]' value='{{$nightdiff_amount}}'></td>
                                                     @endif
-                                                    <td class='text-right'>{{number_format($gross_pay,2)}} <input type='hidden' name='gross_pay[{{$key}}]' value='{{$gross_pay}}'></td>
-                                                    <td class='text-right'>{{number_format($other_income_non_tax,2)}} <input type='hidden' name='other_income_non_tax[{{$key}}]' value='{{$other_income_non_tax}}'></td>
-                                                    <td class='text-right'>{{number_format($sss,2)}} <input type='hidden' name='sss[]' value='{{$sss}}'> <input type='hidden' name='sss_er[{{$key}}]' value='{{$sss_er}}'></td>
-                                                    <td class='text-right'>{{number_format($philhealth,2)}} <input type='hidden' name='philhealth[{{$key}}]' value='{{$philhealth}}'></td>
-                                                    <td class='text-right'>{{number_format($pagibig,2)}} <input type='hidden' name='pagibig[{{$key}}]' value='{{$pagibig}}'></td>
-                                                    <td class='text-right'>0.00<input type='hidden' name='other_deduction[{{$key}}]' value='0.00'></td>
-                                                    <td class='text-right'>{{number_format($total_deduction,2)}} <input type='hidden' name='total_deduction[{{$key}}]' value='{{$total_deduction}}'></td>
-                                                    <td class='text-right'>{{number_format($net,2)}} <input type='hidden' name='net[{{$key}}]' value='{{$net}}'></td>
+                                                    <td class='text-right'>{{number_format($gross_pay,2)}} <input type='hidden' id='gross_pay[{{$key}}]' value='{{$gross_pay}}'></td>
+                                                    <td class='text-right'>{{number_format($other_income_non_tax,2)}} <input type='hidden' id='other_income_non_tax[{{$key}}]' value='{{$other_income_non_tax}}'></td>
+                                                    <td class='text-right'>{{number_format($sss,2)}} <input type='hidden' id='sss[{{$key}}]' value='{{$sss}}'> <input type='hidden' id='sss_er[{{$key}}]' value='{{$sss_er}}'></td>
+                                                    <td class='text-right'>{{number_format($philhealth,2)}} <input type='hidden' id='philhealth[{{$key}}]' value='{{$philhealth}}'></td>
+                                                    <td class='text-right'>{{number_format($pagibig,2)}} <input type='hidden' id='pagibig[{{$key}}]' value='{{$pagibig}}'></td>
+                                                    <td class='text-right'>0.00<input type='hidden' id='other_deduction[{{$key}}]' value='0.00'></td>
+                                                    <td class='text-right'>{{number_format($total_deduction,2)}} <input type='hidden' id='total_deduction[{{$key}}]' value='{{$total_deduction}}'></td>
+                                                    <td class='text-right'>{{number_format($net,2)}} <input type='hidden' id='net[{{$key}}]' value='{{$net}}'></td>
                                                     <td></td>
                                                 </tr>
                                             @endforeach
@@ -355,11 +357,115 @@
 <script src="{{ asset('admin/js/plugins/chosen/chosen.jquery.js')}}"></script>
 <script src="{{ asset('admin/js/inspinia.js')}}"></script>
 <script src="{{ asset('admin/js/plugins/pace/pace.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function(){
       $('.chosen-select').chosen({width: "100%"});
     });
+    async function handleSubmit(e) {
+        e.preventDefault();
+        var data = []
+        var table = document.getElementById('myTable');
+        for (var r = 0; r <= table.rows.length - 4; r++) {
+            var id = `emp_id[${r}]`;
+            var name = `emp_name[${r}]`;
+            var dailyRate = `rate[${r}]`;
+            var ratePerHour = `daily_rate[${r}]`;
+            var workingHours = `working_hours[${r}]`;
+            var daysWork = `day_works[${r}]`;
+            var basicPay = `basic_pay[${r}]`;
+            var hoursTardy = `hours_tardy[${r}]`;
+            var tardyAmount = `tardy_amount[${r}]`;
+            var overtime = `overtime[${r}]`;
+            var overtimeAmount = `overtime_amount[${r}]`;
+            var specialHoliday = `special_holiday[${r}]`;
+            var specialHolidayAmount = `special_holiday_amount[${r}]`;
+            var legal_holiday = `legal_holiday[${r}]`;
+            var legal_holiday_amount = `legal_holiday_amount[${r}]`;
+            var night_diff = `night_diff[${r}]`;
+            var nightdiff_amount = `nightdiff_amount[${r}]`;
+            var gross_pay = `gross_pay[${r}]`;
+            var other_income_non_tax = `other_income_non_tax[${r}]`;
+            var sss_er = `sss_er[${r}]`;
+            var philhealth = `philhealth[${r}]`;
+            var pagibig = `pagibig[${r}]`;
+            var other_deduction = `other_deduction[${r}]`;
+            var total_deduction = `total_deduction[${r}]`;
+            var net = `net[${r}]`;
+            var sss = `sss[${r}]`;
 
+            data.push(
+                {
+                    emp_id: document.getElementById(id).value, 
+                    emp_name: document.getElementById(name).value,
+                    rate: document.getElementById(dailyRate).value,
+                    daily_rate: document.getElementById(ratePerHour).value,
+                    working_hours: document.getElementById(workingHours).value,
+                    days_work: document.getElementById(daysWork).value,
+                    basic_pay: document.getElementById(basicPay).value,
+                    hours_tardy: document.getElementById(hoursTardy).value,
+                    tardy_amount: document.getElementById(tardyAmount).value,
+                    overtime: document.getElementById(overtime).value,
+                    overtime_amount: document.getElementById(overtimeAmount).value,
+                    special_holiday: document.getElementById(specialHoliday).value,
+                    special_holiday_amount: document.getElementById(specialHolidayAmount).value,
+                    legal_holiday: document.getElementById(legal_holiday).value,
+                    legal_holiday_amount: document.getElementById(legal_holiday_amount).value,
+                    nightdiff_amount: document.getElementById(nightdiff_amount).value,
+                    night_diff: document.getElementById(night_diff).value,
+                    gross_pay: document.getElementById(gross_pay).value,
+                    other_income_non_tax: document.getElementById(other_income_non_tax).value,
+                    sss_er: document.getElementById(sss_er).value,
+                    sss: document.getElementById(sss).value,
+                    philhealth: document.getElementById(philhealth).value,
+                    pagibig: document.getElementById(pagibig).value,
+                    other_deduction: document.getElementById(other_deduction).value,
+                    total_deduction: document.getElementById(total_deduction).value,
+                    net: document.getElementById(net).value,
+                    from: document.getElementById("fromDate").value,
+                    to: document.getElementById("toDate").value,
+                    id: document.getElementById("id").value,
+                    store:document.getElementById("store").value
+                }
+            )
+            
+            /*for (var c = 0, m = table.rows[0].cells.length; c < m; c++) {
+                console.log(table.rows[r + 3].cells[c]);
+            }*/
+        }
+        const response = await fetch(`https://payroll-live.sparkles.com.ph/api/save`, {
+           method: 'POST',
+           body: JSON.stringify(data),
+           headers: { 'Content-Type': 'application/json' },
+        });
+        const jsonData = await response.json(); // Parse JSON data
+        console.log(jsonData);
+        if (jsonData.message === "payroll already created") {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Payroll already created.',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('payrolls') }}"
+                }
+            });
+            
+        }
+        if (jsonData.message === "success") {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Payroll successfully save.',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('payrolls') }}"
+                }
+            });
+            
+        }
+
+    }
     function get_last_payroll(data)
     {
         document.getElementById("from").value = "";

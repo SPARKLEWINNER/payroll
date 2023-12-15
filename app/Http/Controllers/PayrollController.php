@@ -179,6 +179,7 @@ class PayrollController extends Controller
                 'allowance' => $request->allowance
             ]
         );
+
         return redirect()->back()->with('message', 'Save successful!');
     }
     public function setStoreRates(Request $request)
@@ -226,55 +227,54 @@ class PayrollController extends Controller
     }
     public function save(Request $request)
     {
-        $payrollExist = Payroll::where('payroll_from', $request->from)->where('payroll_to', $request->to)->where('store', $request->store)->first();
+        $formattedRequest = $request->input();
+        $payrollExist = Payroll::where('payroll_from', $request[0]['from'])->where('payroll_to', $request[0]['to'])->where('store', $request[0]['store'])->first();
         if ($payrollExist) {
-            Alert::warning('Please Go to Generated Payrolls, it already save.')->persistent('Dismiss');
-            return redirect('/payrolls');
+            return response()->json(['message' => 'payroll already created'], 200);
         }
 
         $payroll = new Payroll;
         $payroll->date_generated = date('Y-m-d');
-        $payroll->generated_by = auth()->user()->id;
-        $payroll->payroll_from = $request->from;
-        $payroll->payroll_to = $request->to;
-        $payroll->store = $request->store;
+        $payroll->generated_by = $request[0]['id'];
+        $payroll->payroll_from = $request[0]['from'];
+        $payroll->payroll_to = $request[0]['to'];
+        $payroll->store = $request[0]['store'];
         $payroll->save();
 
-        foreach ($request->emp_id as $key => $emp_id) {
+        for ($key = 0; $key <= count($formattedRequest); $key++) {
             $payroll_info = new PayrollInfo;
             $payroll_info->payroll_id = $payroll->id;
-            $payroll_info->employee_id = $emp_id;
-            if (isset($request->emp_name[$key])) {
-                $payroll_info->employee_name = $request->emp_name[$key];
-                $payroll_info->daily_rate = $request->rate[$key];
-                $payroll_info->hour_rate = $request->daily_rate[$key];
-                $payroll_info->days_work = $request->day_works[$key];
-                $payroll_info->hours_work = $request->working_hours[$key];
-                $payroll_info->basic_pay = $request->basic_pay[$key];
-                $payroll_info->hours_tardy = $request->hours_tardy[$key];
-                $payroll_info->hours_tardy_basic = $request->tardy_amount[$key];
-                $payroll_info->overtime = $request->overtime[$key];
-                $payroll_info->amount_overtime = $request->overtime_amount[$key];
-                $payroll_info->special_holiday = $request->special_holiday[$key];
-                $payroll_info->amount_special_holiday = $request->special_holiday_amount[$key];
-                $payroll_info->legal_holiday = $request->legal_holiday[$key];
-                $payroll_info->amount_legal_holiday = $request->legal_holiday_amount[$key];
-                $payroll_info->night_diff = $request->night_diff[$key];
-                $payroll_info->amount_night_diff = $request->nightdiff_amount[$key];
-                $payroll_info->gross_pay = $request->gross_pay[$key];
-                $payroll_info->other_income_non_taxable = $request->other_income_non_tax[$key];
-                $payroll_info->sss_contribution = $request->sss[$key];
-                $payroll_info->nhip_contribution = $request->philhealth[$key];
-                $payroll_info->hdmf_contribution = $request->pagibig[$key];
-                $payroll_info->total_deductions = $request->total_deduction[$key];
-                $payroll_info->other_deductions = $request->other_deduction[$key];
-                $payroll_info->net_pay = $request->net[$key];
-                $payroll_info->sss_er = $request->sss_er[$key];
+            $payroll_info->employee_id = $request[$key]['emp_id'];
+            if (isset($request[$key]['emp_name'])) {
+                $payroll_info->employee_name = $request[$key]['emp_name'];
+                $payroll_info->daily_rate = $request[$key]['rate'];
+                $payroll_info->hour_rate = $request[$key]['daily_rate'];
+                $payroll_info->days_work = $request[$key]['days_work'];
+                $payroll_info->hours_work = $request[$key]["working_hours"];
+                $payroll_info->basic_pay = $request[$key]["basic_pay"];
+                $payroll_info->hours_tardy = $request[$key]["hours_tardy"];
+                $payroll_info->hours_tardy_basic = $request[$key]["tardy_amount"];
+                $payroll_info->overtime = $request[$key]["overtime"];
+                $payroll_info->amount_overtime = $request[$key]["overtime_amount"];
+                $payroll_info->special_holiday = $request[$key]["special_holiday"];
+                $payroll_info->amount_special_holiday = $request[$key]["special_holiday_amount"];
+                $payroll_info->legal_holiday = $request[$key]["legal_holiday"];
+                $payroll_info->amount_legal_holiday = $request[$key]["legal_holiday_amount"];
+                $payroll_info->night_diff = $request[$key]["night_diff"];
+                $payroll_info->amount_night_diff = $request[$key]["nightdiff_amount"];
+                $payroll_info->gross_pay = $request[$key]["gross_pay"];
+                $payroll_info->other_income_non_taxable = $request[$key]["other_income_non_tax"];
+                $payroll_info->sss_contribution = $request[$key]["sss"];
+                $payroll_info->nhip_contribution = $request[$key]["philhealth"];
+                $payroll_info->hdmf_contribution = $request[$key]["pagibig"];
+                $payroll_info->total_deductions = $request[$key]["total_deduction"];
+                $payroll_info->other_deductions = $request[$key]["other_deduction"];
+                $payroll_info->net_pay = $request[$key]["net"];
+                $payroll_info->sss_er = $request[$key]["sss_er"];
                 $payroll_info->save();
             }
         }
-        Alert::success('Successfully Save to Payroll')->persistent('Dismiss');
-        return redirect('/payrolls');
+        return response()->json(['message' => 'success'], 200);
     }
     public function editPayroll(Request $request, $id)
     {
@@ -523,7 +523,7 @@ class PayrollController extends Controller
     }
         $other_deductions = $payroll_info->other_deductions;
         $payroll_info->other_deductions = $other_deduc;
-        $payroll_info->net_pay = $payroll_info->net_pay - $other_deduc + $other_deductions;
+        $payroll_info->net_pay = $payroll_info->net_pay - ($other_deduc + $other_deductions);
         $payroll_info->save();
         Alert::success('Successfully Add Deduction')->persistent('Dismiss');
         return back();
@@ -555,7 +555,7 @@ class PayrollController extends Controller
         }
         $other_income_non_taxable = $payroll_info->other_income_non_taxable;
         $payroll_info->other_income_non_taxable = $other_income;
-        $payroll_info->net_pay = $payroll_info->net_pay + $other_income - $other_income_non_taxable;
+        $payroll_info->net_pay = $payroll_info->net_pay + $other_income + $other_income_non_taxable;
         $payroll_info->save();
         Alert::success('Successfully Add Allowance')->persistent('Dismiss');
         return back();
@@ -598,7 +598,8 @@ class PayrollController extends Controller
         $payroll = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
         $payroll->gross_pay = $payroll->gross_pay + $request->income;
         $payroll->other_income_non_taxable = $request->income;
-        $payroll->net_pay = $payroll->gross_pay - $payroll->total_deduction;
+        $payroll->net_pay = $payroll->gross_pay - $payroll->total_deductions;
+        var_dump($payroll->gross_pay - $payroll->total_deduction);
         $payroll->save();
         return 'success';  
     }

@@ -303,10 +303,10 @@
                 const result = (parseFloat(gross) + parseFloat(e.target.innerText)).toFixed(2);
                 const formattedNumber = formatter.format(result);
                 const deduction = $(`#deductions-${emp}`).text();
-                $(`#${emp}`).text(formattedNumber);
+                /*$(`#${emp}`).text(formattedNumber);*/
                 const net = (Number(result) - parseFloat(deduction)).toFixed(2);
                 const formattedNet = formatter.format(net);
-                $(`#netpay-${emp}`).text(formattedNet);
+                /*$(`#netpay-${emp}`).text(formattedNet);*/
                 const body = {
                     "emp_id": emp,
                     "income": Number(e.target.innerText),
@@ -353,15 +353,15 @@
                 const formatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 const result = (parseFloat(deduction) + parseFloat(e.target.innerText)).toFixed(2);
                 const formattedNumber = formatter.format(result);
-                $(`#deductions-${emp}`).text(formattedNumber);
+                /*$(`#deductions-${emp}`).text(formattedNumber);*/
                 const net = (Number(gross) - parseFloat(result)).toFixed(2);
                 const formattedNet = formatter.format(net);
-                $(`#netpay-${emp}`).text(formattedNet);
+                /*$(`#netpay-${emp}`).text(formattedNet);*/
                 const body = {
                     "emp_id": emp,
                     "deduction": Number(e.target.innerText),
                 }
-                const response = await fetch(`http://127.0.0.1:8000/api/deduction/${id}`, {
+                const response = await fetch(`https://payroll-live.sparkles.com.ph/api/deduction/${id}`, {
                   method: 'post',
                   body: JSON.stringify(body),
                   headers: {'Content-Type': 'application/json'}
