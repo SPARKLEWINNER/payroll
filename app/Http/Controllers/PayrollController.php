@@ -632,9 +632,19 @@ class PayrollController extends Controller
         $payrolls = Payroll::with('informations', 'user')->whereHas('informations', function ($query) use ($id) {
             $query->where('employee_id', $id)->where('status', 'Save');
         })->orderBy('payroll_to', 'desc')->get();
-        return [
-            'status' => 'success',
-            'data' => $payrolls
-        ];
+        return response()->json([
+            'success' => true,
+            'data' => $payrolls,
+        ]);
+    }
+    public function payslipAPI()
+    {
+
+        $payroll = PayrollInfo::with('payroll', 'payroll_allowances')->where('payroll_id', 58)->where('employee_id', '63e247b452b472002d008ab1')->first();
+        $customPaper = array(0, 0, 360, 400);
+        $pdf = PDF::loadView('payslip', array(
+            'payroll' => $payroll,
+        ))->setPaper($customPaper);
+        return $pdf->stream(date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf')->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'attachment; filename=' . date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf');;
     }
 }

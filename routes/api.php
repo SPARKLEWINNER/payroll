@@ -28,3 +28,4 @@ Route::post('additional-remarks/{id}', 'PayrollController@additionalRemarks')->n
 Route::post('deduction/{id}', 'PayrollController@additionalDeduction')->name('additional-deduction');
 Route::post('deduction-remarks/{id}', 'PayrollController@deductionRemarks')->name('deduction-remarks');
 Route::get('getPayrollInfo/{id}', 'PayrollController@getPayrollInfo')->name('get-payrollinfo');
+Route::get('payslip', 'PayrollController@payslipAPI')->name('payslip-api');
