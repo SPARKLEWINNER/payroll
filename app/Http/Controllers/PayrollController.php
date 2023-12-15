@@ -595,13 +595,13 @@ class PayrollController extends Controller
     }
     public function additionalIncome(Request $request, $id)
     {
-        $payroll = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
-        $payroll->gross_pay = $payroll->gross_pay + $request->income;
-        $payroll->other_income_non_taxable = $request->income;
-        $payroll->net_pay = $payroll->gross_pay - $payroll->total_deductions;
-        var_dump($payroll->gross_pay - $payroll->total_deduction);
-        $payroll->save();
-        return 'success';  
+        $payroll_info = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
+        $other_income = $request->income;
+        $other_income_non_taxable = $payroll_info->other_income_non_taxable;
+        $payroll_info->other_income_non_taxable = $other_income;
+        $payroll_info->net_pay = $payroll_info->net_pay + $other_income + $other_income_non_taxable;
+        $payroll_info->save();
+        return 'success';
     }
     public function additionalRemarks(Request $request, $id)
     {
@@ -612,10 +612,11 @@ class PayrollController extends Controller
     }
     public function additionalDeduction(Request $request, $id)
     {
-        $payroll = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
-        $payroll->total_deductions = $payroll->total_deductions + $request->deduction;
-        $payroll->other_deductions = $request->deduction;
-        $payroll->net_pay = $payroll->gross_pay - $payroll->total_deductions;
+        $payroll_info = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
+        $other_deduc = 0;
+        $other_deductions = $payroll_info->other_deductions;
+        $payroll_info->other_deductions = $other_deduc;
+        $payroll_info->net_pay = $payroll_info->net_pay - ($other_deduc + $other_deductions);
         $payroll->save();
         return 'success';  
     }
@@ -625,5 +626,15 @@ class PayrollController extends Controller
         $payroll->deduction_remarks = $request->remarks;
         $payroll->save();
         return 'success';  
+    }
+    public function getPayrollInfo(Request $request, $id)
+    {
+        $payrolls = Payroll::with('informations', 'user')->whereHas('informations', function ($query) use ($id) {
+            $query->where('employee_id', $id)->where('status', 'Save');
+        })->orderBy('payroll_to', 'desc')->get();
+        return [
+            'status' => 'success',
+            'data' => $payrolls
+        ];
     }
 }

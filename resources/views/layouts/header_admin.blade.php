@@ -18,10 +18,10 @@
 
     <!-- Styles -->
     {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
-    <link href="{{ asset('admin/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('admin/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
-    <link href="{{ asset('admin/css/animate.css') }}" rel="stylesheet">
-    <link href="{{ asset('admin/css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('admin/css/bootstrap.min.css') }}" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'" defer>
+    <link href="{{ asset('admin/font-awesome/css/font-awesome.css') }}" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'" defer>
+    <link href="{{ asset('admin/css/animate.css') }}" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'" defer>
+    <link href="{{ asset('admin/css/style.css') }}" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'" defer>
 
     @yield('css')
  

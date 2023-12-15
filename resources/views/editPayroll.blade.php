@@ -1,7 +1,7 @@
 @extends('layouts.header_admin')
 @section('css')
-<link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet">
-<link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet">
+<link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'" defer>
+<link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'" defer>
 @endsection
 @section('content')
 <div class='row'>
@@ -109,7 +109,7 @@
                                 <td>{{number_format($payrollInfo->hdmf_contribution,2)}}</td>
 
                                 @if($payroll->status == null)                          
-                                <td contenteditable="true" onkeydown="add_other_deduction(event,'{{$payrollInfo->gross_pay}}','{{$payrollInfo->total_deductions}}', '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')" id="otherDeductions-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->other_deductions,2)}}</td>
+                                <td contenteditable="true" onkeydown="add_other_deduction(event,'{{$payrollInfo->net_pay}}','{{$payrollInfo->total_deductions}}', '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')" id="otherDeductions-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->other_deductions,2)}}</td>
                                 <td contenteditable="true" onkeydown="add_deduction_remarks(event, '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')">{{$payrollInfo->deduction_remarks}}</td>
                                 <td id="deductions-{{$payrollInfo->employee_id}}" data="{{$payrollInfo->gross_pay}}">{{number_format($payrollInfo->total_deductions,2)}}</td>
                                 @else
@@ -301,12 +301,8 @@
             if (event.key === 'Tab') {
                 const formatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 const result = (parseFloat(gross) + parseFloat(e.target.innerText)).toFixed(2);
-                const formattedNumber = formatter.format(result);
-                const deduction = $(`#deductions-${emp}`).text();
-                /*$(`#${emp}`).text(formattedNumber);*/
-                const net = (Number(result) - parseFloat(deduction)).toFixed(2);
-                const formattedNet = formatter.format(net);
-                /*$(`#netpay-${emp}`).text(formattedNet);*/
+                const formattedNet = formatter.format(result);
+                $(`#netpay-${emp}`).text(formattedNet);
                 const body = {
                     "emp_id": emp,
                     "income": Number(e.target.innerText),
@@ -347,16 +343,13 @@
                 }
             }
         }
-        async function add_other_deduction(e, gross, deduction, emp, id)
+        async function add_other_deduction(e, net, deduction, emp, id)
         {
             if (event.key === 'Tab') {
                 const formatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                const result = (parseFloat(deduction) + parseFloat(e.target.innerText)).toFixed(2);
-                const formattedNumber = formatter.format(result);
-                /*$(`#deductions-${emp}`).text(formattedNumber);*/
-                const net = (Number(gross) - parseFloat(result)).toFixed(2);
-                const formattedNet = formatter.format(net);
-                /*$(`#netpay-${emp}`).text(formattedNet);*/
+                const totalDeduction = (parseFloat(net) - parseFloat(e.target.innerText)).toFixed(2);
+                const formattedNet = formatter.format(totalDeduction);
+                $(`#netpay-${emp}`).text(formattedNet);
                 const body = {
                     "emp_id": emp,
                     "deduction": Number(e.target.innerText),

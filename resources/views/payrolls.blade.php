@@ -1,7 +1,7 @@
 @extends('layouts.header_admin')
 @section('css')
-<link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet">
-<link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet">
+<link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet" defer>
+<link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet" defer>
 @endsection
 @section('content')
 <div class="row">
