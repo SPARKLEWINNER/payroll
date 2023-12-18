@@ -12,9 +12,10 @@
 */
 
 // Route::get('attendance','AttendanceController@create')->name('create-attendance');
-
+Route::get('payslip-api/{empid}/{id}', 'PayrollController@payslipAPI')->name('payslip-api');
 Auth::routes();
 Route::post('rates', 'PayrollController@getRatesStore')->name('store-rates');
+
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('sample', 'AttendanceController@sample');
@@ -61,6 +62,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('payslips', 'PayrollController@payslips');
     Route::get('payslip/{id}', 'PayrollController@payslip');
     Route::get('payslips_all','PayrollController@payslips_all');
+
     Route::post('additional-income/{id}', 'PayrollController@additionaIncome');
     Route::post('deduction-income/{id}', 'PayrollController@deductionIncome');
 
@@ -72,4 +74,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('rates/{id}', 'PayrollController@getRates')->name('rates');
     Route::post('edit-rates', 'PayrollController@setRates')->name('edit-rates');
     Route::post('edit-store-rates', 'PayrollController@setStoreRates')->name('edit-store-rates');
+
+
 });

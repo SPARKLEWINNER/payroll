@@ -433,7 +433,7 @@
                 console.log(table.rows[r + 3].cells[c]);
             }*/
         }
-        const response = await fetch(`https://payroll-live.sparkles.com.ph/api/save`, {
+        const response = await fetch(`https://payroll-live.7star.com.ph/api/save`, {
            method: 'POST',
            body: JSON.stringify(data),
            headers: { 'Content-Type': 'application/json' },

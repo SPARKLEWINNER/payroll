@@ -241,7 +241,7 @@ class PayrollController extends Controller
         $payroll->store = $request[0]['store'];
         $payroll->save();
 
-        for ($key = 0; $key <= count($formattedRequest); $key++) {
+        for ($key = 0; $key < count($formattedRequest); $key++) {
             $payroll_info = new PayrollInfo;
             $payroll_info->payroll_id = $payroll->id;
             $payroll_info->employee_id = $request[$key]['emp_id'];
@@ -598,8 +598,10 @@ class PayrollController extends Controller
         $payroll_info = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
         $other_income = $request->income;
         $other_income_non_taxable = $payroll_info->other_income_non_taxable;
+        $payroll_info->gross_pay = $payroll_info->gross_pay + $request->income;
         $payroll_info->other_income_non_taxable = $other_income;
         $payroll_info->net_pay = $payroll_info->net_pay + $other_income + $other_income_non_taxable;
+
         $payroll_info->save();
         return 'success';
     }
@@ -616,8 +618,9 @@ class PayrollController extends Controller
         $other_deduc = 0;
         $other_deductions = $payroll_info->other_deductions;
         $payroll_info->other_deductions = $other_deduc;
-        $payroll_info->net_pay = $payroll_info->net_pay - ($other_deduc + $other_deductions);
-        $payroll->save();
+        $payroll_info->total_deductions = $payroll_info->total_deductions + $request->deduction;
+        $payroll_info->net_pay = $payroll_info->net_pay - $payroll_info->total_deductions;
+        $payroll_info->save();
         return 'success';  
     }
     public function deductionRemarks(Request $request, $id)
@@ -637,14 +640,13 @@ class PayrollController extends Controller
             'data' => $payrolls,
         ]);
     }
-    public function payslipAPI()
+    public function payslipAPI($empid, $id)
     {
-
-        $payroll = PayrollInfo::with('payroll', 'payroll_allowances')->where('payroll_id', 58)->where('employee_id', '63e247b452b472002d008ab1')->first();
+        $payroll = PayrollInfo::with('payroll', 'payroll_allowances')->where('payroll_id', $id)->where('employee_id', $empid)->first();
         $customPaper = array(0, 0, 360, 400);
         $pdf = PDF::loadView('payslip', array(
             'payroll' => $payroll,
         ))->setPaper($customPaper);
-        return $pdf->stream(date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf')->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'attachment; filename=' . date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf');;
+        return $pdf->stream(date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf');
     }
 }
