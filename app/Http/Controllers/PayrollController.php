@@ -498,7 +498,6 @@ class PayrollController extends Controller
     }
     public function deductionIncome(Request $request, $id)
     {
-
         $payroll_deductions = PayrollDeduction::where('payroll_info_id', $id)->delete();
         $payroll_info = PayrollInfo::findOrfail($id);
         $other_deduc = 0;
@@ -523,7 +522,7 @@ class PayrollController extends Controller
     }
         $other_deductions = $payroll_info->other_deductions;
         $payroll_info->other_deductions = $other_deduc;
-        $payroll_info->net_pay = $payroll_info->net_pay - ($other_deduc + $other_deductions);
+        $payroll_info->net_pay = $payroll_info->net_pay - ($other_deduc);
         $payroll_info->save();
         Alert::success('Successfully Add Deduction')->persistent('Dismiss');
         return back();
@@ -555,7 +554,7 @@ class PayrollController extends Controller
         }
         $other_income_non_taxable = $payroll_info->other_income_non_taxable;
         $payroll_info->other_income_non_taxable = $other_income;
-        $payroll_info->net_pay = $payroll_info->net_pay + $other_income + $other_income_non_taxable;
+        $payroll_info->net_pay = $payroll_info->net_pay + $other_income;
         $payroll_info->save();
         Alert::success('Successfully Add Allowance')->persistent('Dismiss');
         return back();
@@ -617,9 +616,9 @@ class PayrollController extends Controller
         $payroll_info = PayrollInfo::where('payroll_id', $id)->where('employee_id', $request->emp_id)->first();
         $other_deduc = 0;
         $other_deductions = $payroll_info->other_deductions;
-        $payroll_info->other_deductions = $other_deduc;
+        $payroll_info->other_deductions = $request->deduction;
         $payroll_info->total_deductions = $payroll_info->total_deductions + $request->deduction;
-        $payroll_info->net_pay = $payroll_info->net_pay - $payroll_info->total_deductions;
+        $payroll_info->net_pay = $payroll_info->net_pay - $request->deduction;
         $payroll_info->save();
         return 'success';  
     }
@@ -648,5 +647,20 @@ class PayrollController extends Controller
             'payroll' => $payroll,
         ))->setPaper($customPaper);
         return $pdf->stream(date('mm-dd-yyyy') . '-payslip-' . $payroll->employee_name . '.pdf');
+    }
+    public function updateCompanyAPI()
+    {
+        $ids = [
+            "63ed92f1d72f54002d67fa1e",
+            "640137a9bfddb1002da11dcf",
+            "63fd49736497db002df0740f",
+            "62bb925753f9b300378b6062",
+            "61891c24ab5e4e0042a1823c",
+        ];
+        foreach ($ids as $key => $value) {
+            $payroll = Attendance::where('emp_id', $value)->update(['store' => 'Starjobs Executive Search Corporation']);;
+            
+        }
+        return "success";
     }
 }

@@ -354,15 +354,16 @@
                 const result = (parseFloat(deduction) + parseFloat(e.target.innerText)).toFixed(2);
                 const formattedNumber = formatter.format(result);
                 $(`#deductions-${emp}`).text(formattedNumber);
-                const net = $(`#netpay-${emp}`).text();
+                const grossPay = $(`#${emp}`).text();
+                const net = (parseFloat(grossPay.replace(/,/g, '')) - parseFloat(result)).toFixed(2);
                 const formattedNet = formatter.format(net);
-                console.log(formattedNet)
+                console.log(parseFloat(grossPay.replace(/,/g, '')) + " " + parseFloat(result))
                 $(`#netpay-${emp}`).text(formattedNet);
-                const body = {
+                /*const body = {
                     "emp_id": emp,
                     "deduction": Number(e.target.innerText),
                 }
-                const response = await fetch(`http://127.0.0.1:8000/api/deduction/${id}`, {
+                const response = await fetch(`https://payroll-live.7star.com.ph/api/deduction/${id}`, {
                   method: 'post',
                   body: JSON.stringify(body),
                   headers: {'Content-Type': 'application/json'}
@@ -373,7 +374,7 @@
                     success: false,
                     msg: "Connection to payroll error",
                   });  
-                }
+                }*/
             }
         }
         async function add_deduction_remarks(e, emp, id)

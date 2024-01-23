@@ -224,10 +224,16 @@
                                                                 $sss = $sssData->ee;
                                                                 $sss_er = $sssData->er;
                                                             }
-                                                            
-                                                            $philhealth = ((($rate_employee*313*.04)/12)/2);
-                                                            $philhealth = 200;
-                                                            $pagibig = 100.00;
+                                                            if($gross_pay != 0) {
+                                                                $philhealth = ((($rate_employee*313*.04)/12)/2);
+                                                                $philhealth = 200;
+                                                                $pagibig = 100.00;    
+                                                            }
+                                                            else {
+                                                                $philhealth = ((($rate_employee*313*.04)/12)/2);
+                                                                $philhealth = $rates->philhealth;
+                                                                $pagibig = $rates->pagibig;
+                                                            }
                                                             
                                                         }
                                                         $total_deduction = $sss + $philhealth + $pagibig;
