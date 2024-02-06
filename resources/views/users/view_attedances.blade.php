@@ -59,13 +59,23 @@
 								<td>
 								   <small> {{($schedule != null) ? date('h:i a',strtotime($schedule->time_in)). "-".date('h:i a',strtotime($schedule->time_out))." Working Hrs : ".$schedule->total_hours : "No Schedule"}} </small>
 								</td>
-								<td>{{($time_in != null) ? date('h:i a',strtotime($time_in->time)) : ""}}</td>
-								<td>{{($time_out != null) ? date('h:i a',strtotime($time_out->time)) : ""}}</td>
-								<td>{{(($time_in != null) && ($time_out != null)) ? get_working_hours($time_out->time,$time_in->time)." hrs" : "0.00 hrs" }}  </td>
-								<td>{{((($time_in != null) && ($time_out != null) && ($schedule != null)) ) ? get_late($schedule,$time_in->time)." hrs" : "0.00 hrs" }}</td>
+								<td>{{($time_in !== null) ? date('h:i a',strtotime($time_in->time)) : ""}}</td>
+								<td>
+                                    {{ 
+                                        ($time_out != null) 
+                                        ? date('h:i a', strtotime($time_out->time)) 
+                                        : ($time_in != null ? date('h:i a', strtotime($time_in->time. ' +9 hours')) : '') 
+                                    }}
+                                </td>
+								<td>{{(($time_in != null) && ($time_out != null)) ? get_working_hours($time_out->time,$time_in->time)." hrs" : (
+                                        ($time_in != null && $time_out == null)
+                                        ? "8 hrs"
+                                        : "0 hrs"
+                                    ) }}  </td>
+								<td>{{((($time_in != null) && ($schedule != null))) ? get_late($schedule,$time_in->time)." minutes" : "0 minutes" }}</td>
 								<td>0.00 </td>
 								<td>0.00 </td>
-								<td>{{((($time_in != null) && ($time_out != null) && ($schedule != null)) ) ? night_difference(strtotime($time_in->time),strtotime($time_out->time))." hrs" : "0.00 hrs"}}</td>
+								<td>{{((($time_in != null) && ($time_out != null) && ($schedule != null)) ) ? night_difference(strtotime($time_in->time),strtotime($time_out->time),$schedule)." hrs" : "0 hrs"}}</td>
 							  </tr>
 							  @endforeach
 						</tbody>

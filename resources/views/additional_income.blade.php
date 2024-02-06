@@ -51,10 +51,10 @@
                                 @foreach($payrollInfo->payroll_allowances as $key => $allowance)
                                 <div class="row " id='allowance-{{$payrollInfo->id}}-{{$key}}'>
                                     <div class='col-md-5 border form-group'>
-                                        <input name='allowance_name[]' value='{{$allowance->name}}' type='text' placeholder='Meal Allowance' class='form-control form-control-sm' required>
+                                        <input name='allowance_name[]' value='{{$allowance->name}}' type='text' placeholder='Meal Allowance' class='form-control form-control-sm' required disabled>
                                     </div>
                                     <div class='col-md-5 border form-group'>
-                                        <input name='allowance_amount[]' value='{{$allowance->amount}}' type='number'  placeholder='1.00' class='form-control form-control-sm' required>
+                                        <input name='allowance_amount[]' value='{{$allowance->amount}}' type='number'  placeholder='1.00' class='form-control form-control-sm' required disabled>
                                     </div>
 <!--                                    <div class='col-md-2 border form-group'>
                                         <button class='btn btn-danger btn-circle' onclick='remove_allowance({{$payrollInfo->id}},0)' type='button'><i class='fa fa-minus'></i></button>

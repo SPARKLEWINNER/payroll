@@ -297,6 +297,8 @@ class PayrollController extends Controller
         $payroll = PayrollInfo::where('id', $id)->first();
         $old_data = $payroll;
         $days_work = $request->days_work;
+        $other_income = $request->other_income_non_taxable;
+        $other_deduction = $request->other_deduction;
         $daily_rate = $request->daily_rate;
         $hour_rate = $request->hour_rate;
         $basic_pay = $hour_rate * $request->hours_work;
@@ -305,7 +307,7 @@ class PayrollController extends Controller
         $legal_holiday_amount = $request->legal_holiday * $daily_rate;
         $overtime_amount = ($hour_rate * 1.25) * $request->overtime;
         $nightdiff_amount = ($hour_rate * .1) * $request->night_diff;
-        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount + $special_holiday_amount + $legal_holiday_amount;
+        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount + $special_holiday_amount + $legal_holiday_amount + $other_income
         $other_income_non_tax = $request->other_income_non_taxable;
         $other_deduction = $request->other_deduction;
         $sssTable = SssTable::where('from_range', '<', $gross_pay)->orderBy('id', 'desc')->first();
@@ -509,7 +511,7 @@ class PayrollController extends Controller
             $allowance->amount = $request->deduction_amount[$key];
             $allowance->payroll_info_id = $id;
             $allowance->save();
-            $other_deduc = $other_deduc + $request->deduction_amount[$key];
+            $other_deduc = $other_deduc + $request->deduction_amount[0];
             $log = new PayrollLog;
             $log->table = "payroll_deductions";
             $log->action = "Create";
@@ -521,7 +523,8 @@ class PayrollController extends Controller
         }
     }
         $other_deductions = $payroll_info->other_deductions;
-        $payroll_info->other_deductions = $other_deduc;
+        $payroll_info->other_deductions = $payroll_info->other_deductions+$other_deduc;
+        $payroll_info->total_deductions = $payroll_info->total_deductions + $other_deduc;
         $payroll_info->net_pay = $payroll_info->net_pay - ($other_deduc);
         $payroll_info->save();
         Alert::success('Successfully Add Deduction')->persistent('Dismiss');
@@ -529,7 +532,6 @@ class PayrollController extends Controller
     }
     public function additionaIncome(Request $request, $id)
     {
-
         $payroll_allowances = PayrollAllowance::where('payroll_info_id', $id)->delete();
         $payroll_info = PayrollInfo::findOrfail($id);
         $other_income = 0;
@@ -541,7 +543,7 @@ class PayrollController extends Controller
             $allowance->amount = $request->allowance_amount[$key];
             $allowance->payroll_info_id = $id;
             $allowance->save();
-            $other_income = $other_income + $request->allowance_amount[$key];
+            $other_income = $request->allowance_amount[0];
             $log = new PayrollLog;
             $log->table = "payroll_allowances";
             $log->action = "Create";
@@ -553,7 +555,8 @@ class PayrollController extends Controller
         }
         }
         $other_income_non_taxable = $payroll_info->other_income_non_taxable;
-        $payroll_info->other_income_non_taxable = $other_income;
+        $payroll_info->gross_pay = $payroll_info->gross_pay + $other_income;
+        $payroll_info->other_income_non_taxable = $payroll_info->other_income_non_taxable+$other_income;
         $payroll_info->net_pay = $payroll_info->net_pay + $other_income;
         $payroll_info->save();
         Alert::success('Successfully Add Allowance')->persistent('Dismiss');
@@ -632,7 +635,7 @@ class PayrollController extends Controller
     public function getPayrollInfo(Request $request, $id)
     {
         $payrolls = Payroll::with('informations', 'user')->whereHas('informations', function ($query) use ($id) {
-            $query->where('employee_id', $id)->where('status', 'Save');
+            $query->where('employee_id', $id)->where('display', 1)->where('status', 'Save');
         })->orderBy('payroll_to', 'desc')->get();
         return response()->json([
             'success' => true,
@@ -651,16 +654,86 @@ class PayrollController extends Controller
     public function updateCompanyAPI()
     {
         $ids = [
-            "63ed92f1d72f54002d67fa1e",
-            "640137a9bfddb1002da11dcf",
-            "63fd49736497db002df0740f",
-            "62bb925753f9b300378b6062",
-            "61891c24ab5e4e0042a1823c",
+            "63c74d095c034a002f2f55dc",
+            "64fe7881df5d41002d2c6116",
+            "64ffc7d9a95fb6002d76c7f2",
+            "6147e9c4a4bda00016e74c1d",
+            "6454ce3e7f255d002d3765be",
         ];
         foreach ($ids as $key => $value) {
             $payroll = Attendance::where('emp_id', $value)->update(['store' => 'Starjobs Executive Search Corporation']);;
             
         }
         return "success";
+    }
+    public function display($id)
+    {
+        try {
+            $payroll_info = Payroll::where('id', $id)->first();
+            //dd($payroll_info->display);
+            if ($payroll_info->display == 0) {
+                $payroll_info->display = 1;
+                $payroll_info->save();
+                Alert::success('Payslip information integrated with timekeeping.')->persistent('Dismiss');
+                return back();           
+            }
+            else {
+                $payroll_info->display = 0;
+                $payroll_info->save();
+                Alert::success('Payslip removed from timekeeping.')->persistent('Dismiss');
+                return back();
+            }
+            
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+    public function sss_get()
+    {
+        try {
+            $sssTable = SssTable::orderBy('id', 'desc')->get();
+            return response()->json([
+                'success' => true,
+                'data' => $sssTable,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+    public function sss_post(Request $request)
+    {
+        try {
+            $sssTable = new SssTable;
+            $sssTable->from_range = $request->from;
+            $sssTable->to_range = $request->to;
+            $sssTable->er = $request->er;
+            $sssTable->ee = $request->ee;
+            $sssTable->save();
+            return response()->json([
+                'success' => true,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+    public function sss_update(Request $request, $id)
+    {
+        try {
+            $sssTable = SssTable::where('id', $id)->first();
+            $sssTable->from_range = $request->from;
+            $sssTable->to_range = $request->to;
+            $sssTable->er = $request->er;
+            $sssTable->ee = $request->ee;
+            $sssTable->save();
+            return response()->json([
+                'success' => true,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+            throw $e;
+        }
     }
 }

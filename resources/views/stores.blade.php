@@ -58,8 +58,8 @@
                                 </div>
                                 </div>
                             </form> 
-              		
-              	        </div>
+                    
+                        </div>
                         {{-- New Laborer --}}
                         <div class="modal fade" id="edit_rates" tabindex="-1" role="dialog" aria-labelledby="EditRatesData" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -151,10 +151,11 @@
                                         $legal_holiday = 0;
                                         $night_diff = 0;
                                     @endphp
-                                            @foreach($date_range as $date)
+                                            @foreach($date_range as $index => $date)
                                                 @php
                                                     $time_in = (($employee->attendances)->where('status','time-in')->where('date',$date))->first();
-                                                    $time_out = (($employee->attendances)->where('status','time-out')->where('date',$date))->first();
+                                                    
+                                                    $time_out = (($employee->attendances)->where('status','time-out')->where('date', $date))->first();
                                                     $schedule = (($employee->schedules)->where('date',$date))->first();
                                                     if(($time_in != null) && ($time_out != null))
                                                     {
@@ -172,7 +173,7 @@
                                                         {
                                                             $late = get_late($schedule,$time_in->time);
                                                             $hours_tardy = $hours_tardy+$late;
-                                                            $night_difference = night_difference(strtotime($time_in->time),strtotime($time_out->time));
+                                                            $night_difference = night_difference(strtotime($time_in->time),strtotime($time_out->time),$schedule);
                                                             $night_diff = $night_diff+$night_difference;
                                                         }
                                                     }
@@ -247,7 +248,7 @@
                                             <td>{{((($time_in != null) && ($time_out != null) && ($schedule != null)) ) ? get_late($schedule,$time_in->time)." hrs" : "0.00 hrs" }}</td>
                                             <td>0.00 </td>
                                             <td>0.00 </td>
-                                            <td>{{((($time_in != null) && ($time_out != null) && ($schedule != null)) ) ? night_difference(strtotime($time_in->time),strtotime($time_out->time))." hrs" : "0.00 hrs"}}</td>
+                                            <td>{{((($time_in != null) && ($time_out != null) && ($schedule != null)) ) ? night_difference(strtotime($time_in->time),strtotime($time_out->time),$schedule)." hrs" : "0.00 hrs"}}</td>
                                           </tr>
                                           @endforeach
                                     </tbody>
@@ -265,58 +266,71 @@
 @php
     function get_working_hours($timeout,$timein)
     {
-        return round((((strtotime($timeout) - strtotime($timein)))/3600),2);
+        return round((((strtotime($timeout) - strtotime($timein)))/3600));
     }
     function get_late($schedule,$timein)
     {
-        $late = (((strtotime($schedule->time_in) - strtotime($timein)))/3600);
-        // dd($late);
-        if($late < 0)
+        
+        $startTime = new DateTime($timein);
+        $timeInTimeOnly = $startTime->format('H:i:s');
+        $endTime = new DateTime($schedule->time_in);
+        $ScheduledtimeInTimeOnly = $endTime->format('H:i:s');
+        $formattedDateTimeIn = new DateTime($timeInTimeOnly);
+        if ($timeInTimeOnly > $ScheduledtimeInTimeOnly)
         {
-            $late_data = $late;
+            $interval = $formattedDateTimeIn->diff(new DateTime ($ScheduledtimeInTimeOnly));
+            $hours = $interval->h;
+            $minutes = $interval->i;
+            $lateMinutes = $hours * 60 + $minutes;
         }
         else {
-            $late_data = 0;
-        
+            $lateMinutes = 0;
         }
-        return round($late_data*-1,2);
+        return $lateMinutes;
     }
 
-    function night_difference($start_work,$end_work)
+    function night_difference($start_work,$end_work,$schedule)
     {
+        $startTime = new DateTime($schedule->time_in);
+        $startTimeTimeOnly = $startTime->format('H:i:s');
         $start_night = mktime('22','00','00',date('m',$start_work),date('d',$start_work),date('Y',$start_work));
         $end_night   = mktime('06','00','00',date('m',$start_work),date('d',$start_work) + 1,date('Y',$start_work));
-
-        if($start_work >= $start_night && $start_work <= $end_night)
-        {
-            if($end_work >= $end_night)
-            {
-                return ($end_night - $start_work) / 3600;
-            }
-            else
-            {
-                return ($end_work - $start_work) / 3600;
-            }
-        }
-        elseif($end_work >= $start_night && $end_work <= $end_night)
-        {
-            if($start_work <= $start_night)
-            {
-                return ($end_work - $start_night) / 3600;
-            }
-            else
-            {
-                return ($end_work - $start_work) / 3600;
-            }
-        }
-        else
-        {
-            if($start_work < $start_night && $end_work > $end_night)
-            {
-                return ($end_night - $start_night) / 3600;
-            }
+        if($startTime != new DateTime("22:00:00")){
             return 0;
         }
+        else {
+            if($start_work >= $start_night && $start_work <= $end_night)
+            {
+                if($end_work >= $end_night)
+                {
+                    return ($end_night - $start_work) / 3600;
+                }
+                else
+                {
+                    return ($end_work - $start_work) / 3600;
+                }
+            }
+            elseif($end_work >= $start_night && $end_work <= $end_night)
+            {
+                if($start_work <= $start_night)
+                {
+                    return ($end_work - $start_night) / 3600;
+                }
+                else
+                {
+                    return ($end_work - $start_work) / 3600;
+                }
+            }
+            else
+            {
+                if($start_work < $start_night && $end_work > $end_night)
+                {
+                    return ($end_night - $start_night) / 3600;
+                }
+                return 0;
+            }
+        }
+        
     }
 @endphp
 @section('js')

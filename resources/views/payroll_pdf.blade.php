@@ -188,7 +188,6 @@ ini_set("memory_limit", "-1");
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('hdmf_contribution')),2)}}</th>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('tax')),2)}}</th>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('other_deductions')),2)}}</th>
-                <th class='text-right'>{{number_format(0.00, 2)}}</td>
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('total_deductions')),2)}}</th>
 
                 <th class='text-right'>{{number_format((($payroll->informations)->sum('net_pay')),2)}}</th>

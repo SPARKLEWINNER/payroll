@@ -13,6 +13,10 @@
 
 // Route::get('attendance','AttendanceController@create')->name('create-attendance');
 Route::get('payslip-api/{empid}/{id}', 'PayrollController@payslipAPI')->name('payslip-api');
+Route::get('sss-api/', 'PayrollController@sss_get')->name('sss-api');
+Route::get('sss-update/', 'PayrollController@sss_update')->name('sss-update');
+Route::post('api/sss-post', 'PayrollController@sss_post')->name('sss-post');
+
 Auth::routes();
 Route::post('rates', 'PayrollController@getRatesStore')->name('store-rates');
 
@@ -50,6 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('generate', 'PayrollController@save')->name('save-payroll');
     Route::get('payrolls', 'PayrollController@payrolls')->name('payrolls');
     Route::get('payroll/{id}', 'PayrollController@payroll')->name('payroll');
+    Route::get('display/{id}', 'PayrollController@display')->name('display');
     Route::get('billing/{id}', 'PayrollController@billing')->name('billing');
     Route::get('test', 'PayrollController@test')->name('test');
     Route::get('edit-payroll/{id}', 'PayrollController@editPayroll');
@@ -75,5 +80,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('edit-rates', 'PayrollController@setRates')->name('edit-rates');
     Route::post('edit-store-rates', 'PayrollController@setStoreRates')->name('edit-store-rates');
 
+    //SSS
+    Route::get('sss', 'SssController@index')->name('sss');
+    Route::post('new-sss', 'SssController@create')->name('new-sss');
+    Route::post('edit-sss', 'SssController@edit')->name('edit-sss');
 
 });

@@ -81,12 +81,11 @@
                         
                                 <tr>
                                     <td > 
+                                        @if($payroll->status == "")
                                         <a title='Edit Payroll' href='{{url("edit-payroll/".$payroll->id)}}' ><button type="button"  class="btn btn-success btn-icon btn-sm">
                                             <i class="fa fa-edit"></i>
                                             </button>
                                         </a>
-                                        @if($payroll->status == "")
-                                        
                                         <a title='Delete Payroll' class='delete-payroll' id='{{$payroll->id}}' ><button type="button"  class="btn btn-danger btn-icon btn-sm">
                                             <i class="fa fa-trash"></i>
                                             </button>
@@ -96,6 +95,17 @@
                                             </button>
                                         </a>
                                         @else
+                                        @if($payroll->display == 0)
+                                        <a title='Display Payslip' href='{{url("display/".$payroll->id)}}' ><button type="button"  class="btn btn-success btn-icon btn-sm">
+                                            <i class="fa fa-exchange"></i>
+                                            </button>
+                                        </a>
+                                        @else
+                                        <a title='Remove Payslip' href='{{url("display/".$payroll->id)}}' ><button type="button"  class="btn btn-success btn-icon btn-sm">
+                                            <i class="fa fa-minus-square"></i>
+                                            </button>
+                                        </a>
+                                        @endif
                                         <a title='Print Payroll' href='{{url("payroll/".$payroll->id)}}' target="_blank"><button type="button"  class="btn btn-danger btn-icon btn-sm">
                                         <i class="fa fa-file-pdf-o"></i>
                                         </button></a>
