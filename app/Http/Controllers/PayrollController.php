@@ -92,7 +92,20 @@ class PayrollController extends Controller
     public function payrolls()
     {
         $stores = Attendance::groupBy('store')->with('payroll')->selectRaw('store')->where('store', '!=', null)->get();
-        $payrolls = Payroll::with('informations', 'user')->orderBy('payroll_to', 'desc')->get();
+        $payrolls = Payroll::with('informations', 'user')->orderBy('payroll_to', 'desc')->where('status', NULL)->get();
+        return view(
+            'payrolls',
+            array(
+                'payrolls' => $payrolls,
+                'stores' => $stores,
+
+            )
+        );
+    }
+    public function savePayrolls()
+    {
+        $stores = Attendance::groupBy('store')->with('payroll')->selectRaw('store')->where('store', '!=', null)->get();
+        $payrolls = Payroll::with('informations', 'user')->orderBy('payroll_to', 'desc')->where('status', "Save")->get();
         return view(
             'payrolls',
             array(
@@ -307,7 +320,7 @@ class PayrollController extends Controller
         $legal_holiday_amount = $request->legal_holiday * $daily_rate;
         $overtime_amount = ($hour_rate * 1.25) * $request->overtime;
         $nightdiff_amount = ($hour_rate * .1) * $request->night_diff;
-        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount + $special_holiday_amount + $legal_holiday_amount + $other_income
+        $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount + $special_holiday_amount + $legal_holiday_amount + $other_income;
         $other_income_non_tax = $request->other_income_non_taxable;
         $other_deduction = $request->other_deduction;
         $sssTable = SssTable::where('from_range', '<', $gross_pay)->orderBy('id', 'desc')->first();

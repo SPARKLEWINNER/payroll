@@ -53,6 +53,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('generate', 'PayrollController@index')->name('generate-payroll');
     Route::post('generate', 'PayrollController@save')->name('save-payroll');
     Route::get('payrolls', 'PayrollController@payrolls')->name('payrolls');
+    Route::get('save_payrolls', 'PayrollController@savePayrolls')->name('savePayrolls');
     Route::get('payroll/{id}', 'PayrollController@payroll')->name('payroll');
     Route::get('display/{id}', 'PayrollController@display')->name('display');
     Route::get('billing/{id}', 'PayrollController@billing')->name('billing');
