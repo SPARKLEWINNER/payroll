@@ -326,8 +326,7 @@ class PayrollController extends Controller
         $sssTable = SssTable::where('from_range', '<', $gross_pay)->orderBy('id', 'desc')->first();
 
         if ($basic_pay >= 1) {
-
-            $sssData = $sssTable->where('from_range', '<', $gross_pay)->first();
+            $sssData = $sssTable->where('from_range','<=',$gross_pay)->where('to_range', '>=', $gross_pay)->first();
             if ($sssData != null) {
                 $sss = $sssData->ee;
                 $sss_er = $sssData->er;
@@ -513,7 +512,6 @@ class PayrollController extends Controller
     }
     public function deductionIncome(Request $request, $id)
     {
-        $payroll_deductions = PayrollDeduction::where('payroll_info_id', $id)->delete();
         $payroll_info = PayrollInfo::findOrfail($id);
         $other_deduc = 0;
         if($request->deduction_name != null)
@@ -545,7 +543,6 @@ class PayrollController extends Controller
     }
     public function additionaIncome(Request $request, $id)
     {
-        $payroll_allowances = PayrollAllowance::where('payroll_info_id', $id)->delete();
         $payroll_info = PayrollInfo::findOrfail($id);
         $other_income = 0;
         if($request->allowance_name != null)

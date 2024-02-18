@@ -218,7 +218,7 @@
                                                         if($basic_pay >= 1)
                                                         {
                                                             
-                                                            $sssData = $sssTable->where('from_range','<',$gross_pay)->first();
+                                                            $sssData = $sssTable->where('from_range','<=',$gross_pay)->where('to_range', '>=', $gross_pay)->first();
                                                             if($sssData != null)
                                                             {
                                                                 $sss = $sssData->ee;
