@@ -331,11 +331,8 @@ class PayrollController extends Controller
                 $sss = $sssData->ee;
                 $sss_er = $sssData->er;
             }
-            $philhealth = ((($daily_rate * 313 * .04) / 12) / 2);
-            $philhealth = 200;
-            $pagibig = 100.00;
         }
-        $total_deduction = $sss + $philhealth + $pagibig + $other_deduction;
+        $total_deduction = $payroll->$sss_contribution + $payroll->$nhip_contribution + $payroll->$hdmf_contribution + $other_deduction;
         $net = $gross_pay - $total_deduction + $other_income_non_tax;
         $payroll->daily_rate = $daily_rate;
         $payroll->hour_rate = $hour_rate;
@@ -354,9 +351,6 @@ class PayrollController extends Controller
         $payroll->amount_night_diff = $nightdiff_amount;
         $payroll->gross_pay = $gross_pay;
         $payroll->other_income_non_taxable = $other_income_non_tax;
-        $payroll->sss_contribution = $sss;
-        $payroll->nhip_contribution = $philhealth;
-        $payroll->hdmf_contribution = $pagibig;
         $payroll->total_deductions = $total_deduction;
         $payroll->other_deductions = $other_deduction;
         $payroll->net_pay = $net;
@@ -432,7 +426,7 @@ class PayrollController extends Controller
         $payroll->sss_contribution = $request->sss_contribution;
         $payroll->nhip_contribution = $request->nhip_contribution;
         $payroll->hdmf_contribution = $request->hdmf_contribution;
-        $payroll->total_deductions = $payroll->sss_contribution + $payroll->nhip_contribution + $payroll->hdmf_contribution + $payroll->other_deductions;
+        $payroll->total_deductions = $request->sss_contribution + $request->nhip_contribution + $request->hdmf_contribution + $payroll->other_deductions;
         $payroll->net_pay = $payroll->gross_pay - $payroll->total_deductions;
         $payroll->save();
         $log = new PayrollLog;

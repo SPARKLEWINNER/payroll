@@ -19,16 +19,24 @@ class StoreController extends Controller
         $date_range =  $this->dateRange($from,$to);
         $stores = Attendance::groupBy('store')->selectRaw('store')->where('store','!=',null)->get();
         $employees = [];
+        var_dump($to);
         if($request->store)
         {
-            $employees = Attendance::with(['attendances' => function($q) use ($from,$to)
-            {
-                $q->whereBetween('date',[$from,$to]);
-            }])->with(['schedules' => function($q) use ($from,$to)
-            {
-                $q->whereBetween('date',[$from,$to])->orderBy('id','desc');
+            $employees = Attendance::whereHas('attendances', function ($q) use ($from, $to) {
+                $q->whereBetween('date', [$from, $to]);
+            })
+            ->with(['attendances' => function ($q) use ($from, $to) {
+                $q->whereBetween('date', [$from, $to]);
             }])
-            ->groupBy('emp_id','emp_name')->select('emp_id','emp_name')->where('store',$request->store)->orderBy('emp_name','asc')->get();
+            ->with(['schedules' => function ($q) use ($from, $to) {
+                $q->whereBetween('date', [$from, $to])->orderBy('id', 'desc');
+            }])
+            ->groupBy('emp_id', 'emp_name')
+            ->select('emp_id', 'emp_name')
+            ->orderBy('emp_name', 'asc')
+            ->get();
+
+            /*var_dump($employees);*/
         }
         
         return view('stores',

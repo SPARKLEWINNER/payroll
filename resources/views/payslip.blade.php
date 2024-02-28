@@ -188,6 +188,20 @@ ini_set("memory_limit", "-1");
             </tr>
             <tr>
                 <td  class='text-left'>
+                    NIGHT DIFF
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->amount_night_diff,2)}}
+                </td>
+                <td   class='text-left'>
+                    
+                </td>
+                <td  class='text-right'>
+                    
+                </td>
+            </tr>
+            <tr>
+                <td  class='text-left'>
                     LEGAL HOLIDAY
                 </td>
                 <td  class='text-right'>
