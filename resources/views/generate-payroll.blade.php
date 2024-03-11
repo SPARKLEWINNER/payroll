@@ -3,7 +3,6 @@
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet">
 @endsection
 @section('content')
-  
     <div class='row'>
         <div class="col-lg-12 grid-margin stretch-card">
             <div class="ibox float-e-margins">
@@ -184,7 +183,7 @@
                                                                 }
                                                                 
                                                                 $hours_tardy = $hours_tardy+$late;
-                                                                $night_difference = night_difference(strtotime($time_in->time),strtotime($time_out->time));
+                                                                $night_difference = night_difference(strtotime($time_in->time),strtotime($time_out->time), $schedule);
                                                                 $night_diff = $night_diff+$night_difference;
                                                             }
                                                         }
@@ -206,7 +205,7 @@
                                                         $tardy_amount = ($rate_employee/8/60)*$hours_tardy;
                                                         $overtime_amount = ($rate_employee*1.25)*$overtime;
                                                         $nightdiff_amount = ($rate_employee*.1)*$night_diff;
-                                                        $special_holiday_amount = $special_holiday * .3 * $rate_employee;
+                                                        $special_holiday_amount = ($rate_employee * .3) * $special_holiday;
                                                         $legal_holiday_amount = $legal_holiday * $rate_employee;
                                                         $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount +$special_holiday_amount +$legal_holiday_amount;
                                                         $other_income_non_tax = 0;
@@ -224,15 +223,17 @@
                                                                 $sss = $sssData->ee;
                                                                 $sss_er = $sssData->er;
                                                             }
-                                                            if($gross_pay != 0) {
+                                                            if($rates->gross_pay != 0) {
+                                                                $philhealth = ((($rate_employee*313*.04)/12)/2);
                                                                 $philhealth = 200;
-                                                                $pagibig = 100.00;    
+                                                                $pagibig = 200.00;    
                                                             }
                                                             else {
-                                                                $philhealth = ((($rate_employee*313*.04)/12)/2);
-                                                                $philhealth = $rates->philhealth;
-                                                                $pagibig = $rates->pagibig;
+                                                                $philhealth = ((($rate_employee*313*.05)/12)/2);
+                                                            $philhealth = $rates->philhealth;
+                                                            $pagibig = $rates->pagibig;
                                                             }
+                                                            
                                                             
                                                         }
                                                         $total_deduction = $sss + $philhealth + $pagibig;
@@ -240,7 +241,9 @@
                                                         
                                                         
                                                 @endphp
+                                                
                                                 <tr >
+                                                    @if($working_hours > 0)
                                                     <td>{{$c++}}<input type='hidden' id='emp_id[{{$key}}]' value='{{$employee->emp_id}}'><input type='hidden' id='emp_name[{{$key}}]' value='{{$employee->emp_name}}'></td>
                                                     <td>{{$employee->emp_name}}</td>
                                                     @if(!empty($rates) && $rates->daily > 0)
@@ -277,6 +280,7 @@
                                                     <td class='text-right'>{{number_format($net,2)}} <input type='hidden' id='net[{{$key}}]' value='{{$net}}'></td>
                                                     <td></td>
                                                 </tr>
+                                                @endif
                                             @endforeach
                                     </tbody>
                             </table>
@@ -305,54 +309,67 @@
     }
     function get_late($schedule,$timein)
     {
-        $late = (((strtotime($schedule->time_in) - strtotime($timein)))/3600);
-        // dd($late);
-        if($late < 0)
+        
+        $startTime = new DateTime($timein);
+        $timeInTimeOnly = $startTime->format('H:i:s');
+        $endTime = new DateTime($schedule->time_in);
+        $ScheduledtimeInTimeOnly = $endTime->format('H:i:s');
+        $formattedDateTimeIn = new DateTime($timeInTimeOnly);
+        if ($timeInTimeOnly > $ScheduledtimeInTimeOnly)
         {
-            $late_data = $late;
+            $interval = $formattedDateTimeIn->diff(new DateTime ($ScheduledtimeInTimeOnly));
+            $hours = $interval->h;
+            $minutes = $interval->i;
+            $lateMinutes = $hours * 60 + $minutes;
         }
         else {
-            $late_data = 0;
-        
+            $lateMinutes = 0;
         }
-        return round($late_data*-1,2);
+        return $lateMinutes;
     }
 
-    function night_difference($start_work,$end_work)
+    function night_difference($start_work,$end_work,$schedule)
     {
+        $startTime = new DateTime($schedule->time_in);
+        $startTimeTimeOnly = $startTime->format('H:i:s');
         $start_night = mktime('22','00','00',date('m',$start_work),date('d',$start_work),date('Y',$start_work));
         $end_night   = mktime('06','00','00',date('m',$start_work),date('d',$start_work) + 1,date('Y',$start_work));
-
-        if($start_work >= $start_night && $start_work <= $end_night)
-        {
-            if($end_work >= $end_night)
-            {
-                return ($end_night - $start_work) / 3600;
-            }
-            else
-            {
-                return ($end_work - $start_work) / 3600;
-            }
-        }
-        elseif($end_work >= $start_night && $end_work <= $end_night)
-        {
-            if($start_work <= $start_night)
-            {
-                return ($end_work - $start_night) / 3600;
-            }
-            else
-            {
-                return ($end_work - $start_work) / 3600;
-            }
-        }
-        else
-        {
-            if($start_work < $start_night && $end_work > $end_night)
-            {
-                return ($end_night - $start_night) / 3600;
-            }
+        if($startTime <= new DateTime("22:00:00")){
             return 0;
         }
+        else {
+            if($start_work >= $start_night && $start_work <= $end_night)
+            {
+                if($end_work >= $end_night)
+                {
+                    return ($end_night - $start_work) / 3600;
+                }
+                else
+                {
+                    return ($end_work - $start_work) / 3600;
+                }
+            }
+            elseif($end_work >= $start_night && $end_work <= $end_night)
+            {
+                if($start_work <= $start_night)
+                {
+                    return ($end_work - $start_night) / 3600;
+                }
+                else
+                {
+                    return ($end_work - $start_work) / 3600;
+                }
+            }
+            else
+            {
+                if($start_work < $start_night && $end_work > $end_night)
+                {
+                    return ($end_night - $start_night) / 3600;
+                }
+                return 0;
+            }
+        }
+        
     }
    
 @endphp
@@ -371,7 +388,7 @@
         e.preventDefault();
         var data = []
         var table = document.getElementById('myTable');
-        for (var r = 0; r <= table.rows.length - 4; r++) {
+        for (var r = 0; r <= table.rows.length; r++) {
             var id = `emp_id[${r}]`;
             var name = `emp_name[${r}]`;
             var dailyRate = `rate[${r}]`;
@@ -398,41 +415,42 @@
             var total_deduction = `total_deduction[${r}]`;
             var net = `net[${r}]`;
             var sss = `sss[${r}]`;
-
-            data.push(
-                {
-                    emp_id: document.getElementById(id).value, 
-                    emp_name: document.getElementById(name).value,
-                    rate: document.getElementById(dailyRate).value,
-                    daily_rate: document.getElementById(ratePerHour).value,
-                    working_hours: document.getElementById(workingHours).value,
-                    days_work: document.getElementById(daysWork).value,
-                    basic_pay: document.getElementById(basicPay).value,
-                    hours_tardy: document.getElementById(hoursTardy).value,
-                    tardy_amount: document.getElementById(tardyAmount).value,
-                    overtime: document.getElementById(overtime).value,
-                    overtime_amount: document.getElementById(overtimeAmount).value,
-                    special_holiday: document.getElementById(specialHoliday).value,
-                    special_holiday_amount: document.getElementById(specialHolidayAmount).value,
-                    legal_holiday: document.getElementById(legal_holiday).value,
-                    legal_holiday_amount: document.getElementById(legal_holiday_amount).value,
-                    nightdiff_amount: document.getElementById(nightdiff_amount).value,
-                    night_diff: document.getElementById(night_diff).value,
-                    gross_pay: document.getElementById(gross_pay).value,
-                    other_income_non_tax: document.getElementById(other_income_non_tax).value,
-                    sss_er: document.getElementById(sss_er).value,
-                    sss: document.getElementById(sss).value,
-                    philhealth: document.getElementById(philhealth).value,
-                    pagibig: document.getElementById(pagibig).value,
-                    other_deduction: document.getElementById(other_deduction).value,
-                    total_deduction: document.getElementById(total_deduction).value,
-                    net: document.getElementById(net).value,
-                    from: document.getElementById("fromDate").value,
-                    to: document.getElementById("toDate").value,
-                    id: document.getElementById("id").value,
-                    store:document.getElementById("store").value
-                }
-            )
+            if(document.getElementById(workingHours) !== null) {
+                data.push(
+                    {
+                        emp_id: document.getElementById(id).value, 
+                        emp_name: document.getElementById(name).value,
+                        rate: document.getElementById(dailyRate).value,
+                        daily_rate: document.getElementById(ratePerHour).value,
+                        working_hours: document.getElementById(workingHours).value,
+                        days_work: document.getElementById(daysWork).value,
+                        basic_pay: document.getElementById(basicPay).value,
+                        hours_tardy: document.getElementById(hoursTardy).value,
+                        tardy_amount: document.getElementById(tardyAmount).value,
+                        overtime: document.getElementById(overtime).value,
+                        overtime_amount: document.getElementById(overtimeAmount).value,
+                        special_holiday: document.getElementById(specialHoliday).value,
+                        special_holiday_amount: document.getElementById(specialHolidayAmount).value,
+                        legal_holiday: document.getElementById(legal_holiday).value,
+                        legal_holiday_amount: document.getElementById(legal_holiday_amount).value,
+                        nightdiff_amount: document.getElementById(nightdiff_amount).value,
+                        night_diff: document.getElementById(night_diff).value,
+                        gross_pay: document.getElementById(gross_pay).value,
+                        other_income_non_tax: document.getElementById(other_income_non_tax).value,
+                        sss_er: document.getElementById(sss_er).value,
+                        sss: document.getElementById(sss).value,
+                        philhealth: document.getElementById(philhealth).value,
+                        pagibig: document.getElementById(pagibig).value,
+                        other_deduction: document.getElementById(other_deduction).value,
+                        total_deduction: document.getElementById(total_deduction).value,
+                        net: document.getElementById(net).value,
+                        from: document.getElementById("fromDate").value,
+                        to: document.getElementById("toDate").value,
+                        id: document.getElementById("id").value,
+                        store:document.getElementById("store").value
+                    }
+                )
+            }
             
             /*for (var c = 0, m = table.rows[0].cells.length; c < m; c++) {
                 console.log(table.rows[r + 3].cells[c]);

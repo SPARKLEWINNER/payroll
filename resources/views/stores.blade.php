@@ -58,8 +58,8 @@
                                 </div>
                                 </div>
                             </form> 
-                    
-                        </div>
+              		
+              	        </div>
                         {{-- New Laborer --}}
                         <div class="modal fade" id="edit_rates" tabindex="-1" role="dialog" aria-labelledby="EditRatesData" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -157,9 +157,12 @@
                                                     
                                                     $time_out = (($employee->attendances)->where('status','time-out')->where('date', $date))->first();
                                                     $schedule = (($employee->schedules)->where('date',$date))->first();
+                                                    if($time_in != null) {
+                                                        $day_works = $day_works+1;
+                                                    };
                                                     if(($time_in != null) && ($time_out != null))
                                                     {
-                                                        $day_works = $day_works+1;
+                                                        
                                                         $working = get_working_hours($time_out->time,$time_in->time);
                                                         if($working > 8)
                                                         {
@@ -179,6 +182,7 @@
                                                     }
                                                 @endphp
                                             @endforeach
+                                        @if($working_hours > 0)   
                                         <tr data-target="#viewRecord{{$employee->emp_id}}" data-toggle="modal" title='RECORD'>
                                             <td>
                                                 
@@ -192,7 +196,7 @@
                                             <td>{{$legal_holiday}}</td>
                                             <td>{{$night_diff}}</td>
                                         </tr>
-                                        
+                                        @endif
                                     @endforeach
                                   </tbody>
                                 </table>
@@ -295,7 +299,7 @@
         $startTimeTimeOnly = $startTime->format('H:i:s');
         $start_night = mktime('22','00','00',date('m',$start_work),date('d',$start_work),date('Y',$start_work));
         $end_night   = mktime('06','00','00',date('m',$start_work),date('d',$start_work) + 1,date('Y',$start_work));
-        if($startTime != new DateTime("22:00:00")){
+        if($startTime <= new DateTime("22:00:00")){
             return 0;
         }
         else {

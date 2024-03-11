@@ -323,17 +323,24 @@ class PayrollController extends Controller
         $gross_pay = $basic_pay - $tardy_amount + $overtime_amount + $nightdiff_amount + $special_holiday_amount + $legal_holiday_amount + $other_income;
         $other_income_non_tax = $request->other_income_non_taxable;
         $other_deduction = $request->other_deduction;
-        $sssTable = SssTable::where('from_range', '<', $gross_pay)->orderBy('id', 'desc')->first();
-
-        if ($basic_pay >= 1) {
-            $sssData = $sssTable->where('from_range','<=',$gross_pay)->where('to_range', '>=', $gross_pay)->first();
+/*        $sssTable = SssTable::where('from_range', '<=', $gross_pay)->where('to_range', '>=', $gross_pay)->orderBy('id', 'desc')->first();
+*/
+        if ($gross_pay >= 1) {
+            $sssData = SssTable::where('from_range', '<=', $gross_pay)->where('to_range', '>=', $gross_pay)->first();
             if ($sssData != null) {
                 $sss = $sssData->ee;
                 $sss_er = $sssData->er;
             }
+            else {
+                $sss = 0;
+            }
+            $philhealth = ((($daily_rate * 313 * .05) / 12) / 2);
         }
-        $total_deduction = $payroll->$sss_contribution + $payroll->$nhip_contribution + $payroll->$hdmf_contribution + $other_deduction;
-        $net = $gross_pay - $total_deduction + $other_income_non_tax;
+        else {
+            $sss = 0;
+        }
+        $total_deduction = $sss + $payroll->nhip_contribution + $payroll->hdmf_contribution + $other_deduction;
+        $net = $gross_pay - $total_deduction;
         $payroll->daily_rate = $daily_rate;
         $payroll->hour_rate = $hour_rate;
         $payroll->days_work = $days_work;
@@ -349,6 +356,7 @@ class PayrollController extends Controller
         $payroll->amount_legal_holiday = $legal_holiday_amount;
         $payroll->night_diff = $request->night_diff;
         $payroll->amount_night_diff = $nightdiff_amount;
+         $payroll->sss_contribution = $sss;
         $payroll->gross_pay = $gross_pay;
         $payroll->other_income_non_taxable = $other_income_non_tax;
         $payroll->total_deductions = $total_deduction;

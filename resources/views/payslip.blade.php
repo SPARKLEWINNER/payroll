@@ -77,14 +77,14 @@ ini_set("memory_limit", "-1");
                 <b style='font-size:14px;'>
                     @php
                         $store = strtolower($payroll->payroll->store);
-                        $company = "7-STAR MANPOWER";
-                     
+                        $company = "";
+                        
                         if(str_contains($store,"syzygy"))
                         {
                             $company = "SYZYGY STAFFING SERVICES OF THE PHILIPPINES";
                         }
 
-                        if($company == "7-STAR MANPOWER")
+                        if(str_contains($store,"7-Star"))
                         {
                             $store_name = explode("-",$payroll->payroll->store);
                             $store_name_data = $store_name[count($store_name)-1];
