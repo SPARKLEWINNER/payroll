@@ -78,7 +78,7 @@
                         </thead>
                         <tbody>
                             @foreach($payrolls as $payroll)
-                        
+                                @if($payroll->created_by == auth()->id())
                                 <tr>
                                     <td > 
                                         @if($payroll->status == "")
@@ -127,6 +127,7 @@
                                         </small>
                                     </td>
                                 </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>

@@ -15,55 +15,55 @@
           <div class="row">
             <div class='col-md-12 form-group'>
                Daily Rate  
-              <input type="number" name='daily_rate' class="form-control form-control-sm" value='{{$payrollInfo->daily_rate}}' required>
+              <input type="number" name='daily_rate' class="form-control form-control-sm" value='{{$payrollInfo->daily_rate}}' step='any' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Hourly Rate  
-              <input type="number" name='hour_rate' class="form-control form-control-sm" value='{{$payrollInfo->hour_rate}}' required>
+              <input type="number" name='hour_rate' class="form-control form-control-sm" value='{{$payrollInfo->hour_rate}}' step='any' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Days Work  
-              <input type="number" name='days_work' class="form-control form-control-sm" value='{{$payrollInfo->days_work}}' required>
+              <input type="number" name='days_work' class="form-control form-control-sm" value='{{$payrollInfo->days_work}}' step='any' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Hours Work  
-              <input type="number" name='hours_work' class="form-control form-control-sm" value='{{$payrollInfo->hours_work}}' required>
+              <input type="number" name='hours_work' class="form-control form-control-sm" value='{{$payrollInfo->hours_work}}' step='any' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Hours Tardy  
-              <input type="number" name='hours_tardy' class="form-control form-control-sm" value='{{$payrollInfo->hours_tardy}}' required>
+              <input type="number" name='hours_tardy' class="form-control form-control-sm" value='{{$payrollInfo->hours_tardy}}' step='any' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Overtime
-              <input type="number" name='overtime' class="form-control form-control-sm" value='{{$payrollInfo->overtime}}' required>
+              <input type="number" name='overtime' class="form-control form-control-sm" value='{{$payrollInfo->overtime}}' step='any' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Special Holidays
-              <input type="number" name='special_holiday' class="form-control form-control-sm" value='{{$payrollInfo->special_holiday}}' required>
+              <input type="number" name='special_holiday' class="form-control form-control-sm" step='any' value='{{$payrollInfo->special_holiday}}' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Legal Holidays
-              <input type="number" name='legal_holiday' class="form-control form-control-sm" value='{{$payrollInfo->legal_holiday}}' required>
+              <input type="number" name='legal_holiday' class="form-control form-control-sm" value='{{$payrollInfo->legal_holiday}}' step='any' required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Night Diff
-              <input type="number" name='night_diff' class="form-control form-control-sm" value='{{$payrollInfo->night_diff}}' required>
+              <input type="number" name='night_diff' class="form-control form-control-sm" value='{{$payrollInfo->night_diff}}' step='any' required>
             </div>
           </div>
           <div class="row">

@@ -81,10 +81,12 @@ ini_set("memory_limit", "-1");
                         
                         if(str_contains($store,"syzygy"))
                         {
-                            $company = "SYZYGY STAFFING SERVICES OF THE PHILIPPINES";
+                            $store_name = explode("-",$payroll->payroll->store);
+                            $store_name_data = $store_name[count($store_name)-1];
+                            $company = "SYZYGY STAFFING RESOURCES AGENCY CORPORATION";
                         }
 
-                        if(str_contains($store,"7-Star"))
+                        else if(str_contains($store,"7-Star"))
                         {
                             $store_name = explode("-",$payroll->payroll->store);
                             $store_name_data = $store_name[count($store_name)-1];

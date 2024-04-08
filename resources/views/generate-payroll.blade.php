@@ -77,7 +77,6 @@
                                             <input type='hidden' name='from_date' id="fromDate" value='{{$from}}'>
                                             <input type='hidden' name='from_to' id="toDate" value='{{$to}}'>
                                             <input type='hidden' id="store" value='{{$storeData}}'>
-                                            <input type='hidden' id="id" value='{{ auth()->id() }}'>
                                             Payroll Period of  {{date('M d, Y',strtotime($from))}}  to  {{date('M d, Y',strtotime($to))}}
                                             @if(count($employees) >0)
                                                 <h5>Holidays <br>
@@ -456,7 +455,7 @@
                 console.log(table.rows[r + 3].cells[c]);
             }*/
         }
-        const response = await fetch(`https://payroll-live.7star.com.ph/api/save`, {
+        const response = await fetch(`https://payroll-live.7star.com.ph/public/api/save`, {
            method: 'POST',
            body: JSON.stringify(data),
            headers: { 'Content-Type': 'application/json' },
