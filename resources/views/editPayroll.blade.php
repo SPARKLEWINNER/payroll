@@ -27,13 +27,13 @@
                                 <th>Employee Name</th>
                                 <th>Daily Rate</th>
                                 <th>Daily Rate/Hour </th>
-                                <th>Hours Work</th>
-                                <th>Overtime</th>
-                                <th>Special holiday</th>
-                                <th>Legal holiday</th>
-                                <th>Days Work</th>
-                                <th>Hours Tardy</th>
-                                <th>Night Diff</th>
+                                <th>Hours Work (hr)</th>
+                                <th>Overtime (hr)</th>
+                                <th>Special holiday (day)</th>
+                                <th>Legal holiday (day)</th>
+                                <th>Days Work (day)</th>
+                                <th>Hours Tardy (hr)</th>
+                                <th>Night Diff (hr)</th>
                                 <th>Basic Pay</th>
                                 <th>Amount Overtime</th>
                                 <th>Amount Special holiday</th>
@@ -58,8 +58,8 @@
                                 $height = 28;
                             @endphp
                             @foreach($payroll->informations as $payrollInfo)
-                            
-                          
+
+
                             <tr>
                                 <td>
                                     @if($payroll->status == null)
@@ -95,7 +95,7 @@
                                 <td>{{number_format($payrollInfo->amount_legal_holiday,2)}}</td>
                                 <td>{{number_format($payrollInfo->amount_night_diff,2)}}</td>
                                 <td>{{number_format($payrollInfo->hours_tardy_basic,2)}}</td>
-                                @if($payroll->status == null)                          
+                                @if($payroll->status == null)
                                 <td contenteditable="true" onkeydown="add_other_payments(event,'{{$payrollInfo->gross_pay}}','{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')" id="otherPayments">{{number_format($payrollInfo->other_income_non_taxable,2)}}</td>
                                 <td contenteditable="true" onkeydown="add_additional_remarks(event, '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')">{{$payrollInfo->income_remarks}}</td>
                                 <td id="{{$payrollInfo->employee_id}}" data="{{$payrollInfo->gross_pay}}">{{number_format($payrollInfo->gross_pay,2)}}</td>
@@ -108,7 +108,7 @@
                                 <td>{{number_format($payrollInfo->nhip_contribution,2)}}</td>
                                 <td>{{number_format($payrollInfo->hdmf_contribution,2)}}</td>
 
-                                @if($payroll->status == null)                          
+                                @if($payroll->status == null)
                                 <td contenteditable="true" onkeydown="add_other_deduction(event,'{{$payrollInfo->net_pay}}','{{$payrollInfo->total_deductions}}', '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')" id="otherDeductions-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->other_deductions,2)}}</td>
                                 <td contenteditable="true" onkeydown="add_deduction_remarks(event, '{{$payrollInfo->employee_id}}','{{$payrollInfo->payroll_id}}')">{{$payrollInfo->deduction_remarks}}</td>
                                 <td id="deductions-{{$payrollInfo->employee_id}}" data="{{$payrollInfo->gross_pay}}">{{number_format($payrollInfo->total_deductions,2)}}</td>
@@ -117,7 +117,7 @@
                                 <td>{{$payrollInfo->deduction_remarks}}</td>
                                 <td id="deductions-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->total_deductions,2)}}</td>
                                 @endif
-                                
+
                                 <td id="netpay-{{$payrollInfo->employee_id}}">{{number_format($payrollInfo->net_pay,2)}}</td>
                             </tr>
                             @include('additional_income')
@@ -127,7 +127,7 @@
                             @include('edit_government')
                             @include('transfer_employee')
                             @endforeach
-                         
+
                         </tbody>
                         <tfoot>
                             <tr>
@@ -180,7 +180,7 @@
     });
 
     $('.remove-payroll').click(function () {
-        
+
         var id = this.id;
             swal({
                 title: "Are you sure?",
@@ -203,7 +203,7 @@
                     location.reload();
                 }).fail(function(data)
                 {
-                    
+
                 swal("Deleted!", "Your record been deleted.", "success");
                 location.reload();
                 });
@@ -227,10 +227,10 @@
             item += "<div class='col-md-2 border form-group'><button class='btn btn-danger btn-circle' onclick='remove_allowance("+id+","+finalLastId+")' type='button'><i class='fa fa-minus'></i></button>";
             item += "</div>";
             item += "</div>";
-          
+
             $("#allowance-"+id).append(item);
             unshow();
-            
+
         }
         function add_income_gross(id)
         {
@@ -250,10 +250,10 @@
             item += "<div class='col-md-2 border form-group'><button class='btn btn-danger btn-circle' onclick='remove_allowance("+id+","+finalLastId+")' type='button'><i class='fa fa-minus'></i></button>";
             item += "</div>";
             item += "</div>";
-          
+
             $("#allowance-gross-"+id).append(item);
             unshow();
-            
+
         }
         function add_deduction(id)
         {
@@ -273,10 +273,10 @@
             item += "<div class='col-md-2 border form-group'><button class='btn btn-danger btn-circle' onclick='remove_deduction("+id+","+finalLastId+")' type='button'><i class='fa fa-minus'></i></button>";
             item += "</div>";
             item += "</div>";
-          
+
             $("#deduction-"+id).append(item);
             unshow();
-            
+
         }
         function remove_allowance(id,finalId)
         {
@@ -322,7 +322,7 @@
                   return res.status(400).json({
                     success: false,
                     msg: "Connection to payroll error",
-                  });  
+                  });
                 }
             }
         }
@@ -343,7 +343,7 @@
                   return res.status(400).json({
                     success: false,
                     msg: "Connection to payroll error",
-                  });  
+                  });
                 }
             }
         }
@@ -373,7 +373,7 @@
                   return res.status(400).json({
                     success: false,
                     msg: "Connection to payroll error",
-                  });  
+                  });
                 }*/
             }
         }
@@ -394,7 +394,7 @@
                   return res.status(400).json({
                     success: false,
                     msg: "Connection to payroll error",
-                  });  
+                  });
                 }
             }
         }
