@@ -261,9 +261,9 @@
                                         rate: rate.daily,
                                         daily_rate: rate.daily,
                                         hour_rate: hourlyRate,
-                                        days_work: detail.dayswork + 1,
+                                        days_work: detail.dayswork,
                                         hours_work: detail.hourswork,
-                                        basic_pay: rate.daily * (detail.dayswork + 1),
+                                        basic_pay: rate.daily * detail.dayswork,
                                         hours_tardy: detail.hourstardy,
                                         tardy_amount: (rate.daily / 8 / 60) * detail.hourstardy,
                                         overtime: detail.overtime,
@@ -274,14 +274,14 @@
                                         legal_holiday_amount: rate.holiday * detail.legalholiday,
                                         night_diff: detail.nightdiff,
                                         nightdiff_amount: rate.nightshift * detail.nightdiff,
-                                        gross_pay: rate.daily * (detail.dayswork + 1) - (rate.daily / 8 / 60) * detail.hourstardy + rate.overtime * detail.overtime + rate.specialholiday * detail.specialholiday + rate.holiday * detail.legalholiday + rate.nightshift * detail.nightdiff,
+                                        gross_pay: rate.daily * detail.dayswork - (rate.daily / 8 / 60) * detail.hourstardy + rate.overtime * detail.overtime + rate.specialholiday * detail.specialholiday + rate.holiday * detail.legalholiday + rate.nightshift * detail.nightdiff,
                                         other_income_non_tax: 0,
                                         sss: rate.sss,
                                         philhealth: rate.philhealth,
                                         pagibig: rate.pagibig,
                                         total_deduction: rate.sss + rate.philhealth + rate.pagibig,
                                         other_deduction: 0,
-                                        net: rate.daily * (detail.dayswork + 1) - (rate.daily / 8 / 60) * detail.hourstardy + rate.overtime * detail.overtime + rate.specialholiday * detail.specialholiday + rate.holiday * detail.legalholiday + rate.nightshift * detail.nightdiff - (rate.sss + rate.philhealth + rate.pagibig),
+                                        net: rate.daily * detail.dayswork - (rate.daily / 8 / 60) * detail.hourstardy + rate.overtime * detail.overtime + rate.specialholiday * detail.specialholiday + rate.holiday * detail.legalholiday + rate.nightshift * detail.nightdiff - (rate.sss + rate.philhealth + rate.pagibig),
                                         sss_er: rate.sss
                                     };
                                 } else {
