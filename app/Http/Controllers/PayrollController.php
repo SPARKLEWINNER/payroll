@@ -283,7 +283,7 @@ class PayrollController extends Controller
             $payroll_info->employee_id = $detail['employeeid'];
             $payroll_info->employee_name = $detail['employeename'];
             $payroll_info->daily_rate = $detail['rate'];
-            $payroll_info->hour_rate = $detail['daily_rate'];
+            $payroll_info->hour_rate = $detail['hour_rate'];
             $payroll_info->days_work = $detail['days_work'];
             $payroll_info->hours_work = $detail['hours_work'];
             $payroll_info->basic_pay = $detail['basic_pay'];
