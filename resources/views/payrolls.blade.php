@@ -141,7 +141,13 @@
                                     </td>
                                     <td>{{ $payroll->company ?? 'N/A' }}</td>
                                     <td>{{ $payroll->store ?? 'N/A' }}</td>
-                                    <td>{{ optional($payroll->user)->name ?? 'N/A' }}</td>
+                                    <td>
+                                        @if($payroll->generated_by)
+                                            {{ optional($payroll->user)->name ?? 'N/A' }}
+                                        @else
+                                            {{ $payroll->generated_by_name ?? 'N/A' }}
+                                        @endif
+                                    </td>
                                     <td>{{ date('M d, Y', strtotime($payroll->payroll_from)) }} -
                                         {{ date('M d, Y', strtotime($payroll->payroll_to)) }}</td>
                                     <td>{{ count($payroll->informations) }}</td>
@@ -331,7 +337,8 @@
                                 from: dateFrom,
                                 to: dateTo,
                                 employeecount: payroll.employeecount,
-                                generatedby: payroll.generatedby,
+                                generatedby: isNaN(payroll.generatedby) ? null : payroll.generatedby,
+                                generatedbyname: isNaN(payroll.generatedby) ? payroll.generatedby : null,
                                 details: details
                             };
 
