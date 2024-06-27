@@ -254,9 +254,10 @@ class PayrollController extends Controller
         if ($payrollExist) {
             // Update existing payroll
             $payroll = $payrollExist;
-            // Update only if 'generatedby' is a valid integer (assuming it should be a user ID)
             if (isset($request->generatedby) && is_numeric($request->generatedby)) {
                 $payroll->generated_by = $request->generatedby;
+            } else {
+                $payroll->generated_by_name = $request->generatedbyname;
             }
             $payroll->save();
 
@@ -266,9 +267,11 @@ class PayrollController extends Controller
             // Create new payroll
             $payroll = new Payroll;
             $payroll->date_generated = date('Y-m-d');
-            // Set 'generated_by' only if it's a valid integer
+            // Set 'generated_by' or 'generated_by_name' based on input
             if (isset($request->generatedby) && is_numeric($request->generatedby)) {
                 $payroll->generated_by = $request->generatedby;
+            } else {
+                $payroll->generated_by_name = $request->generatedbyname;
             }
             $payroll->payroll_from = $payrollFrom;
             $payroll->payroll_to = $payrollTo;
