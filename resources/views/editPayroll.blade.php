@@ -171,16 +171,7 @@
                                 <td>{{number_format(($payroll->informations)->sum('other_deductions'),2)}}</td>
                                 <td>0.00</td>
                                 <td>{{number_format(($payroll->informations)->sum('total_deductions'),2)}}</td>
-                                <td>
-                                    @php
-                                        $netPay = number_format(($payroll->informations)->sum('net_pay'), 2);
-                                    @endphp
-                                    @if($netPay < 0)
-                                        0
-                                    @else
-                                        {{ $netPay }}
-                                    @endif
-                                </td>
+                                <td>{{number_format(($payroll->informations)->sum(function($payrollInfo) { return $payrollInfo->net_pay >= 0 ? $payrollInfo->net_pay : 0; }),2)}}</td>
                             </tr>
                         </tfoot>
                     </table>

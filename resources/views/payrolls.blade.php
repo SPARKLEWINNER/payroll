@@ -176,10 +176,6 @@
 <script src="{{ asset('admin/js/plugins/sweetalert/sweetalert.min.js')}}"></script>
 <script>
     $(document).ready(function() {
-        // Log the payroll data
-        console.log('Payrolls:', @json($payrolls));
-        
-        // Existing code for delete and save actions
         $('.delete-payroll').click(function () {
             var id = this.id;
             console.log('Delete payroll ID:', id);
@@ -325,7 +321,7 @@
                         });
 
                         payrollSavePromises.push(Promise.all(detailsPromises).then(function (details) {
-                            details = details.filter(detail => detail !== null); // Filter out any failed requests
+                            details = details.filter(detail => detail !== null);
 
                             console.log('New payroll details for store:', payroll.store);
                             details.forEach(function (detail) {
