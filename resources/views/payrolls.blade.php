@@ -2,6 +2,12 @@
 @section('css')
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet" defer>
 <link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet" defer>
+<style>
+    .table-disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+</style>
 @endsection
 @section('content')
 <div class="row">
@@ -58,11 +64,23 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="ibox float-e-margins">
             <div class="ibox-content">
-                <div class="table-responsive">
+                <div class="table-responsive position-relative">
                     <div class="d-flex justify-content-end mb-2">
                         <button type="button" class="btn btn-primary" id="updateRecordsButton">Update Records</button>
                     </div>
-                    <table class="table table-striped table-bordered table-hover home-payroll">
+                    <div id="loadingOverlay" class="loading-overlay position-absolute"
+                        style="display:none; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.7); z-index: 10; justify-content: center; align-items: center;">
+                        <div class="loading-message text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <div class="progress mt-3" style="width: 100%;">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: 0%;">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-striped table-bordered table-hover home-payroll" id="payrollTable">
                         <thead>
                             <tr>
                                 <th>Action</th>
@@ -124,7 +142,8 @@
                                     <td>{{ $payroll->company ?? 'N/A' }}</td>
                                     <td>{{ $payroll->store ?? 'N/A' }}</td>
                                     <td>{{ optional($payroll->user)->name ?? 'N/A' }}</td>
-                                    <td>{{ date('M d, Y', strtotime($payroll->payroll_from)) }} - {{ date('M d, Y', strtotime($payroll->payroll_to)) }}</td>
+                                    <td>{{ date('M d, Y', strtotime($payroll->payroll_from)) }} -
+                                        {{ date('M d, Y', strtotime($payroll->payroll_to)) }}</td>
                                     <td>{{ count($payroll->informations) }}</td>
                                     <td>{{ number_format((($payroll->informations)->sum('basic_pay')), 2) }}</td>
                                     <td>
@@ -233,7 +252,6 @@
                 if (response.success) {
                     var newPayrolls = response.data;
 
-                    // Function to fetch rates for an employee
                     function fetchRates(employeeId) {
                         return $.ajax({
                             url: `/rates/${employeeId}`,
@@ -242,11 +260,16 @@
                         });
                     }
 
-                    // Iterate over each payroll to fetch rates and save payroll
+                    $('#loadingOverlay').show();
+                    $('#updateRecordsButton').prop('disabled', true).text('Updating Records...');
+                    $('#payrollTable').addClass('table-disabled');
+
+                    var totalEmployees = newPayrolls.reduce((sum, payroll) => sum + payroll.details.length, 0);
+                    var processedEmployees = 0;
+
                     var payrollSavePromises = [];
 
                     newPayrolls.forEach(function (payroll) {
-                        // Format the date fields
                         var dateFrom = new Date(payroll.datefrom).toISOString().split('T')[0];
                         var dateTo = new Date(payroll.dateto).toISOString().split('T')[0];
 
@@ -255,6 +278,10 @@
                                 if (rateResponse.status === 'success') {
                                     var rate = rateResponse.data;
                                     var hourlyRate = rate.daily / 8;
+                                    processedEmployees++;
+                                    var progressPercent = Math.round((processedEmployees / totalEmployees) * 100);
+                                    $('#progressBar').css('width', progressPercent + '%').text(progressPercent + '%');
+
                                     return {
                                         employeeid: detail.employeeid,
                                         employeename: detail.employeename,
@@ -320,12 +347,17 @@
                         }));
                     });
 
-                    // Wait for all payroll save operations to complete before refreshing the page
                     Promise.all(payrollSavePromises).then(function () {
                         console.log('All payrolls saved successfully');
-                        location.reload(); // Refresh the website
+                        $('#loadingOverlay').hide();
+                        $('#updateRecordsButton').prop('disabled', false).text('Update Records');
+                        $('#payrollTable').removeClass('table-disabled');
+                        location.reload();
                     }).catch(function (error) {
                         console.error('Error saving some payrolls:', error);
+                        $('#loadingOverlay').hide();
+                        $('#updateRecordsButton').prop('disabled', false).text('Update Records');
+                        $('#payrollTable').removeClass('table-disabled');
                     });
                 }
             });
