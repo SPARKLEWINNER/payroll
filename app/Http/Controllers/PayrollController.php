@@ -242,45 +242,105 @@ class PayrollController extends Controller
     {
         $formattedRequest = $request->input();
 
-        // Format the date fields
-        $payrollFrom = date('Y-m-d', strtotime($request->from));
-        $payrollTo = date('Y-m-d', strtotime($request->to));
+        $payrollFrom = null;
+        $payrollTo = null;
+        $store = null;
+        
+        $generatedBy = $request->id ?? $request->generatedby ?? null;
+        $generatedByName = $request->generatedbyname ?? null;        
+
+        // Extract from, to, and store from one of the employees if not provided directly
+        if (!isset($request->from) || !isset($request->to) || !isset($request->store)) {
+            foreach ($formattedRequest as $key => $detail) {
+                if (is_array($detail) && isset($detail['from']) && isset($detail['to']) && isset($detail['store'])) {
+                    $payrollFrom = date('Y-m-d', strtotime($detail['from']));
+                    $payrollTo = date('Y-m-d', strtotime($detail['to']));
+                    $store = $detail['store'];
+        
+                    $generatedBy = $generatedBy ?? $detail['id'] ?? null;
+                    $generatedByName = $generatedByName ?? $detail['generatedbyname'] ?? null;
+                    break;
+                }
+            }
+        } else {
+            $payrollFrom = date('Y-m-d', strtotime($request->from));
+            $payrollTo = date('Y-m-d', strtotime($request->to));
+            $store = $request->store;
+        }
+
+        if (!$payrollFrom || !$payrollTo || !$store) {
+            return response()->json(['message' => 'Missing payroll date or store information'], 400);
+        }
 
         $payrollExist = Payroll::where('payroll_from', $payrollFrom)
             ->where('payroll_to', $payrollTo)
-            ->where('store', $request->store)
+            ->where('store', $store)
             ->first();
 
         if ($payrollExist) {
-            // Update existing payroll
             $payroll = $payrollExist;
-            if (isset($request->generatedby) && is_numeric($request->generatedby)) {
-                $payroll->generated_by = $request->generatedby;
-            } else {
-                $payroll->generated_by_name = $request->generatedbyname;
+            if (is_numeric($generatedBy)) {
+                $payroll->generated_by = $generatedBy;
+            } elseif ($generatedByName) {
+                $payroll->generated_by_name = $generatedByName;
             }
             $payroll->save();
 
-            // Delete existing payroll details to update with new ones
             PayrollInfo::where('payroll_id', $payroll->id)->delete();
         } else {
-            // Create new payroll
             $payroll = new Payroll;
             $payroll->date_generated = date('Y-m-d');
-            // Set 'generated_by' or 'generated_by_name' based on input
-            if (isset($request->generatedby) && is_numeric($request->generatedby)) {
-                $payroll->generated_by = $request->generatedby;
-            } else {
-                $payroll->generated_by_name = $request->generatedbyname;
+            if (is_numeric($generatedBy)) {
+                $payroll->generated_by = $generatedBy;
+            } elseif ($generatedByName) {
+                $payroll->generated_by_name = $generatedByName;
             }
             $payroll->payroll_from = $payrollFrom;
             $payroll->payroll_to = $payrollTo;
-            $payroll->store = $request->store;
+            $payroll->store = $store;
             $payroll->save();
         }
 
-        // Save new payroll details
-        foreach ($formattedRequest['details'] as $detail) {
+        // Detect if the 'details' key exists or if the structure is different
+        if (isset($formattedRequest['details']) && is_array($formattedRequest['details'])) {
+            $details = $formattedRequest['details'];
+        } else {
+            $details = [];
+            foreach ($formattedRequest as $key => $detail) {
+                if (is_array($detail) && isset($detail['emp_id'])) {
+                    $details[] = [
+                        'employeeid' => $detail['emp_id'],
+                        'employeename' => $detail['emp_name'],
+                        'rate' => $detail['rate'],
+                        'hour_rate' => $detail['daily_rate'],
+                        'days_work' => $detail['days_work'],
+                        'hours_work' => $detail['working_hours'],
+                        'basic_pay' => $detail['basic_pay'],
+                        'hours_tardy' => $detail['hours_tardy'],
+                        'tardy_amount' => $detail['tardy_amount'],
+                        'overtime' => $detail['overtime'],
+                        'overtime_amount' => $detail['overtime_amount'],
+                        'special_holiday' => $detail['special_holiday'],
+                        'special_holiday_amount' => $detail['special_holiday_amount'],
+                        'legal_holiday' => $detail['legal_holiday'],
+                        'legal_holiday_amount' => $detail['legal_holiday_amount'],
+                        'night_diff' => $detail['night_diff'],
+                        'nightdiff_amount' => $detail['nightdiff_amount'],
+                        'gross_pay' => $detail['gross_pay'],
+                        'other_income_non_tax' => $detail['other_income_non_tax'],
+                        'sss' => $detail['sss'],
+                        'philhealth' => $detail['philhealth'],
+                        'pagibig' => $detail['pagibig'],
+                        'total_deduction' => $detail['total_deduction'],
+                        'other_deduction' => $detail['other_deduction'],
+                        'net' => $detail['net'],
+                        'sss_er' => $detail['sss_er']
+                    ];
+                }
+            }
+        }
+
+        foreach ($details as $detail) {
             $payroll_info = new PayrollInfo;
             $payroll_info->payroll_id = $payroll->id;
             $payroll_info->employee_id = $detail['employeeid'];
