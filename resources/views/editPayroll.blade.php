@@ -125,14 +125,7 @@
                                 @endif
 
                                 <td id="netpay-{{$payrollInfo->employee_id}}">
-                                    @php
-                                        $netPay = number_format($payrollInfo->net_pay,2);
-                                    @endphp
-                                    @if($netPay < 0)
-                                        0
-                                    @else
-                                        {{ $netPay }}
-                                    @endif
+                                    {{number_format($payrollInfo->net_pay,2) <= 0 ? 0 : number_format($payrollInfo->net_pay,2)}}
                                 </td>
                             </tr>
                             @include('additional_income')
