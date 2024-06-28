@@ -385,9 +385,14 @@
     });
     async function handleSubmit(e) {
         e.preventDefault();
-        var data = []
+
+        var data = [];
         var table = document.getElementById('myTable');
-        for (var r = 0; r <= table.rows.length; r++) {
+
+        var userId = "{{ auth()->user()->id }}";
+        var userName = "{{ auth()->user()->name }}";
+    
+        for (var r = 0; r < table.rows.length; r++) { 
             var id = `emp_id[${r}]`;
             var name = `emp_name[${r}]`;
             var dailyRate = `rate[${r}]`;
@@ -401,68 +406,70 @@
             var overtimeAmount = `overtime_amount[${r}]`;
             var specialHoliday = `special_holiday[${r}]`;
             var specialHolidayAmount = `special_holiday_amount[${r}]`;
-            var legal_holiday = `legal_holiday[${r}]`;
-            var legal_holiday_amount = `legal_holiday_amount[${r}]`;
-            var night_diff = `night_diff[${r}]`;
-            var nightdiff_amount = `nightdiff_amount[${r}]`;
-            var gross_pay = `gross_pay[${r}]`;
-            var other_income_non_tax = `other_income_non_tax[${r}]`;
-            var sss_er = `sss_er[${r}]`;
+            var legalHoliday = `legal_holiday[${r}]`;
+            var legalHolidayAmount = `legal_holiday_amount[${r}]`;
+            var nightDiff = `night_diff[${r}]`;
+            var nightDiffAmount = `nightdiff_amount[${r}]`;
+            var grossPay = `gross_pay[${r}]`;
+            var otherIncomeNonTax = `other_income_non_tax[${r}]`;
+            var sssEr = `sss_er[${r}]`;
             var philhealth = `philhealth[${r}]`;
             var pagibig = `pagibig[${r}]`;
-            var other_deduction = `other_deduction[${r}]`;
-            var total_deduction = `total_deduction[${r}]`;
+            var otherDeduction = `other_deduction[${r}]`;
+            var totalDeduction = `total_deduction[${r}]`;
             var net = `net[${r}]`;
             var sss = `sss[${r}]`;
-            if(document.getElementById(workingHours) !== null) {
-                data.push(
-                    {
-                        emp_id: document.getElementById(id).value, 
-                        emp_name: document.getElementById(name).value,
-                        rate: document.getElementById(dailyRate).value,
-                        daily_rate: document.getElementById(ratePerHour).value,
-                        working_hours: document.getElementById(workingHours).value,
-                        days_work: document.getElementById(daysWork).value,
-                        basic_pay: document.getElementById(basicPay).value,
-                        hours_tardy: document.getElementById(hoursTardy).value,
-                        tardy_amount: document.getElementById(tardyAmount).value,
-                        overtime: document.getElementById(overtime).value,
-                        overtime_amount: document.getElementById(overtimeAmount).value,
-                        special_holiday: document.getElementById(specialHoliday).value,
-                        special_holiday_amount: document.getElementById(specialHolidayAmount).value,
-                        legal_holiday: document.getElementById(legal_holiday).value,
-                        legal_holiday_amount: document.getElementById(legal_holiday_amount).value,
-                        nightdiff_amount: document.getElementById(nightdiff_amount).value,
-                        night_diff: document.getElementById(night_diff).value,
-                        gross_pay: document.getElementById(gross_pay).value,
-                        other_income_non_tax: document.getElementById(other_income_non_tax).value,
-                        sss_er: document.getElementById(sss_er).value,
-                        sss: document.getElementById(sss).value,
-                        philhealth: document.getElementById(philhealth).value,
-                        pagibig: document.getElementById(pagibig).value,
-                        other_deduction: document.getElementById(other_deduction).value,
-                        total_deduction: document.getElementById(total_deduction).value,
-                        net: document.getElementById(net).value,
-                        from: document.getElementById("fromDate").value,
-                        to: document.getElementById("toDate").value,
-                        id: document.getElementById("id").value,
-                        store:document.getElementById("store").value
-                    }
-                )
-            }
-            
-            /*for (var c = 0, m = table.rows[0].cells.length; c < m; c++) {
-                console.log(table.rows[r + 3].cells[c]);
-            }*/
+
+        if (document.getElementById(workingHours) !== null) {
+            let rowData = {
+                emp_id: document.getElementById(id) ? document.getElementById(id).value : null,
+                emp_name: document.getElementById(name) ? document.getElementById(name).value : null,
+                rate: document.getElementById(dailyRate) ? document.getElementById(dailyRate).value : null,
+                daily_rate: document.getElementById(ratePerHour) ? document.getElementById(ratePerHour).value : null,
+                working_hours: document.getElementById(workingHours) ? document.getElementById(workingHours).value : null,
+                days_work: document.getElementById(daysWork) ? document.getElementById(daysWork).value : null,
+                basic_pay: document.getElementById(basicPay) ? document.getElementById(basicPay).value : null,
+                hours_tardy: document.getElementById(hoursTardy) ? document.getElementById(hoursTardy).value : null,
+                tardy_amount: document.getElementById(tardyAmount) ? document.getElementById(tardyAmount).value : null,
+                overtime: document.getElementById(overtime) ? document.getElementById(overtime).value : null,
+                overtime_amount: document.getElementById(overtimeAmount) ? document.getElementById(overtimeAmount).value : null,
+                special_holiday: document.getElementById(specialHoliday) ? document.getElementById(specialHoliday).value : null,
+                special_holiday_amount: document.getElementById(specialHolidayAmount) ? document.getElementById(specialHolidayAmount).value : null,
+                legal_holiday: document.getElementById(legalHoliday) ? document.getElementById(legalHoliday).value : null,
+                legal_holiday_amount: document.getElementById(legalHolidayAmount) ? document.getElementById(legalHolidayAmount).value : null,
+                night_diff: document.getElementById(nightDiff) ? document.getElementById(nightDiff).value : null,
+                nightdiff_amount: document.getElementById(nightDiffAmount) ? document.getElementById(nightDiffAmount).value : null,
+                gross_pay: document.getElementById(grossPay) ? document.getElementById(grossPay).value : null,
+                other_income_non_tax: document.getElementById(otherIncomeNonTax) ? document.getElementById(otherIncomeNonTax).value : null,
+                sss_er: document.getElementById(sssEr) ? document.getElementById(sssEr).value : null,
+                sss: document.getElementById(sss) ? document.getElementById(sss).value : null,
+                philhealth: document.getElementById(philhealth) ? document.getElementById(philhealth).value : null,
+                pagibig: document.getElementById(pagibig) ? document.getElementById(pagibig).value : null,
+                other_deduction: document.getElementById(otherDeduction) ? document.getElementById(otherDeduction).value : null,
+                total_deduction: document.getElementById(totalDeduction) ? document.getElementById(totalDeduction).value : null,
+                net: document.getElementById(net) ? document.getElementById(net).value : null,
+                from: document.getElementById("fromDate") ? document.getElementById("fromDate").value : null,
+                to: document.getElementById("toDate") ? document.getElementById("toDate").value : null,
+                id: userId ? userId : (document.getElementById("id") ? document.getElementById("id").value : null),
+                generatedbyname: userName ? userName : (document.getElementById("generatedbyname") ? document.getElementById("generatedbyname").value : null),
+                store: document.getElementById("store") ? document.getElementById("store").value : null
+            };
+            data.push(rowData);
         }
-        const response = await fetch(`https://payroll-live.7star.com.ph/public/api/save`, {
-           method: 'POST',
-           body: JSON.stringify(data),
-           headers: { 'Content-Type': 'application/json' },
+    }
+
+    try {
+        let response = await fetch('http://127.0.0.1:8000/api/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
         });
-        const jsonData = await response.json(); // Parse JSON data
-        console.log(jsonData);
-        if (jsonData.message === "payroll already created") {
+        let result = await response.json();
+        console.log('Response from server:', result); 
+
+        if (result.message === "payroll already created") {
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
@@ -472,21 +479,22 @@
                     window.location.href = "{{ route('payrolls') }}"
                 }
             });
-            
-        }
-        if (jsonData.message === "success") {
+        } else if (result.message === "success") {
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: 'Payroll successfully save.',
+                text: 'Payroll successfully saved.',
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = "{{ route('payrolls') }}"
                 }
             });
-            
+        } else {
+            console.log('Unexpected response message:', result.message);
         }
-
+        } catch (error) {
+            console.error('Error submitting data:', error); // Log any errors
+        }
     }
     function get_last_payroll(data)
     {
