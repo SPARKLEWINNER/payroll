@@ -241,51 +241,75 @@ class PayrollController extends Controller
     public function save(Request $request)
     {
         $formattedRequest = $request->input();
-        $payrollExist = Payroll::where('payroll_from', $request[0]['from'])->where('payroll_to', $request[0]['to'])->where('store', $request[0]['store'])->first();
+
+        // Format the date fields
+        $payrollFrom = date('Y-m-d', strtotime($request->from));
+        $payrollTo = date('Y-m-d', strtotime($request->to));
+
+        $payrollExist = Payroll::where('payroll_from', $payrollFrom)
+            ->where('payroll_to', $payrollTo)
+            ->where('store', $request->store)
+            ->first();
+
         if ($payrollExist) {
-            return response()->json(['message' => 'payroll already created'], 200);
+            // Update existing payroll
+            $payroll = $payrollExist;
+            if (isset($request->generatedby) && is_numeric($request->generatedby)) {
+                $payroll->generated_by = $request->generatedby;
+            } else {
+                $payroll->generated_by_name = $request->generatedbyname;
+            }
+            $payroll->save();
+
+            // Delete existing payroll details to update with new ones
+            PayrollInfo::where('payroll_id', $payroll->id)->delete();
+        } else {
+            // Create new payroll
+            $payroll = new Payroll;
+            $payroll->date_generated = date('Y-m-d');
+            // Set 'generated_by' or 'generated_by_name' based on input
+            if (isset($request->generatedby) && is_numeric($request->generatedby)) {
+                $payroll->generated_by = $request->generatedby;
+            } else {
+                $payroll->generated_by_name = $request->generatedbyname;
+            }
+            $payroll->payroll_from = $payrollFrom;
+            $payroll->payroll_to = $payrollTo;
+            $payroll->store = $request->store;
+            $payroll->save();
         }
 
-        $payroll = new Payroll;
-        $payroll->date_generated = date('Y-m-d');
-        $payroll->generated_by = $request[0]['id'];
-        $payroll->payroll_from = $request[0]['from'];
-        $payroll->payroll_to = $request[0]['to'];
-        $payroll->store = $request[0]['store'];
-        $payroll->save();
-
-        for ($key = 0; $key < count($formattedRequest); $key++) {
+        // Save new payroll details
+        foreach ($formattedRequest['details'] as $detail) {
             $payroll_info = new PayrollInfo;
             $payroll_info->payroll_id = $payroll->id;
-            $payroll_info->employee_id = $request[$key]['emp_id'];
-            if (isset($request[$key]['emp_name'])) {
-                $payroll_info->employee_name = $request[$key]['emp_name'];
-                $payroll_info->daily_rate = $request[$key]['rate'];
-                $payroll_info->hour_rate = $request[$key]['daily_rate'];
-                $payroll_info->days_work = $request[$key]['days_work'];
-                $payroll_info->hours_work = $request[$key]["working_hours"];
-                $payroll_info->basic_pay = $request[$key]["basic_pay"];
-                $payroll_info->hours_tardy = $request[$key]["hours_tardy"];
-                $payroll_info->hours_tardy_basic = $request[$key]["tardy_amount"];
-                $payroll_info->overtime = $request[$key]["overtime"];
-                $payroll_info->amount_overtime = $request[$key]["overtime_amount"];
-                $payroll_info->special_holiday = $request[$key]["special_holiday"];
-                $payroll_info->amount_special_holiday = $request[$key]["special_holiday_amount"];
-                $payroll_info->legal_holiday = $request[$key]["legal_holiday"];
-                $payroll_info->amount_legal_holiday = $request[$key]["legal_holiday_amount"];
-                $payroll_info->night_diff = $request[$key]["night_diff"];
-                $payroll_info->amount_night_diff = $request[$key]["nightdiff_amount"];
-                $payroll_info->gross_pay = $request[$key]["gross_pay"];
-                $payroll_info->other_income_non_taxable = $request[$key]["other_income_non_tax"];
-                $payroll_info->sss_contribution = $request[$key]["sss"];
-                $payroll_info->nhip_contribution = $request[$key]["philhealth"];
-                $payroll_info->hdmf_contribution = $request[$key]["pagibig"];
-                $payroll_info->total_deductions = $request[$key]["total_deduction"];
-                $payroll_info->other_deductions = $request[$key]["other_deduction"];
-                $payroll_info->net_pay = $request[$key]["net"];
-                $payroll_info->sss_er = $request[$key]["sss_er"];
-                $payroll_info->save();
-            }
+            $payroll_info->employee_id = $detail['employeeid'];
+            $payroll_info->employee_name = $detail['employeename'];
+            $payroll_info->daily_rate = $detail['rate'];
+            $payroll_info->hour_rate = $detail['hour_rate'];
+            $payroll_info->days_work = $detail['days_work'];
+            $payroll_info->hours_work = $detail['hours_work'];
+            $payroll_info->basic_pay = $detail['basic_pay'];
+            $payroll_info->hours_tardy = $detail['hours_tardy'];
+            $payroll_info->hours_tardy_basic = $detail['tardy_amount'];
+            $payroll_info->overtime = $detail['overtime'];
+            $payroll_info->amount_overtime = $detail['overtime_amount'];
+            $payroll_info->special_holiday = $detail['special_holiday'];
+            $payroll_info->amount_special_holiday = $detail['special_holiday_amount'];
+            $payroll_info->legal_holiday = $detail['legal_holiday'];
+            $payroll_info->amount_legal_holiday = $detail['legal_holiday_amount'];
+            $payroll_info->night_diff = $detail['night_diff'];
+            $payroll_info->amount_night_diff = $detail['nightdiff_amount'];
+            $payroll_info->gross_pay = $detail['gross_pay'];
+            $payroll_info->other_income_non_taxable = $detail['other_income_non_tax'];
+            $payroll_info->sss_contribution = $detail['sss'];
+            $payroll_info->nhip_contribution = $detail['philhealth'];
+            $payroll_info->hdmf_contribution = $detail['pagibig'];
+            $payroll_info->total_deductions = $detail['total_deduction'];
+            $payroll_info->other_deductions = $detail['other_deduction'];
+            $payroll_info->net_pay = $detail['net'];
+            $payroll_info->sss_er = $detail['sss_er'];
+            $payroll_info->save();
         }
         return response()->json(['message' => 'success'], 200);
     }
