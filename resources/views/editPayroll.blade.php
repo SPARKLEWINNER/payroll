@@ -38,7 +38,7 @@
                                 <th>Special holiday (day)</th>
                                 <th>Legal holiday (day)</th>
                                 <th>Days Work (day)</th>
-                                <th>Hours Tardy (hr)</th>
+                                <th>Minutes Tardy (min)</th>
                                 <th>Night Diff (hr)</th>
                                 <th>Basic Pay</th>
                                 <th>Amount Overtime</th>
