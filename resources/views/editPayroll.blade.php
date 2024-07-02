@@ -45,7 +45,7 @@
                                 <th>Amount Special holiday</th>
                                 <th>Amount Legal Holiday</th>
                                 <th>Amount Night Diff</th>
-                                <th>Hours Tardy Basic</th>
+                                <th>Minutes Tardy Basic</th>
                                 <th>Other Income Non Taxable</th>
                                 <th>Other Income Remarks</th>
                                 <th>Gross Pay</th>
