@@ -320,7 +320,7 @@
                     "income": Number(e.target.innerText),
                     "remarks": ""
                 }
-                const response = await fetch(`http://127.0.0.1:8000/api/additional/${id}`, {
+                const response = await fetch(`https://payroll-live.7star.com.ph/public/api/additional/${id}`, {
                   method: 'post',
                   body: JSON.stringify(body),
                   headers: {'Content-Type': 'application/json'}
@@ -341,7 +341,7 @@
                     "emp_id": emp,
                     "remarks": e.target.innerText
                 }
-                const response = await fetch(`https://payroll-live.7star.com.ph/api/additional-remarks/${id}`, {
+                const response = await fetch(`https://payroll-live.7star.com.ph/public/api/additional-remarks/${id}`, {
                   method: 'post',
                   body: JSON.stringify(body),
                   headers: {'Content-Type': 'application/json'}
@@ -392,7 +392,7 @@
                     "emp_id": emp,
                     "remarks": e.target.innerText
                 }
-                const response = await fetch(`http://127.0.0.1:8000/api/deduction-remarks/${id}`, {
+                const response = await fetch(`https://payroll-live.7star.com.ph/public/api/deduction-remarks/${id}`, {
                   method: 'post',
                   body: JSON.stringify(body),
                   headers: {'Content-Type': 'application/json'}

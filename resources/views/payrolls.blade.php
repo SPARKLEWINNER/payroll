@@ -245,7 +245,7 @@
                     "Content-Type": "application/json"
                 },
                 "data": JSON.stringify({
-                    "store": "Star Concorde Group"
+                    "store": "Sparkle Star International - Inhouse"
                 }),
             };
 
@@ -256,7 +256,7 @@
 
                     function fetchRates(employeeId) {
                         return $.ajax({
-                            url: `/rates/${employeeId}`,
+                            url: `/public/rates/${employeeId}`,
                             method: 'GET',
                             contentType: 'application/json'
                         });

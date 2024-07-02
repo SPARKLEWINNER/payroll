@@ -459,7 +459,7 @@
     }
 
     try {
-        let response = await fetch('http://127.0.0.1:8000/api/save', {
+        let response = await fetch('https://payroll-live.7star.com.ph/public/api/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
