@@ -21,8 +21,13 @@
                                     id="storeList"
                                     required onchange='get_last_payroll(this);'>
                                     <option value="">-- Select store --</option>
-                                    @foreach($stores as $store)    
-                                        <option value="{{$store->store}}" @if ($store->store == $storeData) selected @endif>{{$store->store}}</option>
+                                    @php
+                                        $userId = auth()->user()->id;
+                                    @endphp
+                                    @foreach($stores as $store)
+                                        @if(($userId == 1 && strpos($store->store, 'Inhouse') === false) || ($userId == 2 && strpos($store->store, 'Inhouse') !== false))
+                                            <option value="{{$store->store}}" @if ($store->store == $storeData) selected @endif>{{$store->store}}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
