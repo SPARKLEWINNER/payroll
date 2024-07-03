@@ -627,6 +627,33 @@ class PayrollController extends Controller
         Alert::success('Successfully Add Deduction')->persistent('Dismiss');
         return back();
     }
+    public function deleteDeduction($deductionId)
+    {
+        $deduction = PayrollDeduction::findOrFail($deductionId);
+        $payrollInfoId = $deduction->payroll_info_id;
+        $deductionAmount = $deduction->amount;
+
+        $deduction->delete();
+
+        $payroll_info = PayrollInfo::findOrFail($payrollInfoId);
+        $payroll_info->other_deductions -= $deductionAmount;
+        $payroll_info->total_deductions -= $deductionAmount;
+        $payroll_info->net_pay += $deductionAmount;
+        $payroll_info->save();
+
+        $log = new PayrollLog;
+        $log->table = "payroll_deductions";
+        $log->action = "Delete";
+        $log->table_id = $deductionId;
+        $log->data_from = $deduction;
+        $log->data_to = "";
+        $log->edit_by = auth()->user()->id;
+        $log->save();
+
+        Alert::success('Deduction deleted')->persistent('Dismiss');
+        return response()->json(['success' => true]);
+    }
+
     public function additionaIncome(Request $request, $id)
     {
         $payroll_info = PayrollInfo::findOrfail($id);

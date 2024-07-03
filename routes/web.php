@@ -71,6 +71,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('additional-income/{id}', 'PayrollController@additionaIncome');
     Route::post('deduction-income/{id}', 'PayrollController@deductionIncome');
+    Route::delete('deduction-income/delete/{deductionId}', 'PayrollController@deleteDeduction');
+
 
     //Salaries
     Route::get('salaries', 'SalaryController@index')->name('salary');

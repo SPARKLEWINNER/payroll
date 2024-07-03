@@ -50,17 +50,18 @@
                                 </div>
                             </div>
                             @foreach($payrollInfo->deductions as $key => $deduction)
-                                
-                                <div class="row " id='deduction-{{$payrollInfo->id}}-{{$key}}'>
+                                <div class="row" id='deduction-{{$deduction->id}}'>
                                     <div class='col-md-5 border form-group'>
                                         <input name='deduction_name[]' value='{{$deduction->name}}' type='text' placeholder='Company Loan' class='form-control form-control-sm' disabled>
                                     </div>
                                     <div class='col-md-5 border form-group'>
-                                        <input name='deduction_amount[]' value='{{$deduction->amount}}' type='number'  placeholder='1.00' class='form-control form-control-sm' disabled>
+                                        <input name='deduction_amount[]' value='{{$deduction->amount}}' type='number' placeholder='1.00' class='form-control form-control-sm' disabled>
                                     </div>
-                                    
+                                    <div class='col-md-2 border form-group'>
+                                        <button class='btn btn-danger btn-circle' onclick='deleteDeduction({{$deduction->id}})' type='button'><i class='fa fa-minus'></i></button>
+                                    </div>
                                 </div>
-                                @endforeach
+                            @endforeach
                             @endif
                         </div>
 
@@ -76,3 +77,28 @@
     
     </form>
 </div>
+
+<script>
+function deleteDeduction(deductionId) {
+    if (confirm('Are you sure you want to delete this deduction?')) {
+        show();
+        fetch(`{{ url('deduction-income/delete') }}/${deductionId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`deduction-${deductionId}`).remove();
+                location.reload();
+            } else {
+                alert('Failed to delete deduction');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+}
+</script>
