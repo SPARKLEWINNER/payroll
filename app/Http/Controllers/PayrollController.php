@@ -685,6 +685,35 @@ class PayrollController extends Controller
         Alert::success('Successfully Add Allowance')->persistent('Dismiss');
         return back();
     }
+
+    public function deleteAllowance($allowanceId)
+    {
+        $allowance = PayrollAllowance::findOrFail($allowanceId);
+        $payrollInfoId = $allowance->payroll_info_id;
+        $allowanceAmount = $allowance->amount;
+
+        $allowance->delete();
+
+        $payroll_info = PayrollInfo::findOrFail($payrollInfoId);
+        $payroll_info->gross_pay -= $allowanceAmount;
+        $payroll_info->other_income_non_taxable -= $allowanceAmount;
+        $payroll_info->net_pay -= $allowanceAmount;
+        $payroll_info->save();
+
+        $log = new PayrollLog;
+        $log->table = "payroll_allowances";
+        $log->action = "Delete";
+        $log->table_id = $allowanceId;
+        $log->data_from = $allowance;
+        $log->data_to = "";
+        $log->edit_by = auth()->user()->id;
+        $log->save();
+
+        Alert::success('Allowance deleted')->persistent('Dismiss'); // Alert message for deletion
+
+        return response()->json(['success' => true]);
+    }
+
     public function additionaGrossIncome(Request $request, $id)
     {
 

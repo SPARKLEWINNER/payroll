@@ -70,6 +70,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('payslips_all','PayrollController@payslips_all');
 
     Route::post('additional-income/{id}', 'PayrollController@additionaIncome');
+    Route::delete('additional-income/delete/{allowanceId}', 'PayrollController@deleteAllowance');
     Route::post('deduction-income/{id}', 'PayrollController@deductionIncome');
     Route::delete('deduction-income/delete/{deductionId}', 'PayrollController@deleteDeduction');
 

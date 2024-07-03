@@ -37,7 +37,7 @@
                                     <input name='deduction_name[]' type='text' placeholder='Company Loan' class='form-control form-control-sm' required>
                                 </div>
                                 <div class='col-md-5 border form-group'>
-                                    <input name='deduction_amount[]' type='number' min='0' value=0 placeholder='1.00' class='form-control form-control-sm' required>
+                                    <input name='deduction_amount[]' type='number' min='0' step='any' value=0 placeholder='1.00' class='form-control form-control-sm' required>
                                 </div>
 <!--                                <div class='col-md-2 border form-group'>
                                     <button class='btn btn-danger btn-circle' onclick='remove_deduction({{$payrollInfo->id}},0)' type='button'><i class='fa fa-minus'></i></button>

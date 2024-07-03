@@ -49,16 +49,16 @@
                                    <hr>Current Adittional Incomes</hr>
                                 </div>
                                 @foreach($payrollInfo->payroll_allowances as $key => $allowance)
-                                <div class="row " id='allowance-{{$payrollInfo->id}}-{{$key}}'>
+                                <div class="row " id='allowance-{{$allowance->id}}'>
                                     <div class='col-md-5 border form-group'>
                                         <input name='allowance_name[]' value='{{$allowance->name}}' type='text' placeholder='Meal Allowance' class='form-control form-control-sm' required disabled>
                                     </div>
                                     <div class='col-md-5 border form-group'>
-                                        <input name='allowance_amount[]' value='{{$allowance->amount}}' type='number'  placeholder='1.00' class='form-control form-control-sm' required disabled>
+                                        <input name='allowance_amount[]' value='{{$allowance->amount}}' type='number' placeholder='1.00' class='form-control form-control-sm' required disabled>
                                     </div>
-<!--                                    <div class='col-md-2 border form-group'>
-                                        <button class='btn btn-danger btn-circle' onclick='remove_allowance({{$payrollInfo->id}},0)' type='button'><i class='fa fa-minus'></i></button>
-                                    </div>-->
+                                    <div class='col-md-2 border form-group'>
+                                        <button class='btn btn-danger btn-circle' onclick='deleteAllowance({{$allowance->id}})' type='button'><i class='fa fa-minus'></i></button>
+                                    </div>
                                 </div>
                                 @endforeach
                             </div>
@@ -75,3 +75,29 @@
     
     </form>
 </div>
+
+<script>
+    function deleteAllowance(allowanceId) {
+    if (confirm('Are you sure you want to delete this allowance?')) {
+        show(); 
+        fetch(`{{ url('additional-income/delete') }}/${allowanceId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`allowance-${allowanceId}`).remove();
+                location.reload(); 
+            } else {
+                alert('Failed to delete allowance');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        })
+    }
+}
+
+</script>
