@@ -259,8 +259,7 @@
 
                     function fetchRates(employeeId) {
                         return $.ajax({
-                            // url: `/public/rates/${employeeId}`,
-                            url: `/rates/${employeeId}`,
+                            url: `/public/rates/${employeeId}`,
                             method: 'GET',
                             contentType: 'application/json'
                         });
