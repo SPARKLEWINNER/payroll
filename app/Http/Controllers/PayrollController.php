@@ -298,6 +298,7 @@ class PayrollController extends Controller
             $payroll->payroll_from = $payrollFrom;
             $payroll->payroll_to = $payrollTo;
             $payroll->store = $store;
+            $payroll->created_at = isset($request->createdat) ? date('Y-m-d', strtotime($request->createdat)) : now();
             $payroll->save();
         }
 
