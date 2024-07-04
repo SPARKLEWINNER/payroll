@@ -237,6 +237,7 @@
         });
 
         $('#updateRecordsButton').click(function () {
+            var userId = "{{ auth()->user()->id }}";
             var settings = {
                 "url": "https://sparkle-time-keep.herokuapp.com/api/list/breaklistapproved",
                 "method": "POST",
@@ -245,7 +246,7 @@
                     "Content-Type": "application/json"
                 },
                 "data": JSON.stringify({
-                    "store": "Sparkle Star International - Inhouse"
+                    "payroll": userId
                 }),
             };
 
@@ -256,7 +257,8 @@
 
                     function fetchRates(employeeId) {
                         return $.ajax({
-                            url: `/public/rates/${employeeId}`,
+                            // url: `/public/rates/${employeeId}`,
+                            url: `/rates/${employeeId}`,
                             method: 'GET',
                             contentType: 'application/json'
                         });
@@ -280,6 +282,12 @@
                                 if (rateResponse.status === 'success') {
                                     var rate = rateResponse.data;
                                     var hourlyRate = rate.daily / 8;
+                                    var tardyRate = (rate.daily / 8 / 60) * detail.hourstardy;
+                                    var overtimeRate = (hourlyRate * 1.25) * detail.overtime;
+                                    var specialholidayRate = (rate.daily * .3) * detail.specialholiday;
+                                    var legalholidayRate = rate.daily * detail.legalholiday;
+                                    var nightdiffRate = (rate.daily * .1) * detail.nightdiff;
+
                                     processedEmployees++;
                                     var progressPercent = Math.round((processedEmployees / totalEmployees) * 100);
                                     $('#progressBar').css('width', progressPercent + '%').text(progressPercent + '%');
@@ -294,23 +302,23 @@
                                         hours_work: detail.hourswork,
                                         basic_pay: rate.daily * detail.dayswork,
                                         hours_tardy: detail.hourstardy,
-                                        tardy_amount: (rate.daily / 8 / 60) * detail.hourstardy,
+                                        tardy_amount: tardyRate,
                                         overtime: detail.overtime,
-                                        overtime_amount: rate.overtime * detail.overtime,
+                                        overtime_amount: overtimeRate,
                                         special_holiday: detail.specialholiday,
-                                        special_holiday_amount: rate.specialholiday * detail.specialholiday,
+                                        special_holiday_amount: specialholidayRate,
                                         legal_holiday: detail.legalholiday,
-                                        legal_holiday_amount: rate.holiday * detail.legalholiday,
+                                        legal_holiday_amount: legalholidayRate,
                                         night_diff: detail.nightdiff,
-                                        nightdiff_amount: rate.nightshift * detail.nightdiff,
-                                        gross_pay: rate.daily * detail.dayswork - (rate.daily / 8 / 60) * detail.hourstardy + rate.overtime * detail.overtime + rate.specialholiday * detail.specialholiday + rate.holiday * detail.legalholiday + rate.nightshift * detail.nightdiff,
+                                        nightdiff_amount: nightdiffRate,
+                                        gross_pay: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialholidayRate + legalholidayRate + nightdiffRate,
                                         other_income_non_tax: 0,
                                         sss: rate.sss,
                                         philhealth: rate.philhealth,
                                         pagibig: rate.pagibig,
                                         total_deduction: rate.sss + rate.philhealth + rate.pagibig,
                                         other_deduction: 0,
-                                        net: rate.daily * detail.dayswork - (rate.daily / 8 / 60) * detail.hourstardy + rate.overtime * detail.overtime + rate.specialholiday * detail.specialholiday + rate.holiday * detail.legalholiday + rate.nightshift * detail.nightdiff - (rate.sss + rate.philhealth + rate.pagibig),
+                                        net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialholidayRate + legalholidayRate + nightdiffRate - (rate.sss + rate.philhealth + rate.pagibig),
                                         sss_er: rate.sss
                                     };
                                 } else {
