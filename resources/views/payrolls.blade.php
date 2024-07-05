@@ -238,42 +238,73 @@
             });
         });
 
+    $(document).ready(function() {
         $('#updateRecordsButton').click(function () {
-            var userId = "{{ auth()->user()->id }}";
-            var settings = {
-                "url": "https://sparkle-time-keep.herokuapp.com/api/list/breaklistapproved",
-                "method": "POST",
-                "timeout": 0,
-                "headers": {
-                    "Content-Type": "application/json"
-                },
-                "data": JSON.stringify({
-                    "payroll": userId
-                }),
-            };
+        var userId = "{{ auth()->user()->id }}";
+        var settings = {
+            "url": "https://sparkle-time-keep.herokuapp.com/api/list/breaklistapproved",
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "data": JSON.stringify({
+                "payroll": userId,
+            }),
+        };
 
-            $.ajax(settings).done(function (response) {
-                console.log('Fetched data:', response);
-                if (response.success) {
-                    var newPayrolls = response.data;
+        $.ajax(settings).done(function (response) {
+            console.log('Fetched data:', response);
+            if (response.success) {
+                var newPayrolls = response.data;
 
-                    function fetchRates(employeeId) {
-                        return $.ajax({
-                            url: `/public/rates/${employeeId}`,
-                            method: 'GET',
-                            contentType: 'application/json'
+                function fetchHolidays() {
+                    return $.ajax({
+                        url: '/public/holidays',
+                        method: 'GET',
+                        contentType: 'application/json',
+                        dataType: 'html'
+                    }).then(function (holidaysResponse) {
+                        var $html = $(holidaysResponse);
+
+                        var holidays = [];
+                        $html.find('tr').each(function () {
+                            var $row = $(this);
+                            var holiday = {
+                                date: $row.find('td').eq(0).text().trim(),
+                                name: $row.find('td').eq(1).text().trim(),
+                                type: $row.find('td').eq(2).text().trim()
+                            };
+                            if (holiday.date && holiday.name && holiday.type) {
+                                holidays.push(holiday);
+                            }
                         });
-                    }
 
-                    $('#loadingOverlay').show();
-                    $('#updateRecordsButton').prop('disabled', true).text('Updating Records...');
-                    $('#payrollTable').addClass('table-disabled');
+                        return holidays;
+                    }).fail(function (error) {
+                        console.error('Failed to fetch holidays:', error);
+                        return [];
+                    });
+                }
 
-                    var totalEmployees = newPayrolls.reduce((sum, payroll) => sum + payroll.details.length, 0);
-                    var processedEmployees = 0;
+                function fetchRates(employeeId) {
+                    return $.ajax({
+                        url: `/public/rates/${employeeId}`,
+                        method: 'GET',
+                        contentType: 'application/json'
+                    });
+                }
 
-                    var payrollSavePromises = [];
+                $('#loadingOverlay').show();
+                $('#updateRecordsButton').prop('disabled', true).text('Updating Records...');
+                $('#payrollTable').addClass('table-disabled');
 
+                var totalEmployees = newPayrolls.reduce((sum, payroll) => sum + payroll.details.length, 0);
+                var processedEmployees = 0;
+
+                var payrollSavePromises = [];
+
+                fetchHolidays().done(function (holidays) {
                     newPayrolls.forEach(function (payroll) {
                         var dateFrom = new Date(payroll.datefrom).toISOString().split('T')[0];
                         var dateTo = new Date(payroll.dateto).toISOString().split('T')[0];
@@ -285,8 +316,22 @@
                                     var hourlyRate = rate.daily / 8;
                                     var tardyRate = (rate.daily / 8 / 60) * detail.hourstardy;
                                     var overtimeRate = (hourlyRate * 1.25) * detail.overtime;
-                                    var specialholidayRate = (rate.daily * .3) * detail.specialholiday;
-                                    var legalholidayRate = rate.daily * detail.legalholiday;
+                                    var specialHolidayCount = 0;
+                                    var legalHolidayCount = 0;
+
+                                    holidays.forEach(function (holiday) {
+                                        var holidayDate = holiday.date.replace(/\./g, '-'); 
+                                        if (holidayDate >= dateFrom && holidayDate <= dateTo) {
+                                            if (holiday.type === "Special Holiday") {
+                                                specialHolidayCount++;
+                                            } else {
+                                                legalHolidayCount++;
+                                            }
+                                        }
+                                    });
+
+                                    var specialHolidayRate = (rate.daily * .3) * (detail.specialholiday || specialHolidayCount);
+                                    var legalHolidayRate = rate.daily * (detail.legalholiday || legalHolidayCount);
                                     var nightdiffRate = (rate.daily * .1) * detail.nightdiff;
 
                                     processedEmployees++;
@@ -306,20 +351,20 @@
                                         tardy_amount: tardyRate,
                                         overtime: detail.overtime,
                                         overtime_amount: overtimeRate,
-                                        special_holiday: detail.specialholiday,
-                                        special_holiday_amount: specialholidayRate,
-                                        legal_holiday: detail.legalholiday,
-                                        legal_holiday_amount: legalholidayRate,
+                                        special_holiday: detail.specialholiday || specialHolidayCount,
+                                        special_holiday_amount: specialHolidayRate,
+                                        legal_holiday: detail.legalholiday || legalHolidayCount,
+                                        legal_holiday_amount: legalHolidayRate,
                                         night_diff: detail.nightdiff,
                                         nightdiff_amount: nightdiffRate,
-                                        gross_pay: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialholidayRate + legalholidayRate + nightdiffRate,
+                                        gross_pay: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate,
                                         other_income_non_tax: 0,
                                         sss: rate.sss,
                                         philhealth: rate.philhealth,
                                         pagibig: rate.pagibig,
                                         total_deduction: rate.sss + rate.philhealth + rate.pagibig,
                                         other_deduction: 0,
-                                        net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialholidayRate + legalholidayRate + nightdiffRate - (rate.sss + rate.philhealth + rate.pagibig),
+                                        net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate - (rate.sss + rate.philhealth + rate.pagibig),
                                         sss_er: rate.sss
                                     };
                                 } else {
@@ -372,9 +417,16 @@
                         $('#updateRecordsButton').prop('disabled', false).text('Update Records');
                         $('#payrollTable').removeClass('table-disabled');
                     });
+                }).fail(function (error) {
+                    console.error('Failed to fetch holidays:', error);
+                    $('#loadingOverlay').hide();
+                    $('#updateRecordsButton').prop('disabled', false).text('Update Records');
+                    $('#payrollTable').removeClass('table-disabled');
+                });
                 }
             });
         });
     });
+});
 </script>
 @endsection
