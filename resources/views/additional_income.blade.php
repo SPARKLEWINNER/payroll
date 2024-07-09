@@ -16,8 +16,6 @@
                         </div>
                         <div class="row ">
                             <div class='col-md-12  form-group'>
-                                <button class="btn btn-info btn-circle" onclick="add_income({{$payrollInfo->id}})" type="button"><i class="fa fa-plus"></i>
-                                </button>
                             </div>
                         </div>
                         <div class="row ">
