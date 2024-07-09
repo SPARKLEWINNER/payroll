@@ -38,7 +38,7 @@
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
-               Hours Tardy (hr)
+               Minutes Tardy (min)
               <input type="number" name='hours_tardy' class="form-control form-control-sm" value='{{$payrollInfo->hours_tardy}}' step='any' required>
             </div>
           </div>
