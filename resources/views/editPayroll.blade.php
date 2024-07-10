@@ -18,6 +18,7 @@
                 Generated Date : {{ date('M. d, Y',strtotime($payroll->created_at)) }} <br>
                 Store : {{ $payroll->store }} <br>
                 Payroll Period : {{ date('M. d, Y',strtotime($payroll->payroll_from)) }} -  {{ date('M. d, Y',strtotime($payroll->payroll_to)) }}<br>
+                <div id="holiday-section"></div>
             </div>
         </div>
     </div>
@@ -183,9 +184,63 @@
 <script src="{{ asset('admin/js/plugins/pace/pace.min.js')}}"></script>
 <script src="{{ asset('admin/js/plugins/sweetalert/sweetalert.min.js')}}"></script>
 <script>
-    $(document).ready(function(){
-      $('.chosen-select').chosen({width: "100%"});
-    });
+        $(document).ready(function() {
+            $('.chosen-select').chosen({width: "100%"});
+            fetchHolidays();
+        });
+
+        function formatDate(date) {
+            let d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function fetchHolidays() {
+            $.ajax({
+                url: '/public/holidays',
+                method: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    let holidays = [];
+                    let $html = $(response);
+                    let fromDate = new Date('{{ $payroll->payroll_from }}');
+                    let toDate = new Date('{{ $payroll->payroll_to }}');
+                    
+                    $html.find('tbody tr').each(function() {
+                        let $row = $(this);
+                        let holiday = {
+                            date: new Date($row.find('td').eq(0).text().trim()),
+                            name: $row.find('td').eq(1).text().trim(),
+                            type: $row.find('td').eq(2).text().trim()
+                        };
+                        
+                        if (formatDate(holiday.date) >= formatDate(fromDate) && formatDate(holiday.date) <= formatDate(toDate)) {
+                            holidays.push(holiday);
+                        }
+                    });
+
+                    if (holidays.length > 0) {
+                        let holidaysHtml = '<h5>Holidays <br>';
+                        holidays.forEach(holiday => {
+                            holidaysHtml += `${holiday.name} - ${holiday.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${holiday.type} <br>`;
+                        });
+                        holidaysHtml += '</h5>';
+                        $('#holiday-section').html(holidaysHtml);
+                    } else {
+                        $('#holiday-section').html('<h5>No holidays within the payroll period.</h5>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching holidays:', error);
+                }
+            });
+        }
 
     $('.remove-payroll').click(function () {
 
