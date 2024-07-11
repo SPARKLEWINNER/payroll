@@ -314,7 +314,7 @@
                                 if (rateResponse.status === 'success') {
                                     var rate = rateResponse.data;
                                     var hourlyRate = rate.daily / 8;
-                                    var tardyRate = (rate.daily / 8 / 60) * detail.hourstardy;
+                                    var tardyRate = (rate.late === 1) ? 0 : (rate.daily / 8 / 60) * detail.hourstardy;
                                     var overtimeRate = (hourlyRate * 1.25) * detail.overtime;
                                     var specialHolidayCount = 0;
                                     var legalHolidayCount = 0;
