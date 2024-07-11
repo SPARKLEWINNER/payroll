@@ -2,6 +2,70 @@
 @section('css')
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'" defer>
 <link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'" defer>
+<style>
+    .table-responsive {
+        position: relative;
+        overflow-x: auto;
+        overflow-y: visible;
+        max-height: calc(100vh - 350px);
+    }
+    .table-responsive thead th {
+        position: sticky;
+        top: 0;
+        background: #f8f9fa;
+        z-index: 3; 
+    }
+    .table-responsive tbody td {
+        z-index: 1;
+    }
+    .table-responsive thead th:nth-child(1),
+    .table-responsive thead th:nth-child(2),
+    .table-responsive thead th:nth-child(3) {
+        position: sticky;
+        background: #f8f9fa;
+        z-index: 5; 
+    }
+    .table-responsive thead th:nth-child(1) {
+        left: -1px;
+    }
+    .table-responsive thead th:nth-child(2) {
+        left: 44px; 
+    }
+    .table-responsive thead th:nth-child(3) {
+        left: 68px;
+    }
+    .table-responsive tbody tr:nth-child(n) {
+        z-index: 4; 
+    }
+    .table-responsive tbody td:nth-child(1) {
+        position: sticky;
+        left: -1px;
+        background: #f8f9fa;
+        z-index: 4; 
+    }
+    .table-responsive tbody td:nth-child(2) {
+        position: sticky;
+        left: 44px;
+        background: #f8f9fa;
+    }
+    .table-responsive tbody td:nth-child(3) {
+        position: sticky;
+        left: 68px;
+        background: #f8f9fa;
+    }
+    .table-responsive tfoot td:nth-child(1) {
+        position: sticky;
+        left: 0;
+        background: #f8f9fa;
+        z-index: 5;
+    }
+    .btn-group .dropdown-menu {
+    position: absolute; 
+    z-index: 9999;
+    overflow: visible;
+    left: 130%; 
+    }
+</style>
 @endsection
 @section('content')
 <div class='row'>
