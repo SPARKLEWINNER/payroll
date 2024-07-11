@@ -140,8 +140,8 @@
                                             <li><a title='Edit Payroll' href="#editPayroll{{$payrollInfo->id}}" data-toggle="modal" >Edit</a></li>
                                             <li><a title='Transfer Payroll' href="#transfer{{$payrollInfo->id}}" data-toggle="modal"  >Transfer</a></li>
                                             {{-- <li><a title='Additional Gross Income' href="#AdditionalGrossIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Gross Allowance</a></li> --}}
-                                            <li><a title='Additional Income' href="#AdditionalIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Income</a></li>
-                                            <li><a title='Additional Deduction' href="#DeductionIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Deduction</a></li>
+                                            <!-- <li><a title='Additional Income' href="#AdditionalIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Income</a></li> -->
+                                            <!-- <li><a title='Additional Deduction' href="#DeductionIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Deduction</a></li> -->
                                             <li><a title='Edit Government Benefits' href="#editgov{{$payrollInfo->id}}" data-toggle="modal" >Edit Government</a></li>
                                             <li class="divider"></li>
                                             <li><a title='Delete' class='remove-payroll' id='{{$payrollInfo->id}}' data-toggle="modal" title='Delete'  >Remove Employee</a></li>
@@ -153,13 +153,13 @@
                                 <td>{{strtoupper($payrollInfo->employee_name)}}</td>
                                 <td>{{number_format($payrollInfo->daily_rate,2)}}</td>
                                 <td>{{number_format($payrollInfo->hour_rate,2)}}</td>
-                                <td>{{number_format($payrollInfo->hours_work,2)}}</td>
-                                <td>{{number_format($payrollInfo->overtime,2)}}</td>
-                                <td>{{number_format($payrollInfo->special_holiday,2)}}</td>
-                                <td>{{number_format($payrollInfo->legal_holiday,2)}}</td>
-                                <td>{{number_format($payrollInfo->days_work,2)}}</td>
-                                <td>{{number_format($payrollInfo->hours_tardy,2)}}</td>
-                                <td>{{number_format($payrollInfo->night_diff,2)}}</td>
+                                <td>{{number_format($payrollInfo->hours_work, 0, '.', '')}}</td>
+                                <td>{{number_format($payrollInfo->overtime, 0, '.', '')}}</td>
+                                <td>{{number_format($payrollInfo->special_holiday, 0, '.', '')}}</td>
+                                <td>{{number_format($payrollInfo->legal_holiday, 0, '.', '')}}</td>
+                                <td>{{number_format($payrollInfo->days_work, 0, '.', '')}}</td>
+                                <td>{{number_format($payrollInfo->hours_tardy, 0, '.', '')}}</td>
+                                <td>{{number_format($payrollInfo->night_diff, 0, '.', '')}}</td>
                                 <td>{{number_format($payrollInfo->basic_pay,2)}}</td>
                                 <td>{{number_format($payrollInfo->amount_overtime,2)}}</td>
                                 <td>{{number_format($payrollInfo->amount_special_holiday,2)}}</td>
@@ -207,13 +207,13 @@
                                 <td colspan='3' class='text-right'>Total</td>
                                 <td>{{number_format(($payroll->informations)->sum('daily_rate'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('hour_rate'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('hours_work'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('overtime'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('special_holiday'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('legal_holiday'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('days_work'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('hours_tardy'),2)}}</td>
-                                <td>{{number_format(($payroll->informations)->sum('night_diff'),2)}}</td>
+                                <td>{{number_format(($payroll->informations)->sum('hours_work'), 0, '.', '')}}</td>
+                                <td>{{number_format(($payroll->informations)->sum('overtime'), 0, '.', '')}}</td>
+                                <td>{{number_format(($payroll->informations)->sum('special_holiday'), 0, '.', '')}}</td>
+                                <td>{{number_format(($payroll->informations)->sum('legal_holiday'), 0, '.', '')}}</td>
+                                <td>{{number_format(($payroll->informations)->sum('days_work'), 0, '.', '')}}</td>
+                                <td>{{number_format(($payroll->informations)->sum('hours_tardy'), 0, '.', '')}}</td>
+                                <td>{{number_format(($payroll->informations)->sum('night_diff'), 0, '.', '')}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('basic_pay'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('amount_overtime'),2)}}</td>
                                 <td>{{number_format(($payroll->informations)->sum('amount_special_holiday'),2)}}</td>
