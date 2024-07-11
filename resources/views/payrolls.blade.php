@@ -96,6 +96,17 @@
                         </thead>
                         <tbody>
                             @foreach($payrolls as $payroll)
+                            @php
+                                $userId = auth()->user()->id;
+                                $shouldDisplay = false;
+                                $storeName = $payroll->store;
+                                if (($userId == 1 && strpos($storeName, 'Inhouse') === false && strpos($storeName, 'Star Terran') !== 0) || 
+                                    ($userId == 2 && (strpos($storeName, 'Inhouse') !== false || strpos($storeName, 'Star Terran') === 0)) || 
+                                    ($userId != 1 && $userId != 2)) {
+                                    $shouldDisplay = true;
+                                }
+                            @endphp
+                            @if($shouldDisplay)
                                 <tr>
                                     <td>
                                         @if($payroll->status == "")
@@ -162,6 +173,7 @@
                                         </small>
                                     </td>
                                 </tr>
+                            @endif
                             @endforeach
                         </tbody>
                     </table>
