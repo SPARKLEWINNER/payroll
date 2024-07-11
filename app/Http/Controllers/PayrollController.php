@@ -142,7 +142,7 @@ class PayrollController extends Controller
     {
         $findRates = Rates::where('uid', $id)->first();
         if (empty($findRates)) {
-            $findRates = Rates::where('uid', 1)->first();
+            $findRates = Rates::where('uid', 0)->first();
         } else {
             $findRates = Rates::where('uid', $id)->first();
         }
