@@ -53,12 +53,12 @@
         left: 68px;
         background: #f8f9fa;
     }
-    .table-responsive tfoot td:nth-child(1) {
+    /* .table-responsive tfoot td:nth-child(1) {
         position: sticky;
         left: 0;
         background: #f8f9fa;
         z-index: 5;
-    }
+    } */
     .btn-group .dropdown-menu {
     position: absolute; 
     z-index: 9999;
@@ -140,8 +140,8 @@
                                             <li><a title='Edit Payroll' href="#editPayroll{{$payrollInfo->id}}" data-toggle="modal" >Edit</a></li>
                                             <li><a title='Transfer Payroll' href="#transfer{{$payrollInfo->id}}" data-toggle="modal"  >Transfer</a></li>
                                             {{-- <li><a title='Additional Gross Income' href="#AdditionalGrossIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Gross Allowance</a></li> --}}
-                                            <!-- <li><a title='Additional Income' href="#AdditionalIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Income</a></li> -->
-                                            <!-- <li><a title='Additional Deduction' href="#DeductionIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Deduction</a></li> -->
+                                            <li><a title='Additional Income' href="#AdditionalIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Income</a></li> 
+                                            <li><a title='Additional Deduction' href="#DeductionIncome{{$payrollInfo->id}}" data-toggle="modal"  >Additional Deduction</a></li> 
                                             <li><a title='Edit Government Benefits' href="#editgov{{$payrollInfo->id}}" data-toggle="modal" >Edit Government</a></li>
                                             <li class="divider"></li>
                                             <li><a title='Delete' class='remove-payroll' id='{{$payrollInfo->id}}' data-toggle="modal" title='Delete'  >Remove Employee</a></li>
@@ -486,11 +486,11 @@
                 const formattedNet = formatter.format(net);
                 console.log(parseFloat(grossPay.replace(/,/g, '')) + " " + parseFloat(result))
                 $(`#netpay-${emp}`).text(formattedNet);
-                /*const body = {
+                const body = {
                     "emp_id": emp,
                     "deduction": Number(e.target.innerText),
                 }
-                const response = await fetch(`https://payroll-live.7star.com.ph/api/deduction/${id}`, {
+                const response = await fetch(`https://payroll-live.7star.com.ph/public/api/deduction/${id}`, {
                   method: 'post',
                   body: JSON.stringify(body),
                   headers: {'Content-Type': 'application/json'}
@@ -501,7 +501,7 @@
                     success: false,
                     msg: "Connection to payroll error",
                   });
-                }*/
+                }
             }
         }
         async function add_deduction_remarks(e, emp, id)
@@ -528,4 +528,3 @@
 
 </script>
 @endsection
-
