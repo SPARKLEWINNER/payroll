@@ -69,13 +69,13 @@
           <div class="row">
             <div class='col-md-12 form-group'>
                Other Income Non-Taxable
-              <input type="number" name='other_income_non_taxable' class="form-control form-control-sm" value='{{$payrollInfo->other_income_non_taxable}}' required>
+               <input type="number" name='other_income_non_taxable' class="form-control form-control-sm" value='{{$payrollInfo->other_income_non_taxable}}' step="0.01" pattern="\d+(\.\d{1,2})?" required>
             </div>
           </div>
           <div class="row">
             <div class='col-md-12 form-group'>
                Other Deduction
-              <input type="number" name='other_deduction' class="form-control form-control-sm" value='{{$payrollInfo->other_deductions}}'  required>
+               <input type="number" name='other_deduction' class="form-control form-control-sm" value='{{$payrollInfo->other_deductions}}' step="0.01" pattern="\d+(\.\d{1,2})?" required>
             </div>
           </div>
           </div>
