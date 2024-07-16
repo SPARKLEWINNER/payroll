@@ -151,7 +151,12 @@
                                 </td>
                                 <td>{{$c++}}</td>
                                 <td>{{strtoupper($payrollInfo->employee_name)}}</td>
-                                <td>{{number_format($payrollInfo->daily_rate,2)}}</td>
+                                <td>
+                                    {{ number_format($payrollInfo->daily_rate, 2) }}
+                                    @if($payrollInfo->source)
+                                        <br><small>({{ $payrollInfo->source }})</small>
+                                    @endif
+                                </td>
                                 <td>{{number_format($payrollInfo->hour_rate,2)}}</td>
                                 <td>{{number_format($payrollInfo->hours_work, 0, '.', '')}}</td>
                                 <td>{{number_format($payrollInfo->overtime, 0, '.', '')}}</td>
