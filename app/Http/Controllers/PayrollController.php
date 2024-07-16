@@ -249,7 +249,6 @@ class PayrollController extends Controller
         $generatedBy = $request->id ?? $request->generatedby ?? null;
         $generatedByName = $request->generatedbyname ?? null;        
 
-        // Extract from, to, and store from one of the employees if not provided directly
         if (!isset($request->from) || !isset($request->to) || !isset($request->store)) {
             foreach ($formattedRequest as $key => $detail) {
                 if (is_array($detail) && isset($detail['from']) && isset($detail['to']) && isset($detail['store'])) {
@@ -305,6 +304,25 @@ class PayrollController extends Controller
         // Detect if the 'details' key exists or if the structure is different
         if (isset($formattedRequest['details']) && is_array($formattedRequest['details'])) {
             $details = $formattedRequest['details'];
+
+            foreach ($details as &$detail) {
+                $gross_pay = $detail['gross_pay'];
+                if ($gross_pay >= 1) {
+                    $sssData = SssTable::where('from_range', '<=', $gross_pay)->where('to_range', '>=', $gross_pay)->first();
+                    if ($sssData != null) {
+                        $detail['sss'] = $sssData->ee;
+                        $detail['sss_er'] = $sssData->er;
+                    } else {
+                        $detail['sss'] = 0;
+                        $detail['sss_er'] = 0;
+                    }
+                    $detail['philhealth'] = ((($detail['daily_rate'] * 313 * .05) / 12) / 2);
+                } else {
+                    $detail['sss'] = 0;
+                    $detail['sss_er'] = 0;
+                    $detail['philhealth'] = 0;
+                }
+            }
         } else {
             $details = [];
             foreach ($formattedRequest as $key => $detail) {
