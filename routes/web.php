@@ -81,6 +81,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     //Rates
     Route::get('rates/{id}', 'PayrollController@getRates')->name('rates');
+    Route::get('rates-stk/{id}', 'PayrollController@getRatesSTK')->name('rates-stk');
     Route::post('edit-rates', 'PayrollController@setRates')->name('edit-rates');
     Route::post('edit-store-rates', 'PayrollController@setStoreRates')->name('edit-store-rates');
 
