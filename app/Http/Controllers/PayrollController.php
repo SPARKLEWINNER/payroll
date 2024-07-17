@@ -287,6 +287,7 @@ class PayrollController extends Controller
         
         $generatedBy = $request->id ?? $request->generatedby ?? null;
         $generatedByName = $request->generatedbyname ?? null;        
+        $cutoff = $request->cutoff ?? null;   
 
         if (!isset($request->from) || !isset($request->to) || !isset($request->store)) {
             foreach ($formattedRequest as $key => $detail) {
@@ -297,6 +298,7 @@ class PayrollController extends Controller
         
                     $generatedBy = $generatedBy ?? $detail['id'] ?? null;
                     $generatedByName = $generatedByName ?? $detail['generatedbyname'] ?? null;
+                    $cutoff = $cutoff ?? $detail['cutoff'] ?? null;
                     break;
                 }
             }
@@ -322,6 +324,9 @@ class PayrollController extends Controller
             } elseif ($generatedByName) {
                 $payroll->generated_by_name = $generatedByName;
             }
+            if ($cutoff !== null) {
+                $payroll->cutoff = $cutoff;
+            }
             $payroll->save();
 
             PayrollInfo::where('payroll_id', $payroll->id)->delete();
@@ -336,6 +341,7 @@ class PayrollController extends Controller
             $payroll->payroll_from = $payrollFrom;
             $payroll->payroll_to = $payrollTo;
             $payroll->store = $store;
+            $payroll->cutoff = $cutoff;
             $payroll->created_at = isset($request->createdat) ? date('Y-m-d', strtotime($request->createdat)) : now();
             $payroll->save();
         }
@@ -355,11 +361,18 @@ class PayrollController extends Controller
                         $detail['sss'] = 0;
                         $detail['sss_er'] = 0;
                     }
-                    $detail['philhealth'] = ((($detail['daily_rate'] * 313 * .05) / 12) / 2);
+                    if ($cutoff == 1) {
+                        $detail['philhealth'] = ((($detail['daily_rate'] * 313 * .05) / 12) / 2);
+                        $detail['pagibig'] = $detail['pagibig'] ?? 200;
+                    } elseif ($cutoff == 2) {
+                        $detail['philhealth'] = 0;
+                        $detail['pagibig'] = 0;
+                    }
                 } else {
                     $detail['sss'] = 0;
                     $detail['sss_er'] = 0;
                     $detail['philhealth'] = 0;
+                    $detail['pagibig'] = 0;
                 }
                 if (!isset($detail['source'])) {
                     $detail['source'] = 'Unknown'; 
