@@ -510,6 +510,15 @@
                                     var legalHolidayRate = rate.daily * (detail.legalholiday || legalHolidayCount);
                                     var nightdiffRate = (rate.daily * .1) * detail.nightdiff;
 
+                                    var pagibigRate = rate.pagibig === 0 || rate.pagibig == null ? 200 : rate.pagibig;
+                                    var philhealthRate = rate.philhealth;
+                                    if (payroll.cutoff !== undefined) {
+                                        if (payroll.cutoff === 2) {
+                                            pagibigRate = 0;
+                                            philhealthRate = 0;
+                                        }
+                                    }
+
                                     processedEmployees++;
                                     var progressPercent = Math.round((processedEmployees / totalEmployees) * 100);
                                     $('#progressBar').css('width', progressPercent + '%').text(progressPercent + '%');
@@ -536,11 +545,11 @@
                                         gross_pay: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate,
                                         other_income_non_tax: 0,
                                         sss: rate.sss,
-                                        philhealth: rate.philhealth,
+                                        philhealth: philhealthRate,
                                         pagibig: pagibigRate,
-                                        total_deduction: rate.sss + rate.philhealth + pagibigRate,
+                                        total_deduction: rate.sss + philhealthRate + pagibigRate,
                                         other_deduction: 0,
-                                        net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate - (rate.sss + rate.philhealth + pagibigRate),
+                                        net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate - (rate.sss + philhealthRate + pagibigRate),
                                         sss_er: rate.sss,
                                         source: rateResponse.source
                                     };
@@ -561,6 +570,7 @@
 
                             var payload = {
                                 store: payroll.store,
+                                cutoff: payroll.cutoff,
                                 from: dateFrom,
                                 to: dateTo,
                                 employeecount: payroll.employeecount,
