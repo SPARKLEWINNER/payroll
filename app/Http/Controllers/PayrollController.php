@@ -151,6 +151,40 @@ class PayrollController extends Controller
             'data' => $findRates
         ];
     }
+    public function getRatesSTK(Request $request, $id)
+    {
+        $store = $request->query('store');
+
+        $findRates = Rates::where('uid', $id)->first();
+        if ($findRates) {
+            $source = "Personnel";
+        } else {
+            if ($store) {
+                $findRates = Rates::where('store', $store)->first();
+                if ($findRates) {
+                    $source = "Store";
+                } else {
+                    $group_id = Store::where('store', $store)->value('group_id');
+                    if ($group_id) {
+                        $findRates = Rates::where('uid', $group_id)->first();
+                        $source = $findRates ? "Group" : "Unknown";
+                    } else {
+                        $findRates = Rates::where('uid', 1)->first();
+                        $source = "No Rates";
+                    }
+                }
+            } else {
+                $findRates = Rates::where('uid', 1)->first();
+                $source = "No Rates";
+            }
+        }
+
+        return [
+            'status' => 'success',
+            'data' => $findRates,
+            'source' => $source
+        ];
+    }
     public function getRatesStore(Request $request)
     {
         $findRates = Rates::where('store', $request->store)->first();
@@ -322,6 +356,9 @@ class PayrollController extends Controller
                     $detail['sss_er'] = 0;
                     $detail['philhealth'] = 0;
                 }
+                if (!isset($detail['source'])) {
+                    $detail['source'] = 'Unknown'; 
+                }
             }
         } else {
             $details = [];
@@ -388,6 +425,9 @@ class PayrollController extends Controller
             $payroll_info->other_deductions = $detail['other_deduction'];
             $payroll_info->net_pay = $detail['net'];
             $payroll_info->sss_er = $detail['sss_er'];
+            if (isset($detail['source'])) {
+                $payroll_info->source = $detail['source'];
+            }
             $payroll_info->save();
         }
         return response()->json(['message' => 'success'], 200);
@@ -442,6 +482,9 @@ class PayrollController extends Controller
         else {
             $sss = 0;
         }
+        if ($request->has('daily_rate') && $payroll->daily_rate != $request->daily_rate) {
+            $payroll->source = 'Custom';
+        }        
         $total_deduction = $sss + $payroll->nhip_contribution + $payroll->hdmf_contribution + $other_deduction;
         $net = $gross_pay - $total_deduction;
         $payroll->daily_rate = $daily_rate;
