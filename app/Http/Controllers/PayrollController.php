@@ -341,7 +341,9 @@ class PayrollController extends Controller
             $payroll->payroll_from = $payrollFrom;
             $payroll->payroll_to = $payrollTo;
             $payroll->store = $store;
-            $payroll->cutoff = $cutoff;
+            if (!empty($cutoff)) {
+                $payroll->cutoff = $cutoff;
+            }
             $payroll->created_at = isset($request->createdat) ? date('Y-m-d', strtotime($request->createdat)) : now();
             $payroll->save();
         }
@@ -361,12 +363,12 @@ class PayrollController extends Controller
                         $detail['sss'] = 0;
                         $detail['sss_er'] = 0;
                     }
-                    if ($cutoff == 1) {
-                        $detail['philhealth'] = ((($detail['daily_rate'] * 313 * .05) / 12) / 2);
-                        $detail['pagibig'] = $detail['pagibig'] ?? 200;
-                    } elseif ($cutoff == 2) {
+                    if ($cutoff == 2) {
                         $detail['philhealth'] = 0;
                         $detail['pagibig'] = 0;
+                    } else {
+                        $detail['philhealth'] = ((($detail['daily_rate'] * 313 * .05) / 12) / 2);
+                        $detail['pagibig'] = $detail['pagibig'] ?? 200;
                     }
                 } else {
                     $detail['sss'] = 0;
