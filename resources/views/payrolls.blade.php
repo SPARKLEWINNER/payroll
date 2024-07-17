@@ -105,26 +105,53 @@
                                     ($userId != 1 && $userId != 2)) {
                                     $shouldDisplay = true;
                                 }
+                                $displayRatesMessage = false;
+                                foreach ($payroll->informations as $info) {
+                                    if ($info->source == "No Rates") {
+                                        $displayRatesMessage = true;
+                                        break;
+                                    }
+                                }
                             @endphp
                             @if($shouldDisplay)
                                 <tr>
                                     <td>
+                                        @php
+                                            $disableButtons = false;
+                                            foreach ($payroll->informations as $info) {
+                                                if ($info->source == "No Rates") {
+                                                    $disableButtons = true;
+                                                    break;
+                                                }
+                                            }
+                                        @endphp
                                         @if($payroll->status == "")
-                                            <a title='Edit Payroll' href='{{ url("edit-payroll/" . $payroll->id) }}'>
-                                                <button type="button" class="btn btn-success btn-icon btn-sm">
-                                                    <i class="fa fa-edit"></i>
+                                            @if($disableButtons)
+                                                <a title='Delete Payroll' class='delete-payroll' id='{{ $payroll->id }}'>
+                                                    <button type="button" class="btn btn-danger btn-icon btn-sm">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </a>
+                                                <button type="button" class="btn btn-primary btn-icon btn-sm set-rates" data-store="{{ $payroll->store }}">
+                                                    <i class="fa fa-cog"></i>
                                                 </button>
-                                            </a>
-                                            <a title='Delete Payroll' class='delete-payroll' id='{{ $payroll->id }}'>
-                                                <button type="button" class="btn btn-danger btn-icon btn-sm">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </a>
-                                            <a title='Save Payroll' class='save-payroll' id='{{ $payroll->id }}'>
-                                                <button type="button" class="btn btn-warning btn-icon btn-sm">
-                                                    <i class="fa fa-save"></i>
-                                                </button>
-                                            </a>
+                                            @else
+                                                <a title='Edit Payroll' href='{{ url("edit-payroll/" . $payroll->id) }}'>
+                                                    <button type="button" class="btn btn-success btn-icon btn-sm">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                </a>
+                                                <a title='Delete Payroll' class='delete-payroll' id='{{ $payroll->id }}'>
+                                                    <button type="button" class="btn btn-danger btn-icon btn-sm">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </a>
+                                                <a title='Save Payroll' class='save-payroll' id='{{ $payroll->id }}'>
+                                                    <button type="button" class="btn btn-warning btn-icon btn-sm">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
+                                                </a>
+                                            @endif
                                         @else
                                             @if($payroll->display == 0)
                                                 <a title='Display Payslip' href='{{ url("display/" . $payroll->id) }}'>
@@ -164,7 +191,7 @@
                                     <td>{{ date('M d, Y', strtotime($payroll->payroll_from)) }} -
                                         {{ date('M d, Y', strtotime($payroll->payroll_to)) }}</td>
                                     <td>{{ count($payroll->informations) }}</td>
-                                    <td>{{ number_format((($payroll->informations)->sum('basic_pay')), 2) }}</td>
+                                    <td>{{ $displayRatesMessage ? 'Please Set Rates' : number_format((($payroll->informations)->sum('basic_pay')), 2) }}</td>
                                     <td>
                                         <small>
                                             SSS : {{ number_format((($payroll->informations)->sum('sss_contribution')), 2) }} <br>
@@ -179,6 +206,70 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit_rates" tabindex="-1" role="dialog" aria-labelledby="EditRatesData" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class='row'>
+                    <div class='col-md-12'>
+                        <h5 class="modal-title" id="EditHoldayData"></h5>
+                    </div>
+                </div>
+            </div>
+            <form id="editRatesForm" method='POST' action='{{ route("edit-store-rates") }}' onsubmit='show()'>
+                <div class="modal-body">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="status" value="2" placeholder='status' class="form-control status" required>
+                    <input type="hidden" name="rateid" placeholder='status' class="form-control rateid" required>
+                    <input type="hidden" name="store" placeholder='status' class="form-control store" required>
+                    
+                    <label>Lates:</label>
+                    <input type="checkbox" class="js-switch form-control late" name='late'  checked/>
+                    <label>Undertime:</label>
+                    <input type="checkbox" class="js-switch_2 form-control undertime" name='undertime' checked /> <br>
+                    <label>Daily Rate:</label>
+                    <input type="text" name="dailyRate" placeholder='Holiday Name' class="form-control dailyRate" required>
+                    <label>Holiday Rate:</label>
+                    <input type="text" name="holidayRate" placeholder='Holiday Name' class="form-control holidayRate" required>
+                    <label>Holiday OT Rate:</label>
+                    <input type="text" name="holidayot" placeholder='Holiday Name' class="form-control holidayot" required>
+                    <label>Holiday Rest Day Rate:</label>
+                    <input type="text" name="holidayrestday" placeholder='Holiday Name' class="form-control holidayRestDay" required>
+                    <label>Holiday Rest Day OT Rate:</label>
+                    <input type="text" name="holidayrestdayot" placeholder='Holiday Name' class="form-control holidayRestDayOt" required>
+                    <label>Nightshift Rate:</label>
+                    <input type="text" name="nightshift" placeholder='Holiday Name' class="form-control nightshift" required>
+                    <label>Overtime Rate:</label>
+                    <input type="text" name="overtime" placeholder='Holiday Name' class="form-control overtime" required>
+                    <label>SSS Rate:</label>
+                    <input type="text" name="sss" placeholder='Holiday Name' class="form-control sss" required>
+                    <label>Pag-ibig Rate:</label>
+                    <input type="text" name="pagibig" placeholder='Holiday Name' class="form-control pagibig" required>
+                    <label>Philhealth Rate:</label>
+                    <input type="text" name="philhealth" placeholder='Holiday Name' class="form-control philhealth" required>
+                    <label>Rest Day Duty Rate:</label> 
+                    <input type="text" name="restday" placeholder='Holiday Name' class="form-control restday" required>
+                    <label>Rest Day OT Rate:</label>
+                    <input type="text" name="restdayot" placeholder='Holiday Name' class="form-control restdayot" required>
+                    <label>Special Holiday Rate:</label>
+                    <input type="text" name="specialholiday" placeholder='Holiday Name' class="form-control specialholiday" required>
+                    <label>Special Holiday OT Rate:</label>
+                    <input type="text" name="specialholidayot" placeholder='Holiday Name' class="form-control specialholidayot" required>
+                    <label>Special Holiday RD Rate:</label>
+                    <input type="text" name="specialholidayrestday" placeholder='Holiday Name' class="form-control specialholidayrestday" required>
+                    <label>Special Holiday RD OT Rate:</label>
+                    <input type="text" name="specialholidayrestdayot" placeholder='Holiday Name' class="form-control specialholidayrestdayot" required>
+                    <label>Allowance:</label>
+                    <input type="text" name="allowance" placeholder='Allowance' class="form-control allowance" required>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" id='submit1' class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -249,6 +340,59 @@
                 });
             });
         });
+        $('.set-rates').click(async function() {
+            let store = $(this).data('store');
+            let url = 'rates';
+            if (store) {
+                const data = { "store": store };
+                const option = {
+                    method: "POST",
+                    headers: {
+                        "Accept": '*',
+                        "Content-Type": "application/json",
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    body: JSON.stringify(data)
+                }
+                const response = await fetch(url, option)
+                const d = await response.json()
+                if (d.status === "success") {
+                    $('.modal-title').text(store + " RATES")
+                    $('.dailyRate').val(d.data.daily)
+                    $('.rateid').val(0)
+                    $('.holidayRate').val(d.data.holiday)
+                    $('.holidayot').val(d.data.holidayot)
+                    $('.holidayRestDay').val(d.data.holidayrestday)
+                    $('.holidayRestDayOt').val(d.data.holidayrestdayot)
+                    $('.nightshift').val(d.data.nightshift)
+                    $('.overtime').val(d.data.overtime)
+                    $('.sss').val(d.data.sss)
+                    $('.pagibig').val(d.data.pagibig)
+                    $('.philhealth').val(d.data.philhealth)
+                    $('.restday').val(d.data.restday)
+                    $('.restdayot').val(d.data.restdayot)
+                    $('.specialholiday').val(d.data.specialholiday)
+                    $('.specialholidayot').val(d.data.specialholidayot)
+                    $('.specialholidayrestday').val(d.data.specialholidayrestday)
+                    $('.specialholidayrestdayot').val(d.data.specialholidayrestdayot)
+                    $('.store').val(store)
+                    $('.allowance').val(d.data.allowance)
+                    $('.late').prop('checked', false);
+                    $('.undertime').prop('checked', false);
+                        if (d.data.late == null) {
+                            $('.late').prop('checked', true);
+                        }
+                        if (d.data.undertime == null) {
+                            $('.undertime').prop('checked', true);
+                        }
+                    $(`#edit_rates`).modal().show();
+                } else {
+                    alert("Something went wrong please contact admin");
+                }
+            } else {
+                alert("Please select store");
+            }
+        });
 
     $(document).ready(function() {
         $('#updateRecordsButton').click(function () {
@@ -272,7 +416,8 @@
 
                 function fetchHolidays() {
                     return $.ajax({
-                        url: '/public/holidays',
+                        // url: '/public/holidays',
+                        url: '/holidays',
                         method: 'GET',
                         contentType: 'application/json',
                         dataType: 'html'
@@ -299,9 +444,12 @@
                     });
                 }
 
-                function fetchRates(employeeId) {
+                function fetchRates(detail) {
+                    let employeeId = detail.employeeid;
+                    let store = detail.store;
+
                     return $.ajax({
-                        url: `/public/rates/${employeeId}`,
+                        url: `/public/rates-stk/${employeeId}?store=${store}`,
                         method: 'GET',
                         contentType: 'application/json'
                     });
@@ -322,7 +470,7 @@
                         var dateTo = new Date(payroll.dateto).toISOString().split('T')[0];
 
                         var detailsPromises = payroll.details.map(detail => {
-                            return fetchRates(detail.employeeid).then(rateResponse => {
+                            return fetchRates(detail).then(rateResponse => {
                                 if (rateResponse.status === 'success') {
                                     var rate = rateResponse.data;
                                     var hourlyRate = rate.daily / 8;
@@ -373,11 +521,12 @@
                                         other_income_non_tax: 0,
                                         sss: rate.sss,
                                         philhealth: rate.philhealth,
-                                        pagibig: rate.pagibig,
-                                        total_deduction: rate.sss + rate.philhealth + rate.pagibig,
+                                        pagibig: pagibigRate,
+                                        total_deduction: rate.sss + rate.philhealth + pagibigRate,
                                         other_deduction: 0,
-                                        net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate - (rate.sss + rate.philhealth + rate.pagibig),
-                                        sss_er: rate.sss
+                                        net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate - (rate.sss + rate.philhealth + pagibigRate),
+                                        sss_er: rate.sss,
+                                        source: rateResponse.source
                                     };
                                 } else {
                                     console.error('Failed to fetch rates for employee:', detail.employeeid);
