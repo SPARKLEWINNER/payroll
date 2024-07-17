@@ -351,33 +351,32 @@ class PayrollController extends Controller
         // Detect if the 'details' key exists or if the structure is different
         if (isset($formattedRequest['details']) && is_array($formattedRequest['details'])) {
             $details = $formattedRequest['details'];
-
-            foreach ($details as &$detail) {
+            foreach ($details as $key => $detail) {
                 $gross_pay = $detail['gross_pay'];
                 if ($gross_pay >= 1) {
                     $sssData = SssTable::where('from_range', '<=', $gross_pay)->where('to_range', '>=', $gross_pay)->first();
                     if ($sssData != null) {
-                        $detail['sss'] = $sssData->ee;
-                        $detail['sss_er'] = $sssData->er;
+                        $details[$key]['sss'] = $sssData->ee;
+                        $details[$key]['sss_er'] = $sssData->er;
                     } else {
-                        $detail['sss'] = 0;
-                        $detail['sss_er'] = 0;
+                        $details[$key]['sss'] = 0;
+                        $details[$key]['sss_er'] = 0;
                     }
                     if ($cutoff == 2) {
-                        $detail['philhealth'] = 0;
-                        $detail['pagibig'] = 0;
+                        $details[$key]['philhealth'] = 0;
+                        $details[$key]['pagibig'] = 0;
                     } else {
-                        $detail['philhealth'] = ((($detail['daily_rate'] * 313 * .05) / 12) / 2);
-                        $detail['pagibig'] = $detail['pagibig'] ?? 200;
+                        $details[$key]['philhealth'] = ((($detail['daily_rate'] * 313 * .05) / 12) / 2);
+                        $details[$key]['pagibig'] = $detail['pagibig'] ?? 200;
                     }
                 } else {
-                    $detail['sss'] = 0;
-                    $detail['sss_er'] = 0;
-                    $detail['philhealth'] = 0;
-                    $detail['pagibig'] = 0;
+                    $details[$key]['sss'] = 0;
+                    $details[$key]['sss_er'] = 0;
+                    $details[$key]['philhealth'] = 0;
+                    $details[$key]['pagibig'] = 0;
                 }
                 if (!isset($detail['source'])) {
-                    $detail['source'] = 'Unknown'; 
+                    $details[$key]['source'] = 'Unknown'; 
                 }
             }
         } else {
@@ -417,6 +416,12 @@ class PayrollController extends Controller
         }
 
         foreach ($details as $detail) {
+            $existingEmployee = PayrollInfo::where('payroll_id', $payroll->id)
+                                            ->where('employee_id', $detail['employeeid'])
+                                            ->first();
+            if ($existingEmployee) {
+                continue;
+            }
             $payroll_info = new PayrollInfo;
             $payroll_info->payroll_id = $payroll->id;
             $payroll_info->employee_id = $detail['employeeid'];
