@@ -16,6 +16,7 @@ use App\PayrollGrossAllowance;
 use App\Rates;
 use PDF;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PayrollController extends Controller
@@ -270,6 +271,10 @@ class PayrollController extends Controller
                 'undertime' => $undertime,
             ]
         );
+        $referrer = $request->headers->get('referer');
+        if (strpos($referrer, url('/payrolls')) !== false) {
+            Alert::success('Successfully Set Store Rates, please Update Records')->persistent('Dismiss');
+        }
         return redirect()->back()->with('message', 'Save successful!');
     }
     public function save(Request $request)
