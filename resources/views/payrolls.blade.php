@@ -2,6 +2,8 @@
 @section('css')
 <link href="{{ asset('admin/css/plugins/chosen/bootstrap-chosen.css')}}" rel="stylesheet" defer>
 <link href="{{ asset('admin/css/plugins/sweetalert/sweetalert.css')}}" rel="stylesheet" defer>
+<link href="{{ asset('admin/css/plugins/switchery/switchery.css')}}" rel="stylesheet">
+<meta name="_token" content="{{ csrf_token() }}">
 <style>
     .table-disabled {
         pointer-events: none;
@@ -132,7 +134,7 @@
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </a>
-                                                <button type="button" class="btn btn-primary btn-icon btn-sm set-rates" data-store="{{ $payroll->store }}">
+                                                <button type="button" class="btn btn-primary btn-icon btn-sm set-rates" data-store="{{ $payroll->store }}" data-toggle="tooltip" title="Set Rates">
                                                     <i class="fa fa-cog"></i>
                                                 </button>
                                             @else
@@ -226,9 +228,9 @@
                     <input type="hidden" name="rateid" placeholder='status' class="form-control rateid" required>
                     <input type="hidden" name="store" placeholder='status' class="form-control store" required>
                     
-                    <label>Lates:</label>
+                    <label >Lates:</label>
                     <input type="checkbox" class="js-switch form-control late" name='late'  checked/>
-                    <label>Undertime:</label>
+                    <label >Undertime:</label>
                     <input type="checkbox" class="js-switch_2 form-control undertime" name='undertime' checked /> <br>
                     <label>Daily Rate:</label>
                     <input type="text" name="dailyRate" placeholder='Holiday Name' class="form-control dailyRate" required>
@@ -279,8 +281,10 @@
 <script src="{{ asset('admin/js/inspinia.js')}}"></script>
 <script src="{{ asset('admin/js/plugins/pace/pace.min.js')}}"></script>
 <script src="{{ asset('admin/js/plugins/sweetalert/sweetalert.min.js')}}"></script>
+<script src="{{ asset('admin/js/plugins/switchery/switchery.js')}}"></script>
 <script>
     $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
         $('.delete-payroll').click(function () {
             var id = this.id;
             console.log('Delete payroll ID:', id);
@@ -340,6 +344,13 @@
                 });
             });
         });
+        var elem = document.querySelector('.js-switch');
+            var switchery = new Switchery(elem, { color: '#1AB394' });
+           var elem = document.querySelector('.js-switch_2');
+            var switchery = new Switchery(elem, { color: '#1AB394' });
+          $(document).ready(function(){
+            $('.chosen-select').chosen({width: "100%"});
+        });
         $('.set-rates').click(async function() {
             let store = $(this).data('store');
             let url = 'rates';
@@ -357,7 +368,7 @@
                 const response = await fetch(url, option)
                 const d = await response.json()
                 if (d.status === "success") {
-                    $('.modal-title').text(store + " RATES")
+                    $('.modal-title').text(store + " STORE RATES")
                     $('.dailyRate').val(d.data.daily)
                     $('.rateid').val(0)
                     $('.holidayRate').val(d.data.holiday)
@@ -377,14 +388,19 @@
                     $('.specialholidayrestdayot').val(d.data.specialholidayrestdayot)
                     $('.store').val(store)
                     $('.allowance').val(d.data.allowance)
-                    $('.late').prop('checked', false);
-                    $('.undertime').prop('checked', false);
-                        if (d.data.late == null) {
-                            $('.late').prop('checked', true);
-                        }
-                        if (d.data.undertime == null) {
-                            $('.undertime').prop('checked', true);
-                        }
+                    if(d.data.late == null)
+                    {
+                        $('.late').prop('checked', true);
+                    }
+                    if(d.data.undertime == null)
+                    {
+                        $('.undertime').prop('checked', true);
+                    }
+                    $('.switchery-default').remove();
+                    var elem = document.querySelector('.js-switch');
+                    var switchery = new Switchery(elem, { color: '#1AB394' });
+                    var elem = document.querySelector('.js-switch_2');
+                    var switchery = new Switchery(elem, { color: '#1AB394' });
                     $(`#edit_rates`).modal().show();
                 } else {
                     alert("Something went wrong please contact admin");
