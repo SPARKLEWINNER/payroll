@@ -230,6 +230,20 @@ ini_set("memory_limit", "-1");
                     
                 </td>
             </tr>
+            <tr>
+                <td  class='text-left'>
+                    OTHER INCOME
+                </td>
+                <td  class='text-right'>
+                    {{number_format($payroll->other_income_non_taxable,2)}}
+                </td>
+                <td   class='text-left'>
+                    
+                </td>
+                <td  class='text-right'>
+                    
+                </td>
+            </tr>
             @foreach($payroll->payroll_allowances as $key => $allow)
             <tr>
                 <td  class='text-left'>
