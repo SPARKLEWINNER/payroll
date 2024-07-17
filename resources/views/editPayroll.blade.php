@@ -81,7 +81,13 @@
                 <br>
                 Generated Date : {{ date('M. d, Y',strtotime($payroll->created_at)) }} <br>
                 Store : {{ $payroll->store }} <br>
-                Payroll Period : {{ date('M. d, Y',strtotime($payroll->payroll_from)) }} -  {{ date('M. d, Y',strtotime($payroll->payroll_to)) }}<br>
+                Payroll Period : {{ date('M. d, Y',strtotime($payroll->payroll_from)) }} -  {{ date('M. d, Y',strtotime($payroll->payroll_to)) }}
+                    @if($payroll->cutoff == 1)
+                        (1st Cutoff)
+                    @elseif($payroll->cutoff == 2)
+                        (2nd Cutoff)
+                    @endif
+                    <br>
                 <div id="holiday-section"></div>
             </div>
         </div>
