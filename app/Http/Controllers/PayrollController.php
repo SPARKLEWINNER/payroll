@@ -348,7 +348,6 @@ class PayrollController extends Controller
             $payroll->save();
         }
 
-        // Detect if the 'details' key exists or if the structure is different
         if (isset($formattedRequest['details']) && is_array($formattedRequest['details'])) {
             $details = $formattedRequest['details'];
             foreach ($details as $key => $detail) {
@@ -366,8 +365,17 @@ class PayrollController extends Controller
                         $details[$key]['philhealth'] = 0;
                         $details[$key]['pagibig'] = 0;
                     } else {
-                        $details[$key]['philhealth'] = ((($detail['daily_rate'] * 313 * .05) / 12) / 2);
-                        $details[$key]['pagibig'] = $detail['pagibig'] ?? 200;
+                        if (!isset($detail['philhealth']) || $detail['philhealth'] == 0) {
+                            $details[$key]['philhealth'] = ((($detail['daily_rate'] * 313 * 0.05) / 12) / 2);
+                        } else {
+                            $details[$key]['philhealth'] = $detail['philhealth'];
+                        }
+        
+                        if (!isset($detail['pagibig']) || $detail['pagibig'] == 0) {
+                            $details[$key]['pagibig'] = 200;
+                        } else {
+                            $details[$key]['pagibig'] = $detail['pagibig'];
+                        }
                     }
                 } else {
                     $details[$key]['sss'] = 0;
