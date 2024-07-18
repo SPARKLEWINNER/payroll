@@ -432,8 +432,7 @@
 
                 function fetchHolidays() {
                     return $.ajax({
-                        // url: '/public/holidays',
-                        url: '/holidays',
+                        url: '/public/holidays',
                         method: 'GET',
                         contentType: 'application/json',
                         dataType: 'html'
