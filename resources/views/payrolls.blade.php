@@ -485,6 +485,12 @@
                         var dateFrom = new Date(payroll.datefrom).toISOString().split('T')[0];
                         var dateTo = new Date(payroll.dateto).toISOString().split('T')[0];
 
+                        payroll.details.sort(function(a, b) {
+                            var nameA = a.employeename.toUpperCase();
+                            var nameB = b.employeename.toUpperCase();
+                            return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
+                        });
+
                         var detailsPromises = payroll.details.map(detail => {
                             return fetchRates(detail).then(rateResponse => {
                                 if (rateResponse.status === 'success') {
