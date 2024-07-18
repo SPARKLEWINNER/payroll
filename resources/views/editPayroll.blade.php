@@ -95,6 +95,11 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="ibox float-e-margins">
             <div class="ibox-content">
+                <div class="zoom-buttons">
+                    <span>Zoom: </span>
+                    <button id="zoom-in" class="btn btn-secondary" style="border: 2px solid #ccc;">+</button>
+                    <button id="zoom-out" class="btn btn-secondary" style="border: 2px solid #ccc;">-</button>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover dataTables-example">
                         <thead>
@@ -263,6 +268,45 @@
             $('.chosen-select').chosen({width: "100%"});
             fetchHolidays();
         });
+
+        let zoomLevel = 1;
+        const zoomStep = 0.1;
+        const minZoom = 0.5;
+        const maxZoom = 2;
+
+        $('#zoom-in').on('click', function() {
+            if (zoomLevel < maxZoom) {
+                zoomLevel += zoomStep;
+                updateZoom();
+            }
+        });
+
+        $('#zoom-out').on('click', function() {
+            if (zoomLevel > minZoom) {
+                zoomLevel -= zoomStep;
+                updateZoom();
+            }
+        });
+
+        function updateZoom() {
+            const table = $('.table-responsive table');
+            const dropdownToggle = $('.btn-group .btn.dropdown-toggle');
+            const dropdownMenu = $('.btn-group .dropdown-menu'); 
+
+            const baseFontSize = 14; 
+            const baseButtonFontSize = 12; 
+
+            const adjustedTableFontSize = baseFontSize * zoomLevel;
+            const adjustedButtonFontSize = baseButtonFontSize * zoomLevel; 
+
+            table.css('font-size', `${adjustedTableFontSize}px`);
+            dropdownToggle.css('font-size', `${adjustedButtonFontSize}px`);
+
+            const basePadding = 10;
+            const adjustedPadding = basePadding * zoomLevel;
+            dropdownToggle.css('padding', `${adjustedPadding}px ${adjustedPadding * 1.5}px`);
+
+        }
 
         function formatDate(date) {
             let d = new Date(date),
