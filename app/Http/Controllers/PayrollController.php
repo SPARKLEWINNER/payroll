@@ -273,7 +273,7 @@ class PayrollController extends Controller
         );
         $referrer = $request->headers->get('referer');
         if (strpos($referrer, url('/payrolls')) !== false) {
-            Alert::success('Successfully Set Store Rates, please Update Records')->persistent('Dismiss');
+            Alert::success('Successfully Set Store Rates, please Delete Payroll and Update Records')->persistent('Dismiss');
         }
         return redirect()->back()->with('message', 'Save successful!');
     }

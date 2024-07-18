@@ -412,7 +412,7 @@
 
     $(document).ready(function() {
         $('#updateRecordsButton').click(function () {
-        var userId = "{{ auth()->user()->id }}";
+        var userId = parseInt("{{ auth()->user()->id }}");
         var settings = {
             "url": "https://sparkle-time-keep.herokuapp.com/api/list/breaklistapproved",
             "method": "POST",
@@ -574,27 +574,31 @@
                                 console.log('Employee detail:', detail);
                             });
 
-                            var payload = {
-                                store: payroll.store,
-                                cutoff: payroll.cutoff,
-                                from: dateFrom,
-                                to: dateTo,
-                                employeecount: payroll.employeecount,
-                                generatedby: isNaN(payroll.generatedby) ? null : payroll.generatedby,
-                                generatedbyname: isNaN(payroll.generatedby) ? payroll.generatedby : null,
-                                createdat: new Date(payroll.createdAt).toISOString().split('T')[0],
-                                details: details
-                            };
+                            if (!payrollExists(payroll.store, dateFrom, dateTo)) {
+                                var payload = {
+                                    store: payroll.store,
+                                    cutoff: payroll.cutoff,
+                                    from: dateFrom,
+                                    to: dateTo,
+                                    employeecount: payroll.employeecount,
+                                    generatedby: isNaN(payroll.generatedby) ? null : payroll.generatedby,
+                                    generatedbyname: isNaN(payroll.generatedby) ? payroll.generatedby : null,
+                                    createdat: new Date(payroll.createdAt).toISOString().split('T')[0],
+                                    details: details
+                                };
 
-                            return $.ajax({
-                                url: '{{ route("save-payroll") }}',
-                                method: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify(payload),
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                }
-                            });
+                                return $.ajax({
+                                    url: '{{ route("save-payroll") }}',
+                                    method: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(payload),
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    }
+                                });
+                            } else {
+                                return Promise.resolve();
+                            }
                         }));
                     });
 
@@ -621,5 +625,14 @@
         });
     });
 });
+
+function payrollExists(store, dateFrom, dateTo) {
+    var existingPayrolls = @json($payrolls);
+    return existingPayrolls.some(function (payroll) {
+        return payroll.store === store &&
+            new Date(payroll.payroll_from).toISOString().split('T')[0] === dateFrom &&
+            new Date(payroll.payroll_to).toISOString().split('T')[0] === dateTo;
+    });
+}
 </script>
 @endsection
