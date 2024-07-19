@@ -230,6 +230,17 @@ class PayrollController extends Controller
 
         return redirect()->back()->with('message', 'Save successful!');
     }
+    public function deleteRates(Request $request)
+    {
+        $rateId = $request->rateid;
+
+        if ($rateId) {
+            Rates::where('uid', $rateId)->delete();
+            return response()->json(['message' => 'Rates deleted successfully!']);
+        } else {
+            return response()->json(['error' => 'Rate ID not provided.'], 400);
+        }
+    }
     public function setStoreRates(Request $request)
     {
         $late = $request->late;

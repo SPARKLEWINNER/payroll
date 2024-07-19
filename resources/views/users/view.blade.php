@@ -79,6 +79,9 @@
                                         <i class="icon-eye-open icon-white"></i>
                                         <span><strong>  Set Rates </strong></span>          
                                     </button>
+                                    <button type="button" id="delete-rates" class="btn btn-outline btn-danger dim btn-sm delete-rates" data-toggle="tooltip" title="Delete Rates">
+                                        <span><strong>  Delete Rates </strong></span>
+                                    </button>
                                 </td>
                             </tr>
                             {{-- New Laborer --}}
@@ -265,5 +268,32 @@
                 }
              })
           })
+          const deleteRateButtons = document.querySelectorAll("#myTable #delete-rates");
+            deleteRateButtons.forEach(function(button) {
+                button.addEventListener("click", async function() {
+                    if (confirm('Are you sure you want to delete the rates?')) {
+                        document.getElementById("loader").style.display = "block";
+                        const row = this.closest("tr");
+                        const id = row.cells[0].id;
+                        const option = {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ rateid: id })
+                        }
+                        const response = await fetch('{{ route('delete-rates') }}', option);
+                        const d = await response.json();
+                        if (d.message) {
+                            alert(d.message);
+                            location.reload();
+                        } else {
+                            alert(d.error || "Something went wrong please contact admin");
+                            document.getElementById("loader").style.display = "none";
+                        }
+                    }
+                })
+            });
     </script>
 @endsection
