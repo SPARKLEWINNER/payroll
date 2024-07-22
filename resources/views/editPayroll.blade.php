@@ -170,7 +170,7 @@
                                 </td>
                                 <td>{{number_format($payrollInfo->hour_rate,2)}}</td>
                                 <td>{{number_format($payrollInfo->hours_work, 0, '.', '')}}</td>
-                                <td>{{number_format($payrollInfo->overtime, 0, '.', '')}}</td>
+                                <td>{{number_format($payrollInfo->overtime, 1, '.', '')}}</td>
                                 <td>{{number_format($payrollInfo->special_holiday, 0, '.', '')}}</td>
                                 <td>{{number_format($payrollInfo->legal_holiday, 0, '.', '')}}</td>
                                 <td>{{number_format($payrollInfo->days_work, 0, '.', '')}}</td>
