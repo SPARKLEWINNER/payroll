@@ -477,6 +477,27 @@
                 var totalEmployees = newPayrolls.reduce((sum, payroll) => sum + payroll.details.length, 0);
                 var processedEmployees = 0;
 
+                function findExistingPayrollDetail(store, employeeId, dateFrom, dateTo) {
+                    var existingPayrolls = @json($payrolls);
+                    console.log('Checking for existing payroll detail:', store, employeeId, dateFrom, dateTo);
+                    for (var i = 0; i < existingPayrolls.length; i++) {
+                        var payroll = existingPayrolls[i];
+                        if (payroll.store === store &&
+                            new Date(payroll.payroll_from).toISOString().split('T')[0] === dateFrom &&
+                            new Date(payroll.payroll_to).toISOString().split('T')[0] === dateTo) {
+                            for (var j = 0; j < payroll.informations.length; j++) {
+                                var detail = payroll.informations[j];
+                                if (detail.employee_id === employeeId) {
+                                    console.log('Found existing payroll detail:', detail);
+                                    return detail;
+                                }
+                            }
+                        }
+                    }
+                    console.log('No existing payroll detail found.');
+                    return null;
+                }
+
                 var payrollSavePromises = [];
 
                 fetchHolidays().done(function (holidays) {
@@ -528,36 +549,42 @@
                                     var progressPercent = Math.round((processedEmployees / totalEmployees) * 100);
                                     $('#progressBar').css('width', progressPercent + '%').text(progressPercent + '%');
 
-                                    return {
-                                        employeeid: detail.employeeid,
-                                        employeename: detail.employeename,
-                                        rate: rate.daily,
-                                        daily_rate: rate.daily,
-                                        hour_rate: hourlyRate,
-                                        days_work: detail.dayswork,
-                                        hours_work: detail.hourswork,
-                                        basic_pay: rate.daily * detail.dayswork,
-                                        hours_tardy: detail.hourstardy,
-                                        tardy_amount: tardyRate,
-                                        overtime: detail.overtime,
-                                        overtime_amount: overtimeRate,
-                                        special_holiday: detail.specialholiday || specialHolidayCount,
-                                        special_holiday_amount: specialHolidayRate,
-                                        legal_holiday: detail.legalholiday || legalHolidayCount,
-                                        legal_holiday_amount: legalHolidayRate,
-                                        night_diff: detail.nightdiff,
-                                        nightdiff_amount: nightdiffRate,
-                                        gross_pay: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate,
-                                        other_income_non_tax: 0,
-                                        sss: rate.sss,
-                                        philhealth: philhealthRate,
-                                        pagibig: pagibigRate,
-                                        total_deduction: rate.sss + philhealthRate + pagibigRate,
-                                        other_deduction: 0,
-                                        net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate - (rate.sss + philhealthRate + pagibigRate),
-                                        sss_er: rate.sss,
-                                        source: rateResponse.source
-                                    };
+                                    var existingPayrollDetail = findExistingPayrollDetail(payroll.store, detail.employeeid, dateFrom, dateTo);
+
+                                    if (existingPayrollDetail) {
+                                        return existingPayrollDetail;
+                                    } else {
+                                        return {
+                                            employeeid: detail.employeeid,
+                                            employeename: detail.employeename,
+                                            rate: rate.daily,
+                                            daily_rate: rate.daily,
+                                            hour_rate: hourlyRate,
+                                            days_work: detail.dayswork,
+                                            hours_work: detail.hourswork,
+                                            basic_pay: rate.daily * detail.dayswork,
+                                            hours_tardy: detail.hourstardy,
+                                            tardy_amount: tardyRate,
+                                            overtime: detail.overtime,
+                                            overtime_amount: overtimeRate,
+                                            special_holiday: detail.specialholiday || specialHolidayCount,
+                                            special_holiday_amount: specialHolidayRate,
+                                            legal_holiday: detail.legalholiday || legalHolidayCount,
+                                            legal_holiday_amount: legalHolidayRate,
+                                            night_diff: detail.nightdiff,
+                                            nightdiff_amount: nightdiffRate,
+                                            gross_pay: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate,
+                                            other_income_non_tax: 0,
+                                            sss: rate.sss,
+                                            philhealth: philhealthRate,
+                                            pagibig: pagibigRate,
+                                            total_deduction: rate.sss + philhealthRate + pagibigRate,
+                                            other_deduction: 0,
+                                            net: (rate.daily * detail.dayswork) - tardyRate + overtimeRate + specialHolidayRate + legalHolidayRate + nightdiffRate - (rate.sss + philhealthRate + pagibigRate),
+                                            sss_er: rate.sss,
+                                            source: rateResponse.source
+                                        };
+                                    }
                                 } else {
                                     console.error('Failed to fetch rates for employee:', detail.employeeid);
                                     return null;
