@@ -477,27 +477,6 @@
                 var totalEmployees = newPayrolls.reduce((sum, payroll) => sum + payroll.details.length, 0);
                 var processedEmployees = 0;
 
-                function findExistingPayrollDetail(store, employeeId, dateFrom, dateTo) {
-                    var existingPayrolls = @json($payrolls);
-                    console.log('Checking for existing payroll detail:', store, employeeId, dateFrom, dateTo);
-                    for (var i = 0; i < existingPayrolls.length; i++) {
-                        var payroll = existingPayrolls[i];
-                        if (payroll.store === store &&
-                            new Date(payroll.payroll_from).toISOString().split('T')[0] === dateFrom &&
-                            new Date(payroll.payroll_to).toISOString().split('T')[0] === dateTo) {
-                            for (var j = 0; j < payroll.informations.length; j++) {
-                                var detail = payroll.informations[j];
-                                if (detail.employee_id === employeeId) {
-                                    console.log('Found existing payroll detail:', detail);
-                                    return detail;
-                                }
-                            }
-                        }
-                    }
-                    console.log('No existing payroll detail found.');
-                    return null;
-                }
-
                 var payrollSavePromises = [];
 
                 fetchHolidays().done(function (holidays) {
@@ -549,11 +528,6 @@
                                     var progressPercent = Math.round((processedEmployees / totalEmployees) * 100);
                                     $('#progressBar').css('width', progressPercent + '%').text(progressPercent + '%');
 
-                                    var existingPayrollDetail = findExistingPayrollDetail(payroll.store, detail.employeeid, dateFrom, dateTo);
-
-                                    if (existingPayrollDetail) {
-                                        return existingPayrollDetail;
-                                    } else {
                                         return {
                                             employeeid: detail.employeeid,
                                             employeename: detail.employeename,
@@ -584,7 +558,6 @@
                                             sss_er: rate.sss,
                                             source: rateResponse.source
                                         };
-                                    }
                                 } else {
                                     console.error('Failed to fetch rates for employee:', detail.employeeid);
                                     return null;
