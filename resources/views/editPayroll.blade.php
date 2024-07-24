@@ -138,8 +138,9 @@
                             @php
                                 $c = 1;
                                 $height = 28;
+                                $sortedInfos = $payroll->informations->sortBy('employee_name');
                             @endphp
-                            @foreach($payroll->informations as $payrollInfo)
+                            @foreach($sortedInfos as $payrollInfo)
 
 
                             <tr>
