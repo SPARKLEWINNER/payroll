@@ -582,6 +582,7 @@
                                     employeecount: payroll.employeecount,
                                     generatedby: isNaN(payroll.generatedby) ? null : payroll.generatedby,
                                     generatedbyname: isNaN(payroll.generatedby) ? payroll.generatedby : null,
+                                    breaklistid: payroll.breaklistid,
                                     createdat: new Date(payroll.createdAt).toISOString().split('T')[0],
                                     details: details
                                 };

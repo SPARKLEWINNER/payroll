@@ -299,6 +299,7 @@ class PayrollController extends Controller
         $generatedBy = $request->id ?? $request->generatedby ?? null;
         $generatedByName = $request->generatedbyname ?? null;        
         $cutoff = $request->cutoff ?? null;   
+        $breaklistId = $request->breaklistid ?? null;
 
         if (!isset($request->from) || !isset($request->to) || !isset($request->store)) {
             foreach ($formattedRequest as $key => $detail) {
@@ -338,6 +339,9 @@ class PayrollController extends Controller
             if ($cutoff !== null) {
                 $payroll->cutoff = $cutoff;
             }
+            if ($breaklistId) {  
+                $payroll->breaklist = $breaklistId;
+            }
             $payroll->save();
 
             PayrollInfo::where('payroll_id', $payroll->id)->delete();
@@ -354,6 +358,9 @@ class PayrollController extends Controller
             $payroll->store = $store;
             if (!empty($cutoff)) {
                 $payroll->cutoff = $cutoff;
+            }
+            if ($breaklistId) { 
+                $payroll->breaklist = $breaklistId;
             }
             $payroll->created_at = isset($request->createdat) ? date('Y-m-d', strtotime($request->createdat)) : now();
             $payroll->save();
