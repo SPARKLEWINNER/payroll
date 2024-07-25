@@ -284,6 +284,11 @@
 <script src="{{ asset('admin/js/plugins/switchery/switchery.js')}}"></script>
 <script>
     $(document).ready(function() {
+        if (window.location.pathname.includes('/payrolls')) {
+            $('#updateRecordsButton').show();
+        } else {
+            $('#updateRecordsButton').hide();
+        }
         $('[data-toggle="tooltip"]').tooltip();
         $('.delete-payroll').click(function () {
             var id = this.id;
@@ -345,14 +350,15 @@
             });
         });
         var elem = document.querySelector('.js-switch');
-            var switchery = new Switchery(elem, { color: '#1AB394' });
-           var elem = document.querySelector('.js-switch_2');
-            var switchery = new Switchery(elem, { color: '#1AB394' });
-          $(document).ready(function(){
-            $('.chosen-select').chosen({width: "100%"});
-        });
+        var switchery = new Switchery(elem, { color: '#1AB394' });
+        var elem = document.querySelector('.js-switch_2');
+        var switchery = new Switchery(elem, { color: '#1AB394' });
+
+        $('.chosen-select').chosen({width: "100%"});
+
         $('.set-rates').click(async function() {
             let store = $(this).data('store');
+            let payrollId = $(this).closest('tr').find('.delete-payroll').attr('id'); // Grabs the payroll ID from the delete button
             let url = 'rates';
             if (store) {
                 const data = { "store": store };
@@ -364,36 +370,34 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     body: JSON.stringify(data)
-                }
-                const response = await fetch(url, option)
-                const d = await response.json()
+                };
+                const response = await fetch(url, option);
+                const d = await response.json();
                 if (d.status === "success") {
-                    $('.modal-title').text(store + " STORE RATES")
-                    $('.dailyRate').val(d.data.daily)
-                    $('.rateid').val(0)
-                    $('.holidayRate').val(d.data.holiday)
-                    $('.holidayot').val(d.data.holidayot)
-                    $('.holidayRestDay').val(d.data.holidayrestday)
-                    $('.holidayRestDayOt').val(d.data.holidayrestdayot)
-                    $('.nightshift').val(d.data.nightshift)
-                    $('.overtime').val(d.data.overtime)
-                    $('.sss').val(d.data.sss)
-                    $('.pagibig').val(d.data.pagibig)
-                    $('.philhealth').val(d.data.philhealth)
-                    $('.restday').val(d.data.restday)
-                    $('.restdayot').val(d.data.restdayot)
-                    $('.specialholiday').val(d.data.specialholiday)
-                    $('.specialholidayot').val(d.data.specialholidayot)
-                    $('.specialholidayrestday').val(d.data.specialholidayrestday)
-                    $('.specialholidayrestdayot').val(d.data.specialholidayrestdayot)
-                    $('.store').val(store)
-                    $('.allowance').val(d.data.allowance)
-                    if(d.data.late == null)
-                    {
+                    $('.modal-title').text(store + " STORE RATES");
+                    $('.dailyRate').val(d.data.daily);
+                    $('.rateid').val(0);
+                    $('.holidayRate').val(d.data.holiday);
+                    $('.holidayot').val(d.data.holidayot);
+                    $('.holidayRestDay').val(d.data.holidayrestday);
+                    $('.holidayRestDayOt').val(d.data.holidayrestdayot);
+                    $('.nightshift').val(d.data.nightshift);
+                    $('.overtime').val(d.data.overtime);
+                    $('.sss').val(d.data.sss);
+                    $('.pagibig').val(d.data.pagibig);
+                    $('.philhealth').val(d.data.philhealth);
+                    $('.restday').val(d.data.restday);
+                    $('.restdayot').val(d.data.restdayot);
+                    $('.specialholiday').val(d.data.specialholiday);
+                    $('.specialholidayot').val(d.data.specialholidayot);
+                    $('.specialholidayrestday').val(d.data.specialholidayrestday);
+                    $('.specialholidayrestdayot').val(d.data.specialholidayrestdayot);
+                    $('.store').val(store);
+                    $('.allowance').val(d.data.allowance);
+                    if (d.data.late == null) {
                         $('.late').prop('checked', true);
                     }
-                    if(d.data.undertime == null)
-                    {
+                    if (d.data.undertime == null) {
                         $('.undertime').prop('checked', true);
                     }
                     $('.switchery-default').remove();
@@ -402,6 +406,62 @@
                     var elem = document.querySelector('.js-switch_2');
                     var switchery = new Switchery(elem, { color: '#1AB394' });
                     $(`#edit_rates`).modal().show();
+
+                    $('#editRatesForm').on('submit', async function(e) {
+                        e.preventDefault();
+
+                        const formData = new FormData(this);
+                        let setRatesUrl = '{{ route("edit-store-rates") }}';
+                        const setRatesOption = {
+                            method: "POST",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            body: formData
+                        };
+                        const setRatesResponse = await fetch(setRatesUrl, setRatesOption);
+                        if (setRatesResponse.ok) {
+
+                            const setRatesText = await setRatesResponse.text();
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(setRatesText, 'text/html');
+                            const message = doc.body.innerText.includes('Save successful!') ? 'Save successful!' : '';
+
+                            const setRatesData = { message: message };
+
+                            if (setRatesData.message === "Save successful!") {
+                                console.log("Store rates set successfully");
+
+                                let deleteUrl = '{{url("delete-payroll")}}';
+                                const deleteOption = {
+                                    method: "POST",
+                                    headers: {
+                                        "Accept": '*',
+                                        "Content-Type": "application/json",
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    },
+                                    body: JSON.stringify({ id: payrollId })
+                                };
+                                const deleteResponse = await fetch(deleteUrl, deleteOption);
+                                if (deleteResponse.ok) {
+                                    const deleteData = await deleteResponse.text();
+                                    if (deleteData.trim() === "success") {
+                                        console.log("Payroll deleted successfully");
+                                        alert("Rates set successfully. Please Update Records again to update payroll with new Rates");
+                                        location.reload();
+                                    } else {
+                                        alert("Something went wrong, please contact admin");
+                                    }
+                                } else {
+                                    alert("Something went wrong, please contact admin");
+                                }
+                            } else {
+                                alert("Failed to set store rates. Please contact admin.");
+                            }
+                        } else {
+                            alert("Failed to set store rates. Please contact admin.");
+                        }
+                    });
                 } else {
                     alert("Something went wrong please contact admin");
                 }
