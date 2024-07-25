@@ -85,7 +85,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('edit-rates', 'PayrollController@setRates')->name('edit-rates');
     Route::post('edit-store-rates', 'PayrollController@setStoreRates')->name('edit-store-rates');
     Route::post('delete-rates', 'PayrollController@deleteRates')->name('delete-rates');
-    
+    Route::post('delete-store-rates', 'PayrollController@deleteStoreRates')->name('delete-store-rates');
+
     //SSS
     Route::get('sss', 'SssController@index')->name('sss');
     Route::post('new-sss', 'SssController@create')->name('new-sss');

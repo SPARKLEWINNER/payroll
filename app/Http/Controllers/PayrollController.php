@@ -288,6 +288,17 @@ class PayrollController extends Controller
         }
         return redirect()->back()->with('message', 'Save successful!');
     }
+    public function deleteStoreRates(Request $request)
+    {
+        $storeId = $request->store;
+
+        if ($storeId) {
+            Rates::where('store', $storeId)->delete();
+            return redirect()->back()->with('message', 'Delete successful!');
+        } else {
+            return redirect()->back()->with('error', 'Store ID not provided.');
+        }
+    }
     public function save(Request $request)
     {
         $formattedRequest = $request->input();

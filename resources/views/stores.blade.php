@@ -11,6 +11,11 @@
                 {{ session()->get('message') }}
             </div>
         @endif
+        @if(session()->has('error'))
+            <div class="alert alert-danger">
+                {{ session()->get('error') }}
+            </div>
+        @endif
             <div class='row'>
                 <div class="col-lg-12 grid-margin stretch-card">
                     <div class="ibox float-e-margins">
@@ -55,6 +60,7 @@
                                 <div class="col-lg-3">
                                     <button type="submit" class="btn btn-primary col-sm-3 col-lg-3 col-md-3">View</button>
                                     <button type="button" id="set-rates" class="btn btn-primary col-sm-3 col-lg-3 col-md-3" style="margin-left: 15px" data-toggle="modal" title='EDIT'>Set Rates</button>
+                                    <button type="button" id="delete-rates" class="btn btn-danger col-sm-3 col-lg-3 col-md-3" style="margin-left: 15px">Delete Rates</button>
                                 </div>
                                 </div>
                             </form> 
@@ -200,6 +206,25 @@
                                     @endforeach
                                   </tbody>
                                 </table>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete the rates for this store?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -426,6 +451,45 @@
             }
             document.getElementById("loader").style.display = "none"
           })
+
+          const deleteRatesButton = document.getElementById("delete-rates");
+            $('#delete-rates').click(function() {
+                const store = $("#storeList").val()
+                if (store) {
+                    $('#confirmDeleteModal').modal('show');
+                } else {
+                    alert("Please select store")
+                }
+            });
+
+            $('#confirmDelete').click(async function() {
+                let url = 'delete-store-rates';
+                const store = $("#storeList").val()
+                document.getElementById("loader").style.display = "block"
+                const data = {
+                    "store": store
+                }
+                const option = {
+                    method: "POST",
+                    headers: {
+                    "Accept": '*',
+                    "Content-Type": "application/json",
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    body: JSON.stringify(data)
+                }
+                const response = await fetch(url, option)
+
+                if (response.ok) {
+                    $('#confirmDeleteModal').modal('hide');
+                    document.getElementById("loader").style.display = "none";
+                    // location.reload();
+                    alert("Delete Successful")
+                } else {
+                    alert("Something went wrong please contact admin")
+                    document.getElementById("loader").style.display = "none";
+                }
+            });
     </script>
 @endsection
 
