@@ -17,6 +17,7 @@ use App\Rates;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PayrollController extends Controller
@@ -379,6 +380,10 @@ class PayrollController extends Controller
 
         if (isset($formattedRequest['details']) && is_array($formattedRequest['details'])) {
             $details = $formattedRequest['details'];
+            usort($details, function($a, $b) {
+                return strcmp($a['employeename'], $b['employeename']);
+            });
+            
             foreach ($details as $key => $detail) {
                 $gross_pay = $detail['gross_pay'];
                 if ($gross_pay >= 1) {
@@ -450,6 +455,9 @@ class PayrollController extends Controller
                     ];
                 }
             }
+            usort($details, function($a, $b) {
+                return strcmp($a['employeename'], $b['employeename']);
+            });
         }
 
         foreach ($details as $detail) {

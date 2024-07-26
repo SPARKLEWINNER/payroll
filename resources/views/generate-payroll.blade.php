@@ -464,6 +464,8 @@
         }
     }
 
+    data.sort((a, b) => a.emp_name.localeCompare(b.emp_name));
+
     try {
         let response = await fetch('https://payroll-live.7star.com.ph/public/api/save', {
             method: 'POST',
