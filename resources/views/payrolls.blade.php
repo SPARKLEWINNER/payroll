@@ -116,7 +116,7 @@
                                 }
                             @endphp
                             @if($shouldDisplay)
-                                <tr>
+                                <tr data-payroll='@json($payroll)'>
                                     <td>
                                         @php
                                             $disableButtons = false;
@@ -292,7 +292,10 @@
         $('[data-toggle="tooltip"]').tooltip();
         $('.delete-payroll').click(function () {
             var id = this.id;
+            var payrollData = $(this).closest('tr').data('payroll');
             console.log('Delete payroll ID:', id);
+            console.log('Payroll data:', payrollData);
+
             swal({
                 title: "Are you sure?",
                 text: "You will not be able to recover this payroll",
@@ -301,28 +304,66 @@
                 confirmButtonColor: "#DD6B55",
                 confirmButtonText: "Yes, delete it!",
                 closeOnConfirm: false
-            }, function (){
-                $.ajax({
-                    dataType: 'json',
-                    type:'POST',
-                    url:  '{{url("delete-payroll")}}',
-                    data:{id:id},
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                }).done(function(data){
-                    console.log('Delete response:', data);
-                    swal("Deleted!", "Your record has been deleted.", "success");
-                    location.reload();
-                }).fail(function(data) {
-                    console.log('Delete failed response:', data);
-                    swal("Deleted!", "Your record has been deleted.", "success");
-                    location.reload();
-                });
+            }, function () {
+                if (payrollData.breaklist) {
+                    console.log('Breaklist:', payrollData.breaklist);
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        url: 'https://time-in-production-api.onrender.com/api/delete/breaklist',
+                        data: JSON.stringify({ breaklistid: payrollData.breaklist }),
+                        contentType: 'application/json',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).always(function(breaklistData) {
+                        console.log('Breaklist delete response:', breaklistData);
+                        var breaklistMessage = 'Your record has been deleted, but the breaklist could not be deleted.';
+                        if (breaklistData.success) {
+                            breaklistMessage = 'Your record and breaklist have been deleted.';
+                        }
+                        $.ajax({
+                            dataType: 'json',
+                            type: 'POST',
+                            url: '{{url("delete-payroll")}}',
+                            data: { id: id },
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        }).done(function(data) {
+                            console.log('Delete response:', data);
+                            swal("Deleted!", breaklistMessage, "success");
+                            location.reload();
+                        }).fail(function(data) {
+                            console.log('Delete failed response:', data);
+                            swal("Deleted!", breaklistMessage, "success");
+                            location.reload();
+                        });
+                    });
+                } else {
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        url: '{{url("delete-payroll")}}',
+                        data: { id: id },
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    }).done(function(data) {
+                        console.log('Delete response:', data);
+                        swal("Deleted!", "Your record has been deleted.", "success");
+                        location.reload();
+                    }).fail(function(data) {
+                        console.log('Delete failed response:', data);
+                        swal("Deleted!", "Your record has been deleted.", "success");
+                        location.reload();
+                    });
+                }
             });
         });
 
         $('.save-payroll').click(function () {
             var id = this.id;
+            var payrollData = $(this).closest('tr').data('payroll');
             console.log('Save payroll ID:', id);
+            console.log('Payroll data:', payrollData);
+
             swal({
                 title: "Are you sure to save this payroll?",
                 text: "After saving, you cannot edit this payroll anymore",
@@ -331,22 +372,57 @@
                 confirmButtonColor: "#DD6B55",
                 confirmButtonText: "Yes, save it!",
                 closeOnConfirm: false
-            }, function (){
-                $.ajax({
-                    dataType: 'json',
-                    type:'POST',
-                    url:  '{{url("save-payroll")}}',
-                    data:{id:id},
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                }).done(function(data){
-                    console.log('Save response:', data);
-                    swal("Saved!", "Successfully Saved.", "success");
-                    location.reload();
-                }).fail(function(data) {
-                    console.log('Save failed response:', data);
-                    swal("Saved!", "Successfully Saved.", "success");
-                    location.reload();
-                });
+            }, function () {
+                if (payrollData.breaklist) {
+                    console.log('Breaklist:', payrollData.breaklist);
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        url: 'https://time-in-production-api.onrender.com/api/delete/breaklist',
+                        data: JSON.stringify({ breaklistid: payrollData.breaklist }),
+                        contentType: 'application/json',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).always(function(breaklistData) {
+                        console.log('Breaklist delete response:', breaklistData);
+                        var breaklistMessage = 'Successfully Saved, but the breaklist could not be deleted.';
+                        if (breaklistData.success) {
+                            breaklistMessage = 'Successfully Saved and breaklist has been deleted.';
+                        }
+                        $.ajax({
+                            dataType: 'json',
+                            type: 'POST',
+                            url: '{{url("save-payroll")}}',
+                            data: { id: id },
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        }).done(function(data) {
+                            console.log('Save response:', data);
+                            swal("Saved!", breaklistMessage, "success");
+                            location.reload();
+                        }).fail(function(data) {
+                            console.log('Save failed response:', data);
+                            swal("Saved!", breaklistMessage, "success");
+                            location.reload();
+                        });
+                    });
+                } else {
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        url: '{{url("save-payroll")}}',
+                        data: { id: id },
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    }).done(function(data) {
+                        console.log('Save response:', data);
+                        swal("Saved!", "Successfully Saved.", "success");
+                        location.reload();
+                    }).fail(function(data) {
+                        console.log('Save failed response:', data);
+                        swal("Saved!", "Successfully Saved.", "success");
+                        location.reload();
+                    });
+                }
             });
         });
         var elem = document.querySelector('.js-switch');
