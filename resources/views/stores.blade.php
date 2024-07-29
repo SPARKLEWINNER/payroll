@@ -462,32 +462,35 @@
                 }
             });
 
-            $('#confirmDelete').click(async function() {
-                let url = 'delete-store-rates';
-                const store = $("#storeList").val()
-                document.getElementById("loader").style.display = "block"
-                const data = {
-                    "store": store
-                }
-                const option = {
-                    method: "POST",
-                    headers: {
-                    "Accept": '*',
-                    "Content-Type": "application/json",
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    body: JSON.stringify(data)
-                }
-                const response = await fetch(url, option)
+            $('#confirmDelete').click(function() {
+                const store = $("#storeList").val();
+                if (store) {
 
-                if (response.ok) {
-                    $('#confirmDeleteModal').modal('hide');
-                    document.getElementById("loader").style.display = "none";
-                    // location.reload();
-                    alert("Delete Successful")
+                    document.getElementById("loader").style.display = "block";
+                    
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '{{ url("delete-store-rates") }}';
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'store';
+                    input.value = store;
+
+                    form.appendChild(input);
+
+                    const csrfToken = document.querySelector('meta[name="_token"]').getAttribute('content');
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = csrfToken;
+
+                    form.appendChild(csrfInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
                 } else {
-                    alert("Something went wrong please contact admin")
-                    document.getElementById("loader").style.display = "none";
+                    alert("Please select store");
                 }
             });
     </script>

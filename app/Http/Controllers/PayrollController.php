@@ -295,7 +295,7 @@ class PayrollController extends Controller
 
         if ($storeId) {
             Rates::where('store', $storeId)->delete();
-            return redirect()->back()->with('message', 'Delete successful!');
+            return redirect()->back()->with('error', 'Delete successful!');
         } else {
             return redirect()->back()->with('error', 'Store ID not provided.');
         }
