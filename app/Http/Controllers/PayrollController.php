@@ -342,6 +342,9 @@ class PayrollController extends Controller
             ->first();
 
         if ($payrollExist) {
+            if ($breaklistId && Payroll::where('breaklist', $breaklistId)->exists()) {
+                return response()->json(['message' => 'Payroll with Breaklist already exists, skipping'], 200);
+            }
             $payroll = $payrollExist;
             if (is_numeric($generatedBy)) {
                 $payroll->generated_by = $generatedBy;
