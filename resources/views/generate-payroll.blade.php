@@ -182,6 +182,7 @@
                                                             }
                                                             if($schedule != null)
                                                             {
+                                                                $late = 0;
                                                                 if($rates->late == null)
                                                                 {
                                                                     $late = get_late($schedule,$time_in->time);
