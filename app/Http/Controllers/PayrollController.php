@@ -384,7 +384,7 @@ class PayrollController extends Controller
         if (isset($formattedRequest['details']) && is_array($formattedRequest['details'])) {
             $details = $formattedRequest['details'];
             usort($details, function($a, $b) {
-                return strcmp($a['employeename'], $b['employeename']);
+                return strcasecmp($a['employeename'], $b['employeename']);
             });
             
             foreach ($details as $key => $detail) {
