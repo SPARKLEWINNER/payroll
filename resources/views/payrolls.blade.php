@@ -596,6 +596,10 @@
                                 if (rateResponse.status === 'success') {
                                     var rate = rateResponse.data;
                                     var hourlyRate = rate.daily / 8;
+                                    var workingHours = detail.hourswork;
+                                    if (workingHours <= 0) {
+                                        workingHours = 0;
+                                    }
                                     var tardyRate = (rate.late === 1) ? 0 : (rate.daily / 8 / 60) * detail.hourstardy;
                                     var overtimeRate = (hourlyRate * 1.25) * detail.overtime;
                                     var specialHolidayCount = 0;
@@ -636,7 +640,7 @@
                                             daily_rate: rate.daily,
                                             hour_rate: hourlyRate,
                                             days_work: detail.dayswork,
-                                            hours_work: detail.hourswork,
+                                            hours_work: workingHours,
                                             basic_pay: rate.daily * detail.dayswork,
                                             hours_tardy: detail.hourstardy,
                                             tardy_amount: tardyRate,
